@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Log = require('./Logger');
 const r = require('redis')
 const redis = r.createClient();
@@ -36,9 +37,14 @@ getConnectionString = async (userName) => {
         }))
 };
 
+loadText = (filePath) => {
+    return fs.readFileSync(filePath, { encoding: 'utf-8' })
+}
+
 module.exports = {
     Map: map,
     SendResponse: sendResponse,
+    LoadText: loadText,
     ConnectionString: {
         Build: buildConnectionString,
         Get: getConnectionString
