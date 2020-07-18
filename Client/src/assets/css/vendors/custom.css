@@ -1,0 +1,51 @@
+@font-face {
+    font-family: 'sans';
+    src: url('../../font/iransans.woff') format('woff'), url('../../font/iransans.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+  }
+  
+  @font-face {
+    font-family: 'sans_bold';
+    src: url('../../font/IRANSans-Bold-web.woff') format('woff'), url('../../font/IRANSans-Bold-web.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+  }
+  
+  @font-face {
+    font-family: 'sans_light';
+    src: url('../../font/IRANSssansLight.woff') format('woff'), url('../../font/IRANSssansLight.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+  }
+  
+  @font-face {
+    font-family: 'sans_medium';
+    src: url('../../font/IRANSansMedium.woff') format('woff'), url('../../font/IRANSansMedium.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+  }
+
+  #root{
+      font-family: 'sans';
+  }
+  
+  h2{
+      font-family: 'sans';
+  }
+
+  .rtl{
+direction: rtl;
+  }
+
+  h6{
+    font-family: 'sans';
+}
+
+.customFont{
+  font-family: 'sans';
+}
