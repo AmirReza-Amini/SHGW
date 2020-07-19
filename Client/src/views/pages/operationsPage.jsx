@@ -5,9 +5,8 @@ import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard"
 import operationGroups from "../../mockData/operationGroups";
 import CustomNavigation from "../../components/common/customNavigation";
 import * as Icon from "react-feather";
+import dischargeIcon from "../../assets/icons/svg/Discharge.svg";
 import _ from "lodash";
-
-
 
 class operationsPage extends Component {
   state = {
@@ -16,15 +15,15 @@ class operationsPage extends Component {
 
   constructor(props) {
     super(props);
-    
-    let a=this.props.operations
-    console.log("operations",this.props);
+
+    let a = this.props.operations;
+    console.log("operations", this.props);
     const group = _.head(
       operationGroups.filter(function(item) {
         return item.enName == a ? true : false;
       })
     );
-    this.state.group= group;
+    this.state.group = group;
   }
 
   componentDidMount() {
@@ -41,7 +40,7 @@ class operationsPage extends Component {
     console.log(operationType);
     switch (operationType) {
       case "Discharge":
-        console.log("operations",this.props.match.path);
+        console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/discharge");
       case "Load":
     }
@@ -51,17 +50,9 @@ class operationsPage extends Component {
     return (
       <Fragment>
         <Row className="row-eq-height">
-        <Col sm="12" md="3">
-          <CustomNavigation path={this.props.match.path}/>
-              {/* <Breadcrumb tag="nav">
-                <BreadcrumbItem>
-                  <NavLink to="/operationType">Operation Type</NavLink>
-                </BreadcrumbItem>
-                <BreadcrumbItem active >
-                  {this.state.group.enName}
-                </BreadcrumbItem>
-              </Breadcrumb> */}
-            </Col>
+          <Col sm="12" md="3">
+            <CustomNavigation path={this.props.match.path} />
+          </Col>
         </Row>
         <Row className="row-eq-height">
           {this.state.group.operations.map((op) => (
@@ -74,12 +65,13 @@ class operationsPage extends Component {
                 onClick={this.handleOperation}
                 key={op.enName}
               >
-                <Icon.Briefcase
+                {/* <Icon.Briefcase
                   size={56}
                   strokeWidth="1.3"
                   color="#fff"
                   key={op.fnName}
-                />
+                /> */}
+                 <img src={dischargeIcon} className="customIconSizes" /> 
               </MinimalStatisticsBG>
             </Col>
           ))}

@@ -49,3 +49,16 @@ direction: rtl;
 .customFont{
   font-family: 'sans';
 }
+
+.customIconSizes{
+  height: 50px;
+  width: 50px;
+}
+
+.error{
+  color: red;
+  text-align: right;
+}
+
+
+
