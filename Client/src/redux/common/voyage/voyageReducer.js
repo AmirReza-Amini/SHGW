@@ -3,10 +3,12 @@ import {
   FETCH_VOYAGES_FAILURE,
   FETCH_VOYAGES_REQUEST,
   FETCH_VOYAGES_SUCCESS,
+  VOYAGE_SELECTED_CHANGED
 } from "./voyageTypes";
 
 const initialState = {
   loading: false,
+  selectedVoyage:'',
   voyages: [],
   error: "",
 };
@@ -30,6 +32,11 @@ const voyageReducer = (state = initialState, action) => {
         voyages: [],
         error: action.payload,
       };
+      case VOYAGE_SELECTED_CHANGED:
+        return {
+          ...state,
+          selectedVoyage:action.payload
+        }
     default:
       return initialState
   }

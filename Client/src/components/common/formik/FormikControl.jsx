@@ -5,6 +5,7 @@ import Select from './Select';
 import RadioButtons from './RadioButtons';
 import CheckboxGroup from './CheckboxGroup';
 import CustomSelect from './CustomSelect';
+import InputMaskDebounce from './InputMaskDebounce';
 
 const FormikControl = (props) => {
     const { control, ...rest } = props;
@@ -15,6 +16,7 @@ const FormikControl = (props) => {
         case 'radio': return <RadioButtons {...rest} />
         case 'checkbox': return <CheckboxGroup {...rest} />
         case 'customSelect': return <CustomSelect {...rest} />
+        case 'inputMaskDebounce': return <InputMaskDebounce {...rest}/>
         default: return null
     }
 }

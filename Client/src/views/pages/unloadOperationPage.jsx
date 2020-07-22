@@ -5,14 +5,18 @@ import CustomNavigation from "../../components/common/customNavigation";
 import { Formik, Form } from "formik";
 import FormikControl from "../../components/common/formik/FormikControl";
 import * as Yup from "yup";
+import { Field, ErrorMessage } from "formik";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchVoyagesTopTenOpen } from "../../redux/common/voyage/voyageActions";
+import {
+  fetchVoyagesTopTenOpen,
+  voyageSelectedChanged,
+} from "../../redux/common/voyage/voyageActions";
 
 const initialValues = {
   selectVoyageNo: "",
   selectEquipmentType: "",
-  selectContainerNo: "",
+  containerNo: "",
   personallyCode: "",
   truckNo: "",
 };
@@ -20,7 +24,7 @@ const initialValues = {
 const validationSchema = Yup.object({
   selectVoyageNo: Yup.string().required("!شماره سفر را وارد کنید"),
   selectEquipmentType: Yup.string().required("!شماره دستگاه را وارد کنید"),
-  selectContainerNo: Yup.string().required("!شماره کانتینر را وارد کنید"),
+  containerNo: Yup.string().required("!شماره کانتینر را وارد کنید"),
   personallyCode: Yup.string().required("!کد پرسنلی را وارد کنید"),
   truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
@@ -43,14 +47,28 @@ const containerNoOptions = [
 const onSubmit = (values) => console.log("Form Data", values);
 
 const UnloadOperationPage = (props) => {
-  const [formValues, setFormValues] = useState(null);
+  //const [formValues, setFormValues] = useState(null);
   const voyageData = useSelector((state) => state.voyage);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchVoyagesTopTenOpen());
+    if (
+      voyageData === null ||
+      voyageData.voyages === null ||
+      voyageData.voyages.length === 0
+    )
+      dispatch(fetchVoyagesTopTenOpen());
   }, []);
 
-  console.log("formvalues", formValues);
+  const handleContainerNoChange = () => {
+    console.log("cntrno");
+  };
+
+  const handleVoyageSelectedChanged = (value) => {
+    console.log("handleVoyageSelectedChanged", value);
+    dispatch(voyageSelectedChanged(value));
+  };
+
+  //console.log("formvalues", formValues);
   console.log("voyageData", voyageData);
   return (
     <Fragment>
@@ -62,54 +80,95 @@ const UnloadOperationPage = (props) => {
           <Card>
             <CardBody>
               {/* <CardTitle>Event Registration</CardTitle> */}
-              <p className="mb-0" style={{ textAlign: "center" }}>
+              <p className="mb-2" style={{ textAlign: "center" }}>
                 ثبت عملیات تخلیه
               </p>
               <div className="px-3">
                 <Formik
-                  initialValues={formValues || initialValues}
+                  initialValues={initialValues}
                   validationSchema={validationSchema}
                   onSubmit={onSubmit}
                   validateOnBlur={true}
                 >
                   {(formik) => {
-                    console.log("Formik props values", formik.values);
+                    //console.log("Formik props values", formik.values);
                     return (
                       <Form>
                         <div className="form-body">
-                          <FormikControl
-                            control="customSelect"
-                            name="selectVoyageNo"
-                            options={voyageOptions}
-                            placeholder="شماره سفر"
-                          />
-                          <FormikControl
-                            control="customSelect"
-                            name="selectEquipmentType"
-                            options={equipmentTypeOptions}
-                            placeholder="شماره دستگاه"
-                          />
-                          <FormikControl
-                            control="customSelect"
-                            name="selectContainerNo"
-                            options={containerNoOptions}
-                            placeholder="شماره کانتینر"
-                          />
-                          <FormikControl
-                            control="input"
-                            type="number"
-                            name="personallyCode"
-                            className="rtl"
-                            placeholder="کد پرسنلی"
-                          />
+                          <Row>
+                            <Col md="12">
+                              <FormikControl
+                                control="customSelect"
+                                name="selectVoyageNo"
+                                selectedValue={voyageData.selectedVoyage}
+                                options={voyageData.voyages}
+                                placeholder="شماره سفر"
+                                onSelectedChanged={handleVoyageSelectedChanged}
+                                
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col md="12">
+                              <FormikControl
+                                control="customSelect"
+                                name="selectEquipmentType"
+                                //selectedValue={voyageData.selectedVoyage}
+                                options={voyageData.voyages}
+                                placeholder="شماره دستگاه"
+                                //onSelectedChanged={handleVoyageSelectedChanged}
+                                
+                              />
+                            </Col>
+                           
+                          </Row>
+                          <Row>
+                            <Col md="6">
+                              <FormikControl
+                                control="input"
+                                type="number"
+                                name="personallyCode"
+                                className="rtl"
+                                placeholder="کد اپراتور"
+                              />
+                            </Col>
+                            <Col md="6">
+                            <FormikControl
+                                control="input"
+                                type="text"
+                                name="personallyCodeInfo"
+                                className="rtl"
+                                disabled={true}
+                              />
+                            
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col md="12">
+                              <FormikControl
+                                control="inputMaskDebounce"
+                                name="containerNo"
+                                mask="aaaa 9999999"
+                                debounceTime={0}
+                                placeholder="شماره کانتینر"
+                                className="ltr"
+                                onChange={handleContainerNoChange}
+                              />
+                              <div>{formik.values.containerNo}</div>
+                            </Col>
+                          </Row>
 
-                          <FormikControl
-                            control="input"
-                            type="text"
-                            name="truckNo"
-                            className="rtl"
-                            placeholder="شماره کشنده"
-                          />
+                          <Row>
+                            <Col md="12">
+                              <FormikControl
+                                control="input"
+                                type="text"
+                                name="truckNo"
+                                className="rtl"
+                                placeholder="شماره کشنده"
+                              />
+                            </Col>
+                          </Row>
                         </div>
                         <div className="form-actions center">
                           <p

@@ -6,6 +6,7 @@ module.exports = app => {
   app.use('/api/user', require('./user'));
   app.use('/api/auth', require('./authentication'));
   app.use('/api/al', require('./groupAccessLevel'));
+  app.use('/api/voyage', require('./voyage'));
 
   app.use(errorLoger);
 };

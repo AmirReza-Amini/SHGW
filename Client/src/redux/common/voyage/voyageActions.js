@@ -1,7 +1,8 @@
 import {
   FETCH_VOYAGES_REQUEST,
   FETCH_VOYAGES_FAILURE,
-  FETCH_VOYAGES_SUCCESS
+  FETCH_VOYAGES_SUCCESS,
+  VOYAGE_SELECTED_CHANGED
 } from "./voyageTypes";
 import http from "../../../services/httpService";
 import { apiUrl } from "../../../config.json";
@@ -28,13 +29,24 @@ export const fetchVoyagesFailure = (error) => {
   };
 };
 
+export const voyageSelectedChanged = (voyage) => {
+  return {
+    type: VOYAGE_SELECTED_CHANGED,
+    payload: voyage,
+  };
+};
+
 export const fetchVoyagesTopTenOpen = () => {
   return (dispatch) => {
     dispatch(fetchVoyagesRequest());
     http
-      .get(apiEndpoint + "getVoyagesTopTenOpen")
+    .get('http://localhost:4000/api/voyage')
+      //.get(apiEndpoint + "getVoyagesTopTenOpen")
       .then((response) => {
-        const data = response.data;
+        console.log('res',response)
+        const data = response.data.data.map((c) => {
+          return { value: c.VoyageID, label: `Voyage: ${c.VoyageNo} - Ship: ${c.ShipName}` };
+        });
         dispatch(fetchVoyagesSuccess(data));
       })
       .catch((error) => {
