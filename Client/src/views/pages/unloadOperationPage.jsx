@@ -25,7 +25,7 @@ const initialValues = {
   containerNo: "",
   operatorCode: "",
   truckNo: "",
-  specialEquipment:[]
+  checkboxListSelected:[]
 };
 
 toast.configure();
@@ -38,7 +38,7 @@ const validationSchema = Yup.object({
   truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
 
-const toggleListOptions = [{ key: 'specialEquipment', value: 'SE' },{ key: 'outOfGage', value: 'OG' }];
+const checkboxListOptions = [{ key: 'تجهیزات ویژه', value: 'SE' },{ key: 'غیر استاندارد', value: 'OG' }];
 const equipmentTypeOptions = [];
 const onSubmit = (values) => console.log("Form Data", values);
 
@@ -245,16 +245,10 @@ const UnloadOperationPage = (props) => {
                             <Col md="6">
                               <FormikControl
                                 control="checkbox"
-                                name="specialEquipment"
-                                options={toggleListOptions}
+                                name="checkboxListSelected"
+                                options={checkboxListOptions}
                               />
-                              <FormikControl
-                                control="toggle"
-                                name="SpecialEquipment"
-                                className="rtl"
-                                label="SE"
-                              />
-                            </Col>
+                              </Col>
                           </Row>
                         </div>
                         <div className="form-actions center">
@@ -269,7 +263,7 @@ const UnloadOperationPage = (props) => {
                             style={{ textAlign: "right" }}
                           >
                             <span className="labelDescription">
-                              نوع و سایز کانتینر:
+                              سایز و نوع کانتینر:
                             </span>{" "}
                             <span className="labelValue">
                               {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
