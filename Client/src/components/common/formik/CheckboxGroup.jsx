@@ -11,7 +11,7 @@ const CheckboxGroup = (props) => {
       <Row>
         <Field name={name} {...rest} className={classN}>
           {({ field }) => {
-            console.log("Field", options);
+            //console.log("Field", options);
             return options.map((option) => {
               return (
                 <Col md={12 / options.length} key={option.key}>

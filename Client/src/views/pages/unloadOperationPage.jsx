@@ -25,7 +25,7 @@ const initialValues = {
   containerNo: "",
   operatorCode: "",
   truckNo: "",
-  checkboxListSelected:[]
+  checkboxListSelected: [],
 };
 
 toast.configure();
@@ -38,9 +38,13 @@ const validationSchema = Yup.object({
   truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
 
-const checkboxListOptions = [{ key: 'تجهیزات ویژه', value: 'SE' },{ key: 'غیر استاندارد', value: 'OG' }];
-const equipmentTypeOptions = [];
-const onSubmit = (values) => console.log("Form Data", values);
+const checkboxListOptions = [
+  { key: "تجهیزات ویژه", value: "SE" },
+  { key: "غیر استاندارد", value: "OG" },
+];
+const onSubmit = (values) => {
+  console.log("Form Data", values);
+};
 
 const UnloadOperationPage = (props) => {
   const VoyageData = useSelector((state) => state.voyage);
@@ -79,10 +83,10 @@ const UnloadOperationPage = (props) => {
 
   const handleContainerNoChange = (value) => {
     const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
-    console.log("voyage and cntr", data);
+    // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
       .then((response) => {
-        console.log("cntrno change res", response);
+        //console.log("cntrno change res", response);
         let guessedOperation = "";
         const result = response.data.data[0];
         if (result.ManifestCntrID !== null) {
@@ -131,7 +135,7 @@ const UnloadOperationPage = (props) => {
   };
 
   //console.log("formvalues", formValues);
-  console.log("voyageData", VoyageData);
+  //console.log("voyageData", VoyageData);
   return (
     <Fragment>
       <Row className="row-eq-height justify-content-md-center">
@@ -146,6 +150,8 @@ const UnloadOperationPage = (props) => {
                 ثبت عملیات تخلیه
               </p>
               <div className="px-3">
+              </div>
+              <div className="px-3">
                 <Formik
                   initialValues={initialValues}
                   validationSchema={validationSchema}
@@ -154,224 +160,235 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                    console.log("Formik props values", formik.values);
+                    //console.log("Formik props values", formik.values);
                     return (
-                      <Form>
-                        <div className="form-body">
-                          <Row>
-                            <Col md="12">
-                              <FormikControl
-                                control="customSelect"
-                                name="selectVoyageNo"
-                                selectedValue={VoyageData.selectedVoyage}
-                                options={VoyageData.voyages}
-                                placeholder="شماره سفر"
-                                onSelectedChanged={handleVoyageSelectedChanged}
-                              />
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md="12">
-                              <FormikControl
-                                control="customSelect"
-                                name="selectEquipmentType"
-                                selectedValue={EquipmentData.selectedEquipment}
-                                options={EquipmentData.equipments}
-                                placeholder="شماره دستگاه"
-                                onSelectedChanged={
-                                  handleEquipmentSelectedChanged
-                                }
-                              />
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md="6">
-                              <FormikControl
-                                control="inputMaskDebounce"
-                                name="operatorCode"
-                                mask=""
-                                debounceTime={2000}
-                                placeholder="کد اپراتور"
-                                className="rtl"
-                                onChange={() =>
-                                  handleOperatorCodeChange(
-                                    formik.values.operatorCode
-                                  )
-                                }
-                                defaultValue={OperatorData.operator.staffCode}
-                              />
-                            </Col>
-                            <Col md="6">
-                              <FormikControl
-                                control="input"
-                                type="text"
-                                name="operatorCodeInfo"
-                                className="rtl"
-                                disabled={true}
-                                value={OperatorData.operator.name}
-                              />
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col md="12">
-                              <FormikControl
-                                control="inputMaskDebounce"
-                                name="containerNo"
-                                mask="aaaa 9999999"
-                                debounceTime={0}
-                                placeholder="شماره کانتینر"
-                                className="ltr"
-                                onChange={() =>
-                                  handleContainerNoChange(
-                                    formik.values.containerNo
-                                  )
-                                }
-                                toUppercase={true}
-                              />
-                              {/* <div>{formik.values.containerNo}</div> */}
-                            </Col>
-                          </Row>
-
-                          <Row>
-                            <Col md="6">
-                              <FormikControl
-                                control="input"
-                                type="text"
-                                name="truckNo"
-                                className="rtl"
-                                placeholder="شماره کشنده"
-                              />
-                            </Col>
-                            <Col md="6">
-                              <FormikControl
-                                control="checkbox"
-                                name="checkboxListSelected"
-                                options={checkboxListOptions}
-                              />
+                      <React.Fragment>
+                        <Form>
+                          <div className="form-body">
+                            <Row>
+                              <Col md="12">
+                                <FormikControl
+                                  control="customSelect"
+                                  name="selectVoyageNo"
+                                  selectedValue={VoyageData.selectedVoyage}
+                                  options={VoyageData.voyages}
+                                  placeholder="شماره سفر"
+                                  onSelectedChanged={
+                                    handleVoyageSelectedChanged
+                                  }
+                                />
                               </Col>
-                          </Row>
-                        </div>
-                        <div className="form-actions center">
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "center", fontWeight: "bold" }}
-                          >
-                            اطلاعات تکمیلی
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              سایز و نوع کانتینر:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
-                            </span>
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              وضعیت پر یا خالی:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.FullEmptyStatus}
-                            </span>
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              بندر تخلیه:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.PortOfDischarge}
-                            </span>
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">ترمینال:</span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.TerminalName}
-                            </span>
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">محل تخلیه:</span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.MarshalingLocation}
-                            </span>
-                          </p>
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              نوع بارنامه:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.BLType}
-                            </span>
-                          </p>
+                            </Row>
+                            <Row>
+                              <Col md="12">
+                                <FormikControl
+                                  control="customSelect"
+                                  name="selectEquipmentType"
+                                  selectedValue={
+                                    EquipmentData.selectedEquipment
+                                  }
+                                  options={EquipmentData.equipments}
+                                  placeholder="شماره دستگاه"
+                                  onSelectedChanged={
+                                    handleEquipmentSelectedChanged
+                                  }
+                                />
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col md="6">
+                                <FormikControl
+                                  control="inputMaskDebounce"
+                                  name="operatorCode"
+                                  mask=""
+                                  debounceTime={2000}
+                                  placeholder="کد اپراتور"
+                                  className="rtl"
+                                  onChange={() =>
+                                    handleOperatorCodeChange(
+                                      formik.values.operatorCode
+                                    )
+                                  }
+                                  defaultValue={OperatorData.operator.staffCode}
+                                />
+                              </Col>
+                              <Col md="6">
+                                <FormikControl
+                                  control="input"
+                                  type="text"
+                                  name="operatorCodeInfo"
+                                  className="rtl"
+                                  disabled={true}
+                                  value={OperatorData.operator.name}
+                                />
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col md="12">
+                                <FormikControl
+                                  control="inputMaskDebounce"
+                                  name="containerNo"
+                                  mask="aaaa 9999999"
+                                  debounceTime={0}
+                                  placeholder="شماره کانتینر"
+                                  className="ltr"
+                                  onChange={() =>
+                                    handleContainerNoChange(
+                                      formik.values.containerNo
+                                    )
+                                  }
+                                  toUppercase={true}
+                                />
+                                {/* <div>{formik.values.containerNo}</div> */}
+                              </Col>
+                            </Row>
 
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              وضعیت خطرناک بودن:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.IMDGCode}
-                            </span>
-                          </p>
+                            <Row>
+                              <Col md="6">
+                                <FormikControl
+                                  control="input"
+                                  type="text"
+                                  name="truckNo"
+                                  className="rtl"
+                                  placeholder="شماره کشنده"
+                                />
+                              </Col>
+                              <Col md="6">
+                                <FormikControl
+                                  control="checkbox"
+                                  name="checkboxListSelected"
+                                  options={checkboxListOptions}
+                                />
+                              </Col>
+                            </Row>
+                          </div>
+                          <div className="form-actions center">
+                            <p
+                              className="mb-0 rtl"
+                              style={{
+                                textAlign: "center",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              اطلاعات تکمیلی
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                سایز و نوع کانتینر:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
+                              </span>
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                وضعیت پر یا خالی:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.FullEmptyStatus}
+                              </span>
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                بندر تخلیه:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.PortOfDischarge}
+                              </span>
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">ترمینال:</span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.TerminalName}
+                              </span>
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                محل تخلیه:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.MarshalingLocation}
+                              </span>
+                            </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                نوع بارنامه:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.BLType}
+                              </span>
+                            </p>
 
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              رده ی وزنی:
-                            </span>{" "}
-                            <span className="labelValue">
-                              {CntrInfo.PlanWeight}
-                            </span>
-                          </p>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                وضعیت خطرناک بودن:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.IMDGCode}
+                              </span>
+                            </p>
 
-                          <p
-                            className="mb-0 rtl"
-                            style={{ textAlign: "right" }}
-                          >
-                            <span className="labelDescription">
-                              نوع عملیات:
-                            </span>{" "}
-                            <span className="guessedOperation">
-                              {CntrInfo.GuessedOperation}
-                            </span>
-                          </p>
-                        </div>
-                        <div className="form-actions center">
-                          <Button
-                            color="warning"
-                            className="mr-1"
-                            onClick={() =>
-                              this.props.history.push("/operationTypePage")
-                            }
-                          >
-                            <X size={16} color="#FFF" /> لغو
-                          </Button>
-                          <Button color="primary">
-                            <CheckSquare size={16} color="#FFF" /> ثبت
-                          </Button>
-                        </div>
-                      </Form>
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                رده ی وزنی:
+                              </span>{" "}
+                              <span className="labelValue">
+                                {CntrInfo.PlanWeight}
+                              </span>
+                            </p>
+
+                            <p
+                              className="mb-0 rtl"
+                              style={{ textAlign: "right" }}
+                            >
+                              <span className="labelDescription">
+                                نوع عملیات:
+                              </span>{" "}
+                              <span className="guessedOperation">
+                                {CntrInfo.GuessedOperation}
+                              </span>
+                            </p>
+                          </div>
+                          <div className="form-actions center">
+                            <Button
+                              color="warning"
+                              className="mr-1"
+                              onClick={() =>
+                                this.props.history.push("/operationTypePage")
+                              }
+                            >
+                              <X size={16} color="#FFF" /> لغو
+                            </Button>
+                            <Button color="primary" type="submit">
+                              <CheckSquare size={16} color="#FFF" /> ثبت
+                            </Button>
+                          </div>
+                        </Form>
+                      </React.Fragment>
                     );
                   }}
                 </Formik>
