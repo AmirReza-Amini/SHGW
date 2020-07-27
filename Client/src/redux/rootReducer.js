@@ -4,7 +4,8 @@ import { combineReducers } from "redux";
 import todoReducer from "./todo/";
 import customizer from "./customizer/";
 import voyageReducer from './common/voyage/voyageReducer';
-
+import equipmentReducer from './common/equipment/equipmentReducer';
+import operatorReducer from './common/operator/operatorReducer';
 import { reducer as toastrReducer } from "react-redux-toastr";
 
 const rootReducer = combineReducers({
@@ -12,7 +13,9 @@ const rootReducer = combineReducers({
    todoApp: todoReducer,
    toastr: toastrReducer, 
    customizer: customizer,
-   voyage:voyageReducer
+   voyage:voyageReducer,
+   equipment:equipmentReducer,
+   operator:operatorReducer
 });
 
 export default rootReducer;

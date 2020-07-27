@@ -1,19 +1,18 @@
 import {
-  FETCH_VOYAGES_TOPTENOPEN,
   FETCH_VOYAGES_FAILURE,
   FETCH_VOYAGES_REQUEST,
   FETCH_VOYAGES_SUCCESS,
   VOYAGE_SELECTED_CHANGED
 } from "./voyageTypes";
 
-const initialState = {
+export const initVoyage = {
   loading: false,
   selectedVoyage:'',
   voyages: [],
   error: "",
 };
 
-const voyageReducer = (state = initialState, action) => {
+const voyageReducer = (state = initVoyage, action) => {
   switch (action.type) {
     case FETCH_VOYAGES_REQUEST:
       return {
@@ -25,11 +24,12 @@ const voyageReducer = (state = initialState, action) => {
         loading: false,
         voyages: action.payload,
         error: "",
+        selectedVoyage:''
       };
     case FETCH_VOYAGES_FAILURE:
       return {
+        ...state,
         loading: false,
-        voyages: [],
         error: action.payload,
       };
       case VOYAGE_SELECTED_CHANGED:
@@ -38,7 +38,7 @@ const voyageReducer = (state = initialState, action) => {
           selectedVoyage:action.payload
         }
     default:
-      return initialState
+      return state
   }
 };
 

@@ -4,11 +4,11 @@ import TextError from './TextError';
 import { FormGroup, Label } from "reactstrap";
 
 const CheckboxGroup = (props) => {
-    const { label, name, options, ...rest } = props;
+    const { label, name, options,className, ...rest } = props;
+    const classN = "form-control " + className;
     return (
         <FormGroup >
-            <Label htmlFor={name}>{label}</Label>
-            <Field name={name} {...rest} className='form-control'>
+            <Field name={name} {...rest} className={classN} >
                 {
                     ({ field }) => {
                         //console.log('Field',field);
@@ -16,7 +16,7 @@ const CheckboxGroup = (props) => {
                             return (
                                 <React.Fragment key={option.key}>
                                     <input type='checkbox' id={option.value} {...field} value={option.value}
-                                        checked={field.value.includes(option.value)} />
+                                        checked={field.value.includes(option.value)}  />
                                     <label htmlFor={option.value}>{option.key}</label>
                                 </React.Fragment>
                             )

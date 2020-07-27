@@ -7,12 +7,12 @@ const setting = require('../app-setting')
 const sworm = require('sworm');
 const db = sworm.db(setting.db.sqlConfig);
 
-router.get('/:count?', async (req, res) => {
-    let count = req.params.count || 10;
+router.get('/fetchOperatorInfoBasedOnCode/:code', async (req, res) => {
+    let code = req.params.code || 0;
     //console.log('resultdb',db)
     
 
-    var result = await db.query(queries.VOYAGE.loadLastVoyages, { count: count });
+    var result = await db.query(queries.OPERATOR.fetchOperatorInfoBasedOnCode, { code: code });
     console.log('result',result)
    // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
 

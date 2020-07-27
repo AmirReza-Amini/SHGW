@@ -39,7 +39,7 @@
   }
 
   .rtl{
-direction: rtl;
+      direction: rtl;
   }
 
   h6{
@@ -60,11 +60,20 @@ direction: rtl;
   text-align: right;
 }
 
-.xxx{
-
-border-color: transparent;
-padding-bottom: 0ch;
+.labelDescription{
+  color: black;
+  font-weight: bold;
 }
+
+.labelValue{
+  color: rgb(5, 151, 5);
+}
+
+.guessedOperation{
+  color: rgb(209, 30, 30);
+}
+
+
 
 
 

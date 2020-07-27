@@ -14,10 +14,10 @@ module.exports = {
         sqlConfig: {
             driver: 'mssql',
             config: {
-                user: 'appUser',
-                password: 'Bcts(!(',
-                server: '10.1.102.25',
-                database: 'BCTS'
+                user: 'handheld',
+                password: 'H@nd!#($',
+                server: 'localhost',
+                database: 'Shrct'
             }
         }
     },

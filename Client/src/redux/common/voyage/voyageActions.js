@@ -2,12 +2,12 @@ import {
   FETCH_VOYAGES_REQUEST,
   FETCH_VOYAGES_FAILURE,
   FETCH_VOYAGES_SUCCESS,
-  VOYAGE_SELECTED_CHANGED
+  VOYAGE_SELECTED_CHANGED,
 } from "./voyageTypes";
 import http from "../../../services/httpService";
 import { apiUrl } from "../../../config.json";
 
-const apiEndpoint = apiUrl + "/voyages/";
+const apiEndpoint = apiUrl + "/voyage/";
 
 export const fetchVoyagesRequest = () => {
   return {
@@ -37,15 +37,17 @@ export const voyageSelectedChanged = (voyage) => {
 };
 
 export const fetchVoyagesTopTenOpen = () => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(fetchVoyagesRequest());
     http
-    .get('http://localhost:4000/api/voyage')
-      //.get(apiEndpoint + "getVoyagesTopTenOpen")
+      .get(apiEndpoint)
       .then((response) => {
-        console.log('res',response)
+        //console.log('res',response)
         const data = response.data.data.map((c) => {
-          return { value: c.VoyageID, label: `Voyage: ${c.VoyageNo} - Ship: ${c.ShipName}` };
+          return {
+            value: c.VoyageID,
+            label: `Voyage: ${c.VoyageNo} - Ship: ${c.ShipName}`,
+          };
         });
         dispatch(fetchVoyagesSuccess(data));
       })

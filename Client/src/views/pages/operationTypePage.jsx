@@ -4,7 +4,8 @@ import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
 import operationGroups from "../../mockData/operationGroups";
 import _ from "lodash";
-
+import Discharge from '../../assets/icons/svg/Discharge.svg';
+import * as Icon from "react-feather";
 class operationTypePage extends Component {
   state = {
     group: null,
@@ -41,7 +42,9 @@ class operationTypePage extends Component {
                 onClick={this.handleOperationType}
                 key={g.enName}
                 textAlign="center"
-              ></MinimalStatisticsBG>
+              >
+              </MinimalStatisticsBG>
+              
             </Col>
           ))}
         </Row>
