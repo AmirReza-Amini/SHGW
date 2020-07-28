@@ -1,5 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { Card, CardBody, Row, Col, Button } from "reactstrap";
+import {
+  Card,
+  CardBody,
+  Row,
+  Col,
+  Button,
+  Collapse,
+  UncontrolledCollapse,
+} from "reactstrap";
 import { X, CheckSquare, Bold } from "react-feather";
 import CustomNavigation from "../../components/common/customNavigation";
 import { Formik, Form } from "formik";
@@ -17,7 +25,13 @@ import {
   equipmentSelectedChanged,
 } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
-import { getCntrInfoForUnload } from "../../services/vessel/berth";
+import {
+  getCntrInfoForUnload,
+  saveUnload,
+  addToShifting,
+  addToLoadingList,
+} from "../../services/vessel/berth";
+import _ from "lodash";
 
 const initialValues = {
   selectVoyageNo: "",
@@ -39,11 +53,78 @@ const validationSchema = Yup.object({
 });
 
 const checkboxListOptions = [
-  { key: "تجهیزات ویژه", value: "SE" },
-  { key: "غیر استاندارد", value: "OG" },
+  { key: "SE", value: "SE" },
+  { key: "OG", value: "OG" },
 ];
 const onSubmit = (values) => {
-  console.log("Form Data", values);
+  console.log("Form Submit Data", values);
+  let parameters = {
+    cntrNo: values.containerNo,
+    voyageId: values.selectVoyageNo.value,
+  };
+  let se = _(values.checkboxListSelected)
+    .filter((c) => c === "SE")
+    .first();
+  let og = _(values.checkboxListSelected)
+    .filter((c) => c === "OG")
+    .first();
+
+  //console.log("response", se, og);
+
+  getCntrInfoForUnload(parameters).then((response) => {
+    //console.log("response", response);
+    let { data, result } = response.data;
+    if (result) {
+      //---------------- Duplicate Act Check---------------------------------
+      if (data[0].ActID != null) {
+        return toast.error("اطلاعات این کانتینر قبلاً ثبت شده");
+      } else {
+        let parametersForUnload = {
+          cntrNo: data[0].BayCntrNo,
+          voyageId: data[0].VoyageID,
+          berthId: data[0].BerthID,
+          userId: 220,
+          equipmentId: values.selectEquipmentType.value,
+          operatorId: values.operatorCode,
+          truckNo: values.truckNo,
+          isShifting: data[0].ShiftingID !== null ? 1 : 0,
+          sE: se ? 1 : 0,
+          oG: og ? 1 : 0,
+        };
+        if (data[0].ManifestCntrID != null || data[0].ShiftingID !== null) {
+          if (data[0].ShiftingID != null) {
+            addToLoadingList({
+              voyageId: parametersForUnload.voyageId,
+              cntrNo: parametersForUnload.cntrNo,
+            })
+              .then((res) => {
+                console.log("res save addToLoadingList", res.data.data[0]);
+                if (res.data.result) toast.success(res.data.data[0]);
+                else toast.error(res.data.data[0]);
+              })
+              .catch((error) => {
+                toast.error(error);
+              });
+          }
+          if (data[0].TerminalID != null) {
+            saveUnload(parametersForUnload)
+              .then((res) => {
+                console.log("res save unload", res.data.data[0]);
+                if (res.data.result) toast.success(res.data.data[0]);
+                else toast.error(res.data.data[0]);
+              })
+              .catch((error) => {
+                toast.error(error);
+              });
+          } else {
+            return toast.error("ترمینال تخلیه پلن نشده");
+          }
+        } else if (data[0].PortOfDischarge === "IRBND") {
+        }
+      }
+    } else {
+    }
+  });
 };
 
 const UnloadOperationPage = (props) => {
@@ -51,6 +132,8 @@ const UnloadOperationPage = (props) => {
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);
   const [CntrInfo, setCntrInfo] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const toggle = () => setIsOpen(!isOpen);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -70,7 +153,7 @@ const UnloadOperationPage = (props) => {
     if (VoyageData.error) {
       errorMessage = VoyageData.error;
     }
-    if (VoyageData.error) {
+    if (EquipmentData.error) {
       errorMessage += "\n" + EquipmentData.error;
     }
     if (OperatorData.error) {
@@ -86,10 +169,17 @@ const UnloadOperationPage = (props) => {
     // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
       .then((response) => {
-        //console.log("cntrno change res", response);
+        console.log("cntrno change res", response);
+        if (!response.data.result) {
+          return toast.error("کانتینر یافت نشد");
+        }
+
         let guessedOperation = "";
         const result = response.data.data[0];
-        if (result.ManifestCntrID !== null) {
+        if (result.ActID !== null) {
+          setCntrInfo({});
+          return toast.error("اطلاعات این کانتینر قبلا ثبت شده");
+        } else if (result.ManifestCntrID !== null) {
           guessedOperation = "تخلیه ی کانتینر (Unload)";
         } else if (result.ShiftingID !== null) {
           guessedOperation = "شیفتینگ (Shifting)";
@@ -103,6 +193,18 @@ const UnloadOperationPage = (props) => {
           result.PortOfDischarge !== "IRBND"
         ) {
           guessedOperation = "دید اپراتور (Visibility)";
+          addToShifting({ ...data, staffId: 220 })
+            .then((response) => {
+              console.log(response)
+              if (response.data.result) {
+                toast.success(response.data.data[0]);
+              } else {
+                toast.error(response.data.data[0]);
+              }
+            })
+            .catch((error) => {
+              toast.error(error);
+            });
         }
         setCntrInfo(
           guessedOperation !== ""
@@ -146,11 +248,9 @@ const UnloadOperationPage = (props) => {
           <Card>
             <CardBody>
               {/* <CardTitle>Event Registration</CardTitle> */}
-              <p className="mb-2" style={{ textAlign: "center" }}>
+              {/* <p className="mb-2" style={{ textAlign: "center" }}>
                 ثبت عملیات تخلیه
-              </p>
-              <div className="px-3">
-              </div>
+              </p> */}
               <div className="px-3">
                 <Formik
                   initialValues={initialValues}
@@ -167,60 +267,84 @@ const UnloadOperationPage = (props) => {
                           <div className="form-body">
                             <Row>
                               <Col md="12">
-                                <FormikControl
-                                  control="customSelect"
-                                  name="selectVoyageNo"
-                                  selectedValue={VoyageData.selectedVoyage}
-                                  options={VoyageData.voyages}
-                                  placeholder="شماره سفر"
-                                  onSelectedChanged={
-                                    handleVoyageSelectedChanged
-                                  }
-                                />
+                                <Button
+                                  color="primary"
+                                  onClick={toggle}
+                                  style={{
+                                    marginBottom: "1rem",
+                                    direction: "rtl",
+                                  }}
+                                >
+                                  اطلاعات اولیه
+                                </Button>
                               </Col>
                             </Row>
                             <Row>
                               <Col md="12">
-                                <FormikControl
-                                  control="customSelect"
-                                  name="selectEquipmentType"
-                                  selectedValue={
-                                    EquipmentData.selectedEquipment
-                                  }
-                                  options={EquipmentData.equipments}
-                                  placeholder="شماره دستگاه"
-                                  onSelectedChanged={
-                                    handleEquipmentSelectedChanged
-                                  }
-                                />
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col md="6">
-                                <FormikControl
-                                  control="inputMaskDebounce"
-                                  name="operatorCode"
-                                  mask=""
-                                  debounceTime={2000}
-                                  placeholder="کد اپراتور"
-                                  className="rtl"
-                                  onChange={() =>
-                                    handleOperatorCodeChange(
-                                      formik.values.operatorCode
-                                    )
-                                  }
-                                  defaultValue={OperatorData.operator.staffCode}
-                                />
-                              </Col>
-                              <Col md="6">
-                                <FormikControl
-                                  control="input"
-                                  type="text"
-                                  name="operatorCodeInfo"
-                                  className="rtl"
-                                  disabled={true}
-                                  value={OperatorData.operator.name}
-                                />
+                                <Collapse isOpen={isOpen}>
+                                  <Row>
+                                    <Col md="12">
+                                      <FormikControl
+                                        control="customSelect"
+                                        name="selectVoyageNo"
+                                        selectedValue={
+                                          VoyageData.selectedVoyage
+                                        }
+                                        options={VoyageData.voyages}
+                                        placeholder="شماره سفر"
+                                        onSelectedChanged={
+                                          handleVoyageSelectedChanged
+                                        }
+                                      />
+                                    </Col>
+                                  </Row>
+                                  <Row>
+                                    <Col md="12">
+                                      <FormikControl
+                                        control="customSelect"
+                                        name="selectEquipmentType"
+                                        selectedValue={
+                                          EquipmentData.selectedEquipment
+                                        }
+                                        options={EquipmentData.equipments}
+                                        placeholder="شماره دستگاه"
+                                        onSelectedChanged={
+                                          handleEquipmentSelectedChanged
+                                        }
+                                      />
+                                    </Col>
+                                  </Row>
+                                  <Row>
+                                    <Col md="6">
+                                      <FormikControl
+                                        control="inputMaskDebounce"
+                                        name="operatorCode"
+                                        mask=""
+                                        debounceTime={2000}
+                                        placeholder="کد اپراتور"
+                                        className="rtl"
+                                        onChange={() =>
+                                          handleOperatorCodeChange(
+                                            formik.values.operatorCode
+                                          )
+                                        }
+                                        defaultValue={
+                                          OperatorData.operator.staffCode
+                                        }
+                                      />
+                                    </Col>
+                                    <Col md="6">
+                                      <FormikControl
+                                        control="input"
+                                        type="text"
+                                        name="operatorCodeInfo"
+                                        className="rtl"
+                                        disabled={true}
+                                        value={OperatorData.operator.name}
+                                      />
+                                    </Col>
+                                  </Row>
+                                </Collapse>
                               </Col>
                             </Row>
                             <Row>
@@ -242,7 +366,6 @@ const UnloadOperationPage = (props) => {
                                 {/* <div>{formik.values.containerNo}</div> */}
                               </Col>
                             </Row>
-
                             <Row>
                               <Col md="6">
                                 <FormikControl
@@ -333,7 +456,9 @@ const UnloadOperationPage = (props) => {
                                 نوع بارنامه:
                               </span>{" "}
                               <span className="labelValue">
-                                {CntrInfo.BLType}
+                                {CntrInfo.ShiftingID != null
+                                  ? "شیفتینگ"
+                                  : CntrInfo.BLType}
                               </span>
                             </p>
 
@@ -378,7 +503,7 @@ const UnloadOperationPage = (props) => {
                               color="warning"
                               className="mr-1"
                               onClick={() =>
-                                this.props.history.push("/operationTypePage")
+                                props.history.push("/operationType/vessel")
                               }
                             >
                               <X size={16} color="#FFF" /> لغو

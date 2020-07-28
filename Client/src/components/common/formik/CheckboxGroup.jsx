@@ -14,8 +14,8 @@ const CheckboxGroup = (props) => {
             //console.log("Field", options);
             return options.map((option) => {
               return (
-                <Col md={12 / options.length} key={option.key}>
-                  <input
+                <div  key={option.key}>
+                  <input 
                     type="checkbox"
                     id={option.value}
                     {...field}
@@ -23,7 +23,7 @@ const CheckboxGroup = (props) => {
                     checked={field.value.includes(option.value)}
                   />
                   <label htmlFor={option.value}>{option.key}</label>
-                </Col>
+                </div>
               );
             });
           }}

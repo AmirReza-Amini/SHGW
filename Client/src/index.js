@@ -8,8 +8,6 @@ import registerServiceWorker from "./registerServiceWorker";
 import { store } from "./redux/store";
 import ReduxToastr from 'react-redux-toastr'
 
-import "font-awesome/css/font-awesome.min.css";
-
 import "./index.scss";
 import Spinner from "./components/spinner/spinner";
 

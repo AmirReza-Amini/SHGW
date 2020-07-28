@@ -1,0 +1,10 @@
+EXEC dbo.sp_SaveUnload @CntrNo = @cntrNo, -- nvarchar(12)
+    @VoyageId = @voyageId, -- bigint
+    @BerthID = @berthId, -- bigint
+    @UserID = @userId, -- int
+    @EquipmentId = @equipmentId, -- int
+    @OperatorId = @operatorId, -- int
+    @Vehicle = @truckNo, -- nvarchar(15)
+    @IsShifting = @isShifting, -- bit
+    @SE = @sE, -- bit
+    @OG = @oG -- bit

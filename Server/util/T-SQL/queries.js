@@ -13,7 +13,10 @@ module.exports = {
     },
     VESSEL:{
         BERTH:{
-            getCntrInfoForUnload:LoadText(__dirname + '/vessel/berth/get-cntr-info-for-unload.sql')
+            getCntrInfoForUnload:LoadText(__dirname + '/vessel/berth/get-cntr-info-for-unload.sql'),
+            saveUnload:LoadText(__dirname + '/vessel/berth/save-unload.sql'),
+            addToShifting:LoadText(__dirname+'/vessel/berth/add-to-shifting.sql'),
+            addToLoadingList:LoadText(__dirname+'/vessel/berth/add-to-loading-list.sql')
         },
         DECK:{
 

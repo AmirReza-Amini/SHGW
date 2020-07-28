@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Events = require('../../util/EventList')
-const { SendResponse } = require('../../util/utility')
-const queries = require('../../util/T-SQL/queries')
-const setting = require('../../app-setting')
-const sworm = require('sworm');
+const Events = require("../../util/EventList");
+const { SendResponse } = require("../../util/utility");
+const queries = require("../../util/T-SQL/queries");
+const setting = require("../../app-setting");
+const sworm = require("sworm");
 const db = sworm.db(setting.db.sqlConfig);
 
 // router.get('/load', async (req, res) => {
@@ -21,13 +21,83 @@ const db = sworm.db(setting.db.sqlConfig);
 //     SendResponse(req, res, { capitan: 'Damage(s) registered' })
 // })
 
-router.post('/getCntrInfoForUnload', async (req, res) => {
+router.post("/getCntrInfoForUnload", async (req, res) => {
+  //console.log("result", req);
+  var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForUnload, {
+    voyageId: req.body.voyageId,
+    cntrNo: req.body.cntrNo,
+  });
+  console.log("result", result);
 
-    console.log('result',req)
-    var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForUnload, { voyageId: req.body.voyageId,cntrNo:req.body.cntrNo });
-    console.log('result',result)
+  SendResponse(req, res, result, result && result.length > 0);
+});
 
-    SendResponse(req, res, result, (result && result.length > 0))
-})
+router.post("/saveUnload", async (req, res) => {
+  //console.log("result", req);
+  var result = await db.query(queries.VESSEL.BERTH.saveUnload, {
+    voyageId: req.body.voyageId,
+    cntrNo: req.body.cntrNo,
+    berthId: req.body.berthId,
+    userId: req.body.userId,
+    equipmentId: req.body.equipmentId,
+    operatorId: req.body.operatorId,
+    truckNo: req.body.truckNo,
+    isShifting: req.body.isShifting,
+    sE: req.body.sE,
+    oG: req.body.oG,
+  });
+  console.log("result", result);
+  SendResponse(req, res, "عملیات با موفقیت انجام شد");
+
+  //   db.transaction(() => {
+  //     return db.query(queries.VESSEL.BERTH.saveUnload, {
+  //     voyageId: req.body.voyageId,
+  //     cntrNo: req.body.cntrNo,
+  //     berthId: req.body.berthId,
+  //     userId: req.body.userId,
+  //     equipmentId: req.body.equipmentId,
+  //     operatorId: req.body.operatorId,
+  //     truckNo: req.body.truckNo,
+  //     isShifting: req.body.isShifting,
+  //     sE: req.body.sE,
+  //     oG: req.body.oG,
+  //   })
+  //       .then(() => SendResponse(req, res, 'عملیات با موفقیت انجام شد'))
+  //       .catch(() => SendResponse(req, res, { error: 'خطای سرور' }, false, 500))
+  //   });
+});
+
+router.post("/addToShifting", async (req, res) => {
+  //console.log("result", req);
+  try {
+    var result = await db.query(queries.VESSEL.BERTH.addToShifting, {
+      voyageId: req.body.voyageId,
+      cntrNo: req.body.cntrNo,
+      staffId: req.body.staffId,
+    });
+    console.log("result", result);
+    if (result && result.length > 0)
+      SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
+    else SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد",false);
+  } catch (error) {
+    SendResponse(req, res, error, 400);
+  }
+});
+
+router.post("/addToLoadingList", async (req, res) => {
+    //console.log("result", req);
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo
+      });
+      console.log("result", result);
+      if (result && result.length > 0)
+        SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
+      else SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه نشد",false);
+    } catch (error) {
+      SendResponse(req, res, error, 400);
+    }
+  });
 
 module.exports = router;
