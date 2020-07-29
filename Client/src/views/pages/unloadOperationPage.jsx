@@ -1,37 +1,31 @@
 import React, { Fragment, useState } from "react";
-import {
-  Card,
-  CardBody,
-  Row,
-  Col,
-  Button,
-  Collapse,
-  UncontrolledCollapse,
-} from "reactstrap";
-import { X, CheckSquare, Bold } from "react-feather";
-import CustomNavigation from "../../components/common/customNavigation";
+import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
+import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
-import FormikControl from "../../components/common/formik/FormikControl";
 import * as Yup from "yup";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchVoyagesTopTenOpen,
-  voyageSelectedChanged,
-} from "../../redux/common/voyage/voyageActions";
 import { toast } from "react-toastify";
-import {
-  fetchEquipmentsForUnload,
-  equipmentSelectedChanged,
-} from "../../redux/common/equipment/equipmentActions";
+import _ from "lodash";
+
+import CustomNavigation from "../../components/common/customNavigation";
+import FormikControl from "../../components/common/formik/FormikControl";
+import {fetchVoyagesTopTenOpen,voyageSelectedChanged} from "../../redux/common/voyage/voyageActions";
+import {fetchEquipmentsForUnload,equipmentSelectedChanged} from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
+
 import {
   getCntrInfoForUnload,
   saveUnload,
   addToShifting,
   addToLoadingList,
+  isExistCntrInInstructionLoading,
+  saveUnloadIncrement,
 } from "../../services/vessel/berth";
-import _ from "lodash";
+
+toast.configure({ bodyClassName: "customFont" });
+
+//#region Initial Values
 
 const initialValues = {
   selectVoyageNo: "",
@@ -42,7 +36,10 @@ const initialValues = {
   checkboxListSelected: [],
 };
 
-toast.configure();
+const checkboxListOptions = [
+  { key: "SE", value: "SE" },
+  { key: "OG", value: "OG" },
+];
 
 const validationSchema = Yup.object({
   selectVoyageNo: Yup.string().required("!شماره سفر را وارد کنید"),
@@ -52,10 +49,10 @@ const validationSchema = Yup.object({
   truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
 
-const checkboxListOptions = [
-  { key: "SE", value: "SE" },
-  { key: "OG", value: "OG" },
-];
+//#endregion
+
+//#region Submit Formik ------------------------------------------------------
+
 const onSubmit = (values) => {
   console.log("Form Submit Data", values);
   let parameters = {
@@ -68,8 +65,6 @@ const onSubmit = (values) => {
   let og = _(values.checkboxListSelected)
     .filter((c) => c === "OG")
     .first();
-
-  //console.log("response", se, og);
 
   getCntrInfoForUnload(parameters).then((response) => {
     //console.log("response", response);
@@ -93,20 +88,34 @@ const onSubmit = (values) => {
         };
         if (data[0].ManifestCntrID != null || data[0].ShiftingID !== null) {
           if (data[0].ShiftingID != null) {
-            addToLoadingList({
+            let paramData = {
               voyageId: parametersForUnload.voyageId,
               cntrNo: parametersForUnload.cntrNo,
-            })
+            };
+            isExistCntrInInstructionLoading(paramData)
               .then((res) => {
-                console.log("res save addToLoadingList", res.data.data[0]);
-                if (res.data.result) toast.success(res.data.data[0]);
-                else toast.error(res.data.data[0]);
+                if (!res.data.result) {
+                  addToLoadingList(paramData)
+                    .then((res) => {
+                      console.log(
+                        "res save addToLoadingList",
+                        res.data.data[0]
+                      );
+                      if (res.data.result) toast.success(res.data.data[0]);
+                      else toast.error(res.data.data[0]);
+                    })
+                    .catch((error) => {
+                      toast.error(error);
+                    });
+                }
               })
               .catch((error) => {
                 toast.error(error);
               });
           }
-          if (data[0].TerminalID != null) {
+          if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
+            return toast.error("ترمینال تخلیه پلن نشده");
+          } else {
             saveUnload(parametersForUnload)
               .then((res) => {
                 console.log("res save unload", res.data.data[0]);
@@ -116,26 +125,41 @@ const onSubmit = (values) => {
               .catch((error) => {
                 toast.error(error);
               });
-          } else {
-            return toast.error("ترمینال تخلیه پلن نشده");
           }
         } else if (data[0].PortOfDischarge === "IRBND") {
+          saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
+            .then((res) => {
+              console.log("res save unload", res.data.data[0]);
+              if (res.data.result) toast.success(res.data.data[0]);
+              else toast.error(res.data.data[0]);
+            })
+            .catch((error) => {
+              toast.error(error);
+            });
         }
       }
     } else {
     }
   });
 };
+//#endregion -----------------------------------------------------------------
 
 const UnloadOperationPage = (props) => {
+
+  //#region Selectors and State ---------------------------------------------
+
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
-
   const dispatch = useDispatch();
+
+  //#endregion
+
+  //#region Initialize Functions --------------------------------------------
+
   useEffect(() => {
     if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
       dispatch(fetchVoyagesTopTenOpen());
@@ -163,6 +187,10 @@ const UnloadOperationPage = (props) => {
       toast.error(errorMessage);
     }
   }, [VoyageData.error, VoyageData.error, OperatorData.error]);
+
+  //#endregion --------------------------------------------------------------
+
+  //#region Event Handlers --------------------------------------------------
 
   const handleContainerNoChange = (value) => {
     const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
@@ -195,7 +223,7 @@ const UnloadOperationPage = (props) => {
           guessedOperation = "دید اپراتور (Visibility)";
           addToShifting({ ...data, staffId: 220 })
             .then((response) => {
-              console.log(response)
+              console.log(response);
               if (response.data.result) {
                 toast.success(response.data.data[0]);
               } else {
@@ -236,8 +264,8 @@ const UnloadOperationPage = (props) => {
     dispatch(equipmentSelectedChanged(value));
   };
 
-  //console.log("formvalues", formValues);
-  //console.log("voyageData", VoyageData);
+ //#endregion ---------------------------------------------------------------
+
   return (
     <Fragment>
       <Row className="row-eq-height justify-content-md-center">

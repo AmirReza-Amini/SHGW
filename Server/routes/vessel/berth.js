@@ -67,6 +67,26 @@ router.post("/saveUnload", async (req, res) => {
   //   });
 });
 
+router.post("/saveUnloadIncrement", async (req, res) => {
+    //console.log("result", req);
+    var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
+      voyageId: req.body.voyageId,
+      cntrNo: req.body.cntrNo,
+      berthId: req.body.berthId,
+      userId: req.body.userId,
+      equipmentId: req.body.equipmentId,
+      operatorId: req.body.operatorId,
+      terminalId:req.body.terminalId,
+      truckNo: req.body.truckNo,
+      isShifting: req.body.isShifting,
+      sE: req.body.sE,
+      oG: req.body.oG,
+    });
+    console.log("result", result);
+    SendResponse(req, res, "عملیات با موفقیت انجام شد");
+  
+  });
+
 router.post("/addToShifting", async (req, res) => {
   //console.log("result", req);
   try {
@@ -99,5 +119,22 @@ router.post("/addToLoadingList", async (req, res) => {
       SendResponse(req, res, error, 400);
     }
   });
+
+  router.post("/isExistCntrInInstructionLoading", async (req, res) => {
+    //console.log("result", req);
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.isExistCntrInInstructionLoading, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo
+      });
+      console.log("result", result);
+      if (result && result.length > 0)
+        SendResponse(req, res, result,result && result.length>0);
+      else SendResponse(req, res, "کانتینر در لیست دستورالعمل بارگیری وجود ندارد",false);
+    } catch (error) {
+      SendResponse(req, res, error, 400);
+    }
+  });
+
 
 module.exports = router;
