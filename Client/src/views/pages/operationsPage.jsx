@@ -71,7 +71,7 @@ class operationsPage extends Component {
                   color="#fff"
                   key={op.fnName}
                 /> */}
-                 <img src={dischargeIcon} className="customIconSizes" /> 
+                 {/* <img src={dischargeIcon} className="customIconSizes" />  */}
               </MinimalStatisticsBG>
             </Col>
           ))}

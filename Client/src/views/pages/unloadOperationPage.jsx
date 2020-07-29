@@ -10,8 +10,14 @@ import _ from "lodash";
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
-import {fetchVoyagesTopTenOpen,voyageSelectedChanged} from "../../redux/common/voyage/voyageActions";
-import {fetchEquipmentsForUnload,equipmentSelectedChanged} from "../../redux/common/equipment/equipmentActions";
+import {
+  fetchVoyagesTopTenOpen,
+  voyageSelectedChanged,
+} from "../../redux/common/voyage/voyageActions";
+import {
+  fetchEquipmentsForUnload,
+  equipmentSelectedChanged,
+} from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
 import {
@@ -22,6 +28,7 @@ import {
   isExistCntrInInstructionLoading,
   saveUnloadIncrement,
 } from "../../services/vessel/berth";
+import { Redirect, Link } from "react-router-dom";
 
 toast.configure({ bodyClassName: "customFont" });
 
@@ -53,12 +60,13 @@ const validationSchema = Yup.object({
 
 //#region Submit Formik ------------------------------------------------------
 
-const onSubmit = (values) => {
+const onSubmit = (values, props) => {
   console.log("Form Submit Data", values);
   let parameters = {
     cntrNo: values.containerNo,
     voyageId: values.selectVoyageNo.value,
   };
+   //return props.history.replace('/operationType/vessel');
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
     .first();
@@ -66,8 +74,9 @@ const onSubmit = (values) => {
     .filter((c) => c === "OG")
     .first();
 
+  let goToDamageForm = false;
   getCntrInfoForUnload(parameters).then((response) => {
-    //console.log("response", response);
+    console.log("response", response);
     let { data, result } = response.data;
     if (result) {
       //---------------- Duplicate Act Check---------------------------------
@@ -102,15 +111,15 @@ const onSubmit = (values) => {
                         res.data.data[0]
                       );
                       if (res.data.result) toast.success(res.data.data[0]);
-                      else toast.error(res.data.data[0]);
+                      else return toast.error(res.data.data[0]);
                     })
                     .catch((error) => {
-                      toast.error(error);
+                      return toast.error(error);
                     });
                 }
               })
               .catch((error) => {
-                toast.error(error);
+                return toast.error(error);
               });
           }
           if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
@@ -119,40 +128,57 @@ const onSubmit = (values) => {
             saveUnload(parametersForUnload)
               .then((res) => {
                 console.log("res save unload", res.data.data[0]);
-                if (res.data.result) toast.success(res.data.data[0]);
-                else toast.error(res.data.data[0]);
+                if (res.data.result) {
+                  toast.success(res.data.data[0]);
+                  goToDamageForm = true;
+                } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
-                toast.error(error);
+                return toast.error(error);
               });
           }
         } else if (data[0].PortOfDischarge === "IRBND") {
           saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
             .then((res) => {
               console.log("res save unload", res.data.data[0]);
-              if (res.data.result) toast.success(res.data.data[0]);
-              else toast.error(res.data.data[0]);
+              if (res.data.result) {
+                toast.success(res.data.data[0]);
+                goToDamageForm = true;
+              } else return toast.error(res.data.data[0]);
             })
             .catch((error) => {
-              toast.error(error);
+              return toast.error(error);
             });
         }
       }
     } else {
+      return toast.error("کانتینر یافت نشد");
+    }
+    if (goToDamageForm) {
+      return <Link to="reeeee"></Link>;
     }
   });
 };
 //#endregion -----------------------------------------------------------------
 
 const UnloadOperationPage = (props) => {
-
   //#region Selectors and State ---------------------------------------------
 
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);
+  const temp = { ...VoyageData, ...EquipmentData, ...OperatorData };
+  const [state, setState] = useState({
+    selectVoyageNo: VoyageData.selectedVoyage,
+    selectEquipmentType: EquipmentData.selectedEquipment,
+    containerNo: "",
+    operatorCode: OperatorData.operator.staffCode,
+    truckNo: "",
+    checkboxListSelected: []
+  });
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
+  const [toDamge, setToDamage] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
@@ -170,6 +196,7 @@ const UnloadOperationPage = (props) => {
     ) {
       dispatch(fetchEquipmentsForUnload());
     }
+    console.log("salam");
   }, []);
 
   useEffect(() => {
@@ -264,7 +291,7 @@ const UnloadOperationPage = (props) => {
     dispatch(equipmentSelectedChanged(value));
   };
 
- //#endregion ---------------------------------------------------------------
+  //#endregion ---------------------------------------------------------------
 
   return (
     <Fragment>
@@ -281,14 +308,22 @@ const UnloadOperationPage = (props) => {
               </p> */}
               <div className="px-3">
                 <Formik
-                  initialValues={initialValues}
+                  initialValues={state||initialValues}
                   validationSchema={validationSchema}
-                  onSubmit={onSubmit}
+                  onSubmit={(values) => {
+                    onSubmit(values, props);
+                  }}
                   validateOnBlur={true}
                   enableReinitialize
                 >
                   {(formik) => {
-                    //console.log("Formik props values", formik.values);
+                    console.log("Formik props values", formik.values);
+                    console.log(
+                      "in formik",
+                      VoyageData,
+                      OperatorData,
+                      EquipmentData
+                    );
                     return (
                       <React.Fragment>
                         <Form>
