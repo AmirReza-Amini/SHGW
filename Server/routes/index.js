@@ -9,6 +9,7 @@ module.exports = app => {
   app.use('/api/voyage', require('./voyage'));
   app.use('/api/equipment',require('./equipment'));
   app.use('/api/operator',require('./operator'));
+  app.use('/api/damage',require('./damage'));
 
   app.use(errorLoger);
 };

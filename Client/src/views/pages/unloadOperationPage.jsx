@@ -60,13 +60,14 @@ const validationSchema = Yup.object({
 
 //#region Submit Formik ------------------------------------------------------
 
-const onSubmit = (values, props) => {
+const onSubmit = (values, props,staffId) => {
   console.log("Form Submit Data", values);
   let parameters = {
     cntrNo: values.containerNo,
     voyageId: values.selectVoyageNo.value,
   };
-   //return props.history.replace('/operationType/vessel');
+  return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
+
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
     .first();
@@ -89,7 +90,7 @@ const onSubmit = (values, props) => {
           berthId: data[0].BerthID,
           userId: 220,
           equipmentId: values.selectEquipmentType.value,
-          operatorId: values.operatorCode,
+          operatorId: staffId,
           truckNo: values.truckNo,
           isShifting: data[0].ShiftingID !== null ? 1 : 0,
           sE: se ? 1 : 0,
@@ -127,10 +128,10 @@ const onSubmit = (values, props) => {
           } else {
             saveUnload(parametersForUnload)
               .then((res) => {
-                console.log("res save unload", res.data.data[0]);
+                console.log("res save unload", res,res.data.data[0]);
                 if (res.data.result) {
-                  toast.success(res.data.data[0]);
-                  goToDamageForm = true;
+                  toast.success(res.data.data[0]['message']);
+                  return props.history.push('/operationType/vessel/discharge/damage',{actId:res.data.data[0]['ActId'],cntrNo:values.containerNo});
                 } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
@@ -178,7 +179,6 @@ const UnloadOperationPage = (props) => {
   });
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
-  const [toDamge, setToDamage] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
@@ -311,7 +311,7 @@ const UnloadOperationPage = (props) => {
                   initialValues={state||initialValues}
                   validationSchema={validationSchema}
                   onSubmit={(values) => {
-                    onSubmit(values, props);
+                    onSubmit(values, props,OperatorData.operator.staffId);
                   }}
                   validateOnBlur={true}
                   enableReinitialize

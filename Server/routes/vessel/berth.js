@@ -46,8 +46,13 @@ router.post("/saveUnload", async (req, res) => {
     sE: req.body.sE,
     oG: req.body.oG,
   });
-  console.log("result", result);
-  SendResponse(req, res, "عملیات با موفقیت انجام شد");
+
+    let data = result[0][""][0] !=='0' ? {
+      ActId: result[0][""][0],
+      message: "عملیات با موفقیت انجام شد",
+    }:'خطا در انجام عملیات';
+
+    SendResponse(req, res, data, result[0][""][0] !=='0');
 
   //   db.transaction(() => {
   //     return db.query(queries.VESSEL.BERTH.saveUnload, {
@@ -68,24 +73,23 @@ router.post("/saveUnload", async (req, res) => {
 });
 
 router.post("/saveUnloadIncrement", async (req, res) => {
-    //console.log("result", req);
-    var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-      berthId: req.body.berthId,
-      userId: req.body.userId,
-      equipmentId: req.body.equipmentId,
-      operatorId: req.body.operatorId,
-      terminalId:req.body.terminalId,
-      truckNo: req.body.truckNo,
-      isShifting: req.body.isShifting,
-      sE: req.body.sE,
-      oG: req.body.oG,
-    });
-    console.log("result", result);
-    SendResponse(req, res, "عملیات با موفقیت انجام شد");
-  
+  //console.log("result", req);
+  var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
+    voyageId: req.body.voyageId,
+    cntrNo: req.body.cntrNo,
+    berthId: req.body.berthId,
+    userId: req.body.userId,
+    equipmentId: req.body.equipmentId,
+    operatorId: req.body.operatorId,
+    terminalId: req.body.terminalId,
+    truckNo: req.body.truckNo,
+    isShifting: req.body.isShifting,
+    sE: req.body.sE,
+    oG: req.body.oG,
   });
+  console.log("result", result);
+  SendResponse(req, res, "عملیات با موفقیت انجام شد");
+});
 
 router.post("/addToShifting", async (req, res) => {
   //console.log("result", req);
@@ -98,43 +102,57 @@ router.post("/addToShifting", async (req, res) => {
     console.log("result", result);
     if (result && result.length > 0)
       SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
-    else SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد",false);
+    else SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد", false);
   } catch (error) {
     SendResponse(req, res, error, 400);
   }
 });
 
 router.post("/addToLoadingList", async (req, res) => {
-    //console.log("result", req);
-    try {
-      var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
-        voyageId: req.body.voyageId,
-        cntrNo: req.body.cntrNo
-      });
-      console.log("result", result);
-      if (result && result.length > 0)
-        SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
-      else SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه نشد",false);
-    } catch (error) {
-      SendResponse(req, res, error, 400);
-    }
-  });
+  //console.log("result", req);
+  try {
+    var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
+      voyageId: req.body.voyageId,
+      cntrNo: req.body.cntrNo,
+    });
+    console.log("result", result);
+    if (result && result.length > 0)
+      SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
+    else
+      SendResponse(
+        req,
+        res,
+        "کانتینر به لیست دستورالعمل بارگیری اضافه نشد",
+        false
+      );
+  } catch (error) {
+    SendResponse(req, res, error, 400);
+  }
+});
 
-  router.post("/isExistCntrInInstructionLoading", async (req, res) => {
-    //console.log("result", req);
-    try {
-      var result = await db.query(queries.VESSEL.BERTH.isExistCntrInInstructionLoading, {
+router.post("/isExistCntrInInstructionLoading", async (req, res) => {
+  //console.log("result", req);
+  try {
+    var result = await db.query(
+      queries.VESSEL.BERTH.isExistCntrInInstructionLoading,
+      {
         voyageId: req.body.voyageId,
-        cntrNo: req.body.cntrNo
-      });
-      console.log("result", result);
-      if (result && result.length > 0)
-        SendResponse(req, res, result,result && result.length>0);
-      else SendResponse(req, res, "کانتینر در لیست دستورالعمل بارگیری وجود ندارد",false);
-    } catch (error) {
-      SendResponse(req, res, error, 400);
-    }
-  });
-
+        cntrNo: req.body.cntrNo,
+      }
+    );
+    console.log("result", result);
+    if (result && result.length > 0)
+      SendResponse(req, res, result, result && result.length > 0);
+    else
+      SendResponse(
+        req,
+        res,
+        "کانتینر در لیست دستورالعمل بارگیری وجود ندارد",
+        false
+      );
+  } catch (error) {
+    SendResponse(req, res, error, 400);
+  }
+});
 
 module.exports = router;

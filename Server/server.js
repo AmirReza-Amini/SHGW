@@ -15,9 +15,9 @@ app.use(require('./bootstrap/init'));
 require('./bootstrap/mongodb');
 require('./routes')(app);
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname + '/www/index.html'));
-});
+// app.get('/*', function (req, res) {
+//   res.sendFile(path.join(__dirname + '/www/index.html'));
+// });
 
 app.get('/*', (req, res) => res.sendFile(path.join(__dirname)));
 

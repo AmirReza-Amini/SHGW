@@ -23,6 +23,9 @@ module.exports = {
         DECK:{
 
         }
+    },
+    DAMAGE:{
+        fetchDamageDefinition:LoadText(__dirname+'/damage/fetch-damage-definition.sql')
     }
 
 }

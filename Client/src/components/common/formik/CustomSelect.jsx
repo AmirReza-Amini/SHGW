@@ -4,9 +4,18 @@ import { FormGroup, Label } from "reactstrap";
 import Select from "react-select";
 
 const CustomSelect = (props) => {
-  const { label, name, options,selectedValue,placeholder, ...rest } = props;
+  const {
+    label,
+    name,
+    options,
+    selectedValue,
+    placeholder,
+    isMulti,
+    ...rest
+  } = props;
   return (
     <FormGroup>
+      {label != null && label != "" && <Label for={name}>{label}</Label>}
       <Field name={name} as="select">
         {(fieldProps) => {
           const { field, form, meta } = fieldProps;
@@ -14,24 +23,26 @@ const CustomSelect = (props) => {
           return (
             <div>
               <Select
-                className="basic-single rtl"
+                isMulti={isMulti ? true : false}
+                className={isMulti?"basic-single rtl":"basic-multi-select rtl"}
                 classNamePrefix="select"
                 defaultValue={selectedValue}
                 name={name}
                 options={options}
                 placeholder={placeholder}
-                onChange={value=>{
-                    form.setFieldValue(name,value);
-                    //if (props.onSelectedChanged)
-                      props.onSelectedChanged(value);
+                onChange={(value) => {
+                  form.setFieldValue(name, value);
+                  //if (props.onSelectedChanged)
+                  props.onSelectedChanged(value);
                 }}
-                onBlur={()=>form.setFieldTouched(name,true)}
+                onBlur={() => form.setFieldTouched(name, true)}
               />
-              {meta.touched && meta.error ? <div className='error'>{meta.error}</div> : null}
+              {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+              ) : null}
             </div>
           );
-        }
-        }
+        }}
       </Field>
     </FormGroup>
   );
