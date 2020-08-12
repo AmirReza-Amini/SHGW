@@ -34,6 +34,7 @@ class operationsPage extends Component {
     //   })
     // );
     // this.setState({ group });
+    navigator.geolocation.getCurrentPosition((success)=>{console.log(success)},(error)=>{console.log(error)});
   }
 
   handleOperation = (operationType) => {

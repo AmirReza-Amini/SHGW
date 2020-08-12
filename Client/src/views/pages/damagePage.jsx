@@ -37,8 +37,10 @@ import {
   fetchVoyagesTopTenOpen,
   voyageSelectedChanged,
 } from "../../redux/common/voyage/voyageActions";
-import {fetchDamageDefinition
+import {
+  fetchDamageDefinition
 } from "../../redux/common/damage/damageActions";
+import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damage';
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
 import {
@@ -50,6 +52,7 @@ import {
   saveUnloadIncrement,
 } from "../../services/vessel/berth";
 import { Redirect, Link } from "react-router-dom";
+import CustomButtonGroup from "../../components/common/formik/CustomButtonGroup";
 
 export const colourOptions = [
   { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
@@ -64,17 +67,18 @@ export const colourOptions = [
   { value: "silver", label: "Silver", color: "#666666" },
 ];
 
-toast.configure({ bodyClassName: "customFont" });
+toast.configure({ bodyClassName: "customFont rtl" });
 
 //#region Initial Values
 
 const initialValues = {
-  selectVoyageNo: "",
-  selectEquipmentType: "",
-  containerNo: "",
-  operatorCode: "",
-  truckNo: "",
-  checkboxListSelected: [],
+  selectedFrontDamages: [],
+  selectedRearDamages: [],
+  selectedTopDamages: [],
+  selectedBottomDamages: [],
+  selectedLeftDamages: [],
+  selectedRightDamages: [],
+  selectedOtherDamages: []
 };
 
 //#endregion
@@ -83,8 +87,57 @@ const initialValues = {
 
 const onSubmit = (values, props) => {
   console.log("Form Submit Data", values);
+  if (values.selectedBottomDamages.length == 0 && values.selectedFrontDamages.length == 0 && values.selectedLeftDamages.length == 0 &&
+    values.selectedOtherDamages.length == 0 && values.selectedRearDamages.length == 0 && values.selectedRightDamages.length == 0 &&
+    values.selectedTopDamages.length == 0) {
+    toast.error('خسارتی انتخاب نشده است');
+    return;
+  }
 
-  //return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
+  const data = _(values.selectedFrontDamages).join('');
+  const damageList = [];
+  if (values.selectedFrontDamages.length > 0) {
+    damageList.push({ side: 1, letters: _(values.selectedFrontDamages).join('') });
+  }
+  if (values.selectedRearDamages.length > 0) {
+    damageList.push({ side: 2, letters: _(values.selectedRearDamages).join('') });
+  }
+  if (values.selectedRightDamages.length > 0) {
+    damageList.push({ side: 3, letters: _(values.selectedRightDamages).join('') });
+  }
+  if (values.selectedLeftDamages.length > 0) {
+    damageList.push({ side: 4, letters: _(values.selectedLeftDamages).join('') });
+  }
+  if (values.selectedTopDamages.length > 0) {
+    damageList.push({ side: 5, letters: _(values.selectedTopDamages).join('') });
+  }
+  if (values.selectedBottomDamages.length > 0) {
+    damageList.push({ side: 6, letters: _(values.selectedBottomDamages).join('') });
+  }
+  if (values.selectedOtherDamages.length > 0) {
+    damageList.push({ side: 7, letters: _(values.selectedOtherDamages).join('') });
+  }
+
+  Promise.all(damageList.map((element) => {
+    return setDamageInfoByActId({ actId: values.actId, letters: element.letters, side: element.side, staffId: 220 });
+  })).then(response => {
+    console.log('damage promise all response', response);
+    const successResult=response.filter(c=>c.data.result==true);
+    //const successResult=response.map(c=>c.data);
+    const errorResult=response.filter(c=>c.data.result==false);
+    console.log(successResult,errorResult,damageList.length)
+    if (successResult.length == damageList.length){
+      toast.success(successResult[0].data.data[0]);
+      return props.history.push('/operationType/vessel/discharge/');
+    }
+    else{
+      console.log(errorResult.length +` مورد ` +errorResult[0].data.data[0]);
+      toast.error(errorResult.length +` مورد ` +errorResult[0].data.data[0]);
+      return;
+    }
+  }).catch(error=>{
+    console.log('damage promise all err', error);
+  })
 };
 //#endregion -----------------------------------------------------------------
 
@@ -92,10 +145,23 @@ const DamagePage = (props) => {
   //#region Selectors and State ---------------------------------------------
 
   const damageData = useSelector((state) => state.damage);
+  const sidedDamages = damageData.damages.filter(c => c.isSided).map(c => c.value.trim());
+  //console.log('sidedDamages', sidedDamages);
+  const notSidedDamages = damageData.damages.filter(c => !c.isSided).map(c => c.value.trim());
+  //console.log('props', props)
   const [state, setState] = useState({
     cntrNo:
-      props.location.state != undefined ? props.location.state.cntrNo : "---"
+      props.location.state != undefined ? props.location.state.cntrNo : "---",
+    actId: props.location.state != undefined ? props.location.state.actId : 0,
+    selectedFrontDamages: [],
+    selectedRearDamages: [],
+    selectedTopDamages: [],
+    selectedBottomDamages: [],
+    selectedLeftDamages: [],
+    selectedRightDamages: [],
+    selectedOtherDamages: []
   });
+  //console.log('salam use state');
   const dispatch = useDispatch();
 
   //#endregion
@@ -103,10 +169,43 @@ const DamagePage = (props) => {
   //#region Initialize Functions --------------------------------------------
 
   useEffect(() => {
+    //console.log('salam use effect')
     if (damageData.damages === null || damageData.damages.length === 0) {
-        dispatch(fetchDamageDefinition());
+      dispatch(fetchDamageDefinition());
+    }
+
+    getDamageInfoByActId({ actId: state.actId }).then(response => {
+     // console.log('res', response);
+      let { data, result } = response.data;
+      if (result) {
+
+        const defaultFrontDamages = _(data).filter(c => c.Side == 1 && c.Letters != null).first();
+        const defaultRearDamages = _(data).filter(c => c.Side == 2 && c.Letters != null).first();
+        const defaultRightDamages = _(data).filter(c => c.Side == 3 && c.Letters != null).first();
+        const defaultLeftDamages = _(data).filter(c => c.Side == 4 && c.Letters != null).first();
+        const defaultTopDamages = _(data).filter(c => c.Side == 5 && c.Letters != null).first();
+        const defaultBottomDamages = _(data).filter(c => c.Side == 6 && c.Letters != null).first();
+        const defaultOtherDamages = _(data).filter(c => c.Side == 7 && c.Letters != null).first();
+
+        setState({
+          ...state,
+          selectedFrontDamages: defaultFrontDamages ? defaultFrontDamages['Letters'].split('') : [],
+          selectedRearDamages: defaultRearDamages ? defaultRearDamages['Letters'].split('') : [],
+          selectedRightDamages: defaultRightDamages ? defaultRightDamages['Letters'].split('') : [],
+          selectedLeftDamages: defaultLeftDamages ? defaultLeftDamages['Letters'].split('') : [],
+          selectedTopDamages: defaultTopDamages ? defaultTopDamages['Letters'].split('') : [],
+          selectedBottomDamages: defaultBottomDamages ? defaultBottomDamages['Letters'].split('') : [],
+          selectedOtherDamages: defaultOtherDamages ? defaultOtherDamages['Letters'].split('') : []
+        });
+
       }
-   
+      else {
+        return toast.error('خطا در بازیابی اطلاعات خسارت کانتینر');
+      }
+    }).catch(err => {
+      toast.error(err);
+    })
+
   }, []);
 
   //#endregion --------------------------------------------------------------
@@ -118,8 +217,27 @@ const DamagePage = (props) => {
     //dispatch(voyageSelectedChanged(value));
   };
 
-  //#endregion ---------------------------------------------------------------
+  const handleFrontDamageSelected = (value) => {
+    //console.log("handleFrontDamageSelected", value)
+  }
 
+  const disableSubmitButton = (values) => {
+    //console.log("disableSubmitButton", values, values.selectedBottomDamages.length);
+    if (values.selectedBottomDamages.length != 0 || values.selectedFrontDamages.length != 0 || values.selectedLeftDamages.length != 0 ||
+      values.selectedOtherDamages.length != 0 || values.selectedRearDamages.length != 0 || values.selectedRightDamages.length != 0 ||
+      values.selectedTopDamages.length != 0) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  const handleCancelButton=()=>{
+    props.history.replace('/operationType/vessel/discharge/');
+  }
+  //#endregion ---------------------------------------------------------------
+  const selectedValues = ["P", "S"];
   return (
     <Fragment>
       <Row className="justify-content-md-center">
@@ -134,144 +252,86 @@ const DamagePage = (props) => {
                 ثبت عملیات تخلیه
               </p> */}
               <div className="px-3">
-                <Formik
-                  initialValues={state || initialValues}
-                  onSubmit={(values) => {
-                    onSubmit(values, props);
-                  }}
-                  validateOnBlur={true}
-                  enableReinitialize
-                >
-                  {(formik) => {
-                    console.log("Formik props values", formik.values);
-                    return (
-                      <Form>
-                        <Row className="justify-content-md-center">
-                          <Col md="12">
-                            <div className="form-body">
-                              <Row>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    label="Front"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="ّFront"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Rear"
-                                    label="Rear"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Right"
-                                    label="Right"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Left"
-                                    label="Left"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Top"
-                                    label="Top"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Bottom"
-                                    label="Bottom"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col md="6">
-                                  <FormikControl
-                                    control="customSelect"
-                                    name="selectVoyageNo"
-                                    //selectedValue={colourOptions[0]}
-                                    options={damageData.damages}
-                                    //placeholder="Other"
-                                    label="Other"
-                                    onSelectedChanged={
-                                      handleVoyageSelectedChanged
-                                    }
-                                    isMulti={true}
-                                  />
-                                </Col>
-                                <Col>Container No: {state.cntrNo}</Col>
-                              </Row>
-                            </div>
-                          </Col>
-                        </Row>
+                {
+                  damageData.damages != null && damageData.damages.length > 0 && sidedDamages.length > 0 &&
+                  <Formik
+                    initialValues={state || initialValues}
+                    onSubmit={(values) => {
+                      onSubmit(values, props);
+                    }}
+                    validateOnBlur={true}
+                    enableReinitialize
+                  >
+                    {(formik) => {
+                      //console.log("state in formik", state);
+                      const submitDisabled = disableSubmitButton(formik.values);
+                      return (
+                        <Form>
+                          <Row>
+                            <Col md="12" style={{ textAlign: "right" }} className="rtl">
+                              <span className="labelDescription">
+                                شماره کانتینر:
+                              </span>{" "}
+                              <span className="guessedOperation">
+                                {state.cntrNo}
+                              </span>
+                            </Col>
+                          </Row>
+                          <Row className="justify-content-md-center">
+                            <Col md="12">
+                              <div className="form-body">
+                                <Row >
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Front" name="selectedFrontDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedFrontDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Rear" name="selectedRearDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedRearDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Right" name="selectedRightDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedRightDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Left" name="selectedLeftDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedLeftDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Top" name="selectedTopDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedTopDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Bottom" name="selectedBottomDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedBottomDamages} />
+                                  </Col>
+                                </Row>
+                                <Row>
+                                  <Col md="12">
+                                    <FormikControl control="customButtonGroup" label="Other" name="selectedOtherDamages" source={notSidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedOtherDamages} />
+                                  </Col>
+                                </Row>
+                              </div>
+                            </Col>
+                          </Row>
 
-                        <div className="form-actions center">
-                          <Button color="warning" className="mr-1">
-                            <X size={16} color="#FFF" /> لغو
+                          <div className="form-actions center">
+                            <Button color="warning" className="mr-1" type="button" onClick={handleCancelButton}>
+                              <X size={16} color="#FFF" /> لغو
                           </Button>
-                          <Button color="primary">
-                            <CheckSquare size={16} color="#FFF" /> ثبت
+                            <Button type="submit" color="primary" disabled={submitDisabled}>
+                              <CheckSquare size={16} color="#FFF" /> ثبت
                           </Button>
-                        </div>
-                      </Form>
-                    );
-                  }}
-                </Formik>
+                          </div>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                }
               </div>
             </CardBody>
           </Card>

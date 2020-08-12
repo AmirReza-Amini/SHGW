@@ -29,6 +29,8 @@ import {
   saveUnloadIncrement,
 } from "../../services/vessel/berth";
 import { Redirect, Link } from "react-router-dom";
+import ButtonsCheckbox from '../../views/components/reactstrap/examples/buttonsCheckbox';
+
 
 toast.configure({ bodyClassName: "customFont" });
 
@@ -60,13 +62,13 @@ const validationSchema = Yup.object({
 
 //#region Submit Formik ------------------------------------------------------
 
-const onSubmit = (values, props,staffId) => {
+const onSubmit = (values, props, staffId) => {
   console.log("Form Submit Data", values);
   let parameters = {
     cntrNo: values.containerNo,
     voyageId: values.selectVoyageNo.value,
   };
-  return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
+  // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
 
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
@@ -77,7 +79,7 @@ const onSubmit = (values, props,staffId) => {
 
   let goToDamageForm = false;
   getCntrInfoForUnload(parameters).then((response) => {
-    console.log("response", response);
+    //console.log("response", response);
     let { data, result } = response.data;
     if (result) {
       //---------------- Duplicate Act Check---------------------------------
@@ -128,10 +130,10 @@ const onSubmit = (values, props,staffId) => {
           } else {
             saveUnload(parametersForUnload)
               .then((res) => {
-                console.log("res save unload", res,res.data.data[0]);
+                console.log("res save unload", res, res.data.data[0]);
                 if (res.data.result) {
                   toast.success(res.data.data[0]['message']);
-                  return props.history.push('/operationType/vessel/discharge/damage',{actId:res.data.data[0]['ActId'],cntrNo:values.containerNo});
+                  return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
                 } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
@@ -141,10 +143,10 @@ const onSubmit = (values, props,staffId) => {
         } else if (data[0].PortOfDischarge === "IRBND") {
           saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
             .then((res) => {
-              console.log("res save unload", res.data.data[0]);
+              console.log("res save unload INCREAMENT", res);
               if (res.data.result) {
-                toast.success(res.data.data[0]);
-                goToDamageForm = true;
+                toast.success(res.data.data[0]['message']);
+                return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
               } else return toast.error(res.data.data[0]);
             })
             .catch((error) => {
@@ -179,6 +181,7 @@ const UnloadOperationPage = (props) => {
   });
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
@@ -224,17 +227,21 @@ const UnloadOperationPage = (props) => {
     // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
       .then((response) => {
+        setDisableSubmitButton(false);
         console.log("cntrno change res", response);
         if (!response.data.result) {
+          setDisableSubmitButton(true);
           return toast.error("کانتینر یافت نشد");
         }
 
         let guessedOperation = "";
         const result = response.data.data[0];
         if (result.ActID !== null) {
-          setCntrInfo({});
-          return toast.error("اطلاعات این کانتینر قبلا ثبت شده");
-        } else if (result.ManifestCntrID !== null) {
+          //setCntrInfo({});
+          setDisableSubmitButton(true);
+          toast.error("اطلاعات این کانتینر قبلا ثبت شده");
+        } 
+        if (result.ManifestCntrID !== null) {
           guessedOperation = "تخلیه ی کانتینر (Unload)";
         } else if (result.ShiftingID !== null) {
           guessedOperation = "شیفتینگ (Shifting)";
@@ -248,7 +255,8 @@ const UnloadOperationPage = (props) => {
           result.PortOfDischarge !== "IRBND"
         ) {
           guessedOperation = "دید اپراتور (Visibility)";
-          addToShifting({ ...data, staffId: 220 })
+          if (result.ActID == null){
+            addToShifting({ ...data, staffId: 220 })
             .then((response) => {
               console.log(response);
               if (response.data.result) {
@@ -260,13 +268,14 @@ const UnloadOperationPage = (props) => {
             .catch((error) => {
               toast.error(error);
             });
+          }
         }
         setCntrInfo(
           guessedOperation !== ""
             ? {
-                ...response.data.data[0],
-                GuessedOperation: guessedOperation,
-              }
+              ...response.data.data[0],
+              GuessedOperation: guessedOperation,
+            }
             : response.data.data[0]
         );
       })
@@ -291,16 +300,26 @@ const UnloadOperationPage = (props) => {
     dispatch(equipmentSelectedChanged(value));
   };
 
+  const handleCancelButton = () => {
+    props.history.push("/operationType/vessel")
+  }
+
+  const handleDangerButton=()=>{
+    //console.log(CntrInfo)
+    if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID!=null)
+    props.history.push('/operationType/vessel/discharge/damage',{actId:CntrInfo.ActID,cntrNo:CntrInfo.BayCntrNo});
+  }
+
   //#endregion ---------------------------------------------------------------
 
   return (
     <Fragment>
-      <Row className="row-eq-height justify-content-md-center">
+      <Row className="row-eq-height justify-content-md-center customOpacity">
         <Col md="6">
           <div>
             <CustomNavigation path={props.match.path} />
           </div>
-          <Card>
+          <Card >
             <CardBody>
               {/* <CardTitle>Event Registration</CardTitle> */}
               {/* <p className="mb-2" style={{ textAlign: "center" }}>
@@ -308,10 +327,10 @@ const UnloadOperationPage = (props) => {
               </p> */}
               <div className="px-3">
                 <Formik
-                  initialValues={state||initialValues}
+                  initialValues={state || initialValues}
                   validationSchema={validationSchema}
                   onSubmit={(values) => {
-                    onSubmit(values, props,OperatorData.operator.staffId);
+                    onSubmit(values, props, OperatorData.operator.staffId);
                   }}
                   validateOnBlur={true}
                   enableReinitialize
@@ -562,17 +581,14 @@ const UnloadOperationPage = (props) => {
                             </p>
                           </div>
                           <div className="form-actions center">
-                            <Button
-                              color="warning"
-                              className="mr-1"
-                              onClick={() =>
-                                props.history.push("/operationType/vessel")
-                              }
-                            >
+                            <Button color="warning" className="mr-1" onClick={handleCancelButton} type="button">
                               <X size={16} color="#FFF" /> لغو
                             </Button>
-                            <Button color="primary" type="submit">
+                            <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
                               <CheckSquare size={16} color="#FFF" /> ثبت
+                            </Button>
+                            <Button color="danger" type="button" onClick={handleDangerButton} disabled={ !(CntrInfo && CntrInfo.ActID && CntrInfo.ActID !=null)}>
+                              <CheckSquare size={16} color="#FFF" /> خسارت
                             </Button>
                           </div>
                         </Form>

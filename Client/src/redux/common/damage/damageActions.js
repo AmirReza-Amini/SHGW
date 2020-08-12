@@ -32,12 +32,12 @@ export const fetchDamageDefinition = () => {
   return async (dispatch) => {
     dispatch(fetchDamageRequest());
     http
-      .get(apiEndpoint + "/fetchDamageDefinition")
+      .get(apiEndpoint + "fetchDamageDefinition")
       .then((response) => {
         const data = response.data.data.map((c) => {
           return {
             value: c.Letter,
-            label: c.EnglishName + "(" + c.FarsiName + ")",//c.Letter
+            label: c.Letter,
             isSided: c.IsSided,
           };
         });

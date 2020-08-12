@@ -25,7 +25,9 @@ module.exports = {
         }
     },
     DAMAGE:{
-        fetchDamageDefinition:LoadText(__dirname+'/damage/fetch-damage-definition.sql')
+        fetchDamageDefinition:LoadText(__dirname+'/damage/fetch-damage-definition.sql'),
+        getDamageInfoByActId:LoadText(__dirname+'/damage/get-damage-info-by-actId.sql'),
+        setDamageInfoByActId:LoadText(__dirname+'/damage/set-damage-info-by-actId.sql')
     }
 
 }

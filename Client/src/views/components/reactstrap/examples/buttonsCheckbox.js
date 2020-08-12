@@ -18,17 +18,26 @@ class ButtonsCheckbox extends Component {
       return (
          <div>
             <ButtonGroup>
-               <Button
-                  color="primary"
+               <button
+                  //color="primary"
+                  //className="btn"
+                  type="button"
+                  className={!this.state.cSelected.includes(1)?"btn btn-outline-danger":"btn btn-danger"}
                   onClick={() => this.onCheckboxBtnClick(1)}
                   active={this.state.cSelected.includes(1)}
+                  style={{ "backgroundColor": "#55D4A5"}}
+                  //outline={!this.state.cSelected.includes(1)}
                >
                   One
-               </Button>
+               </button>
                <Button
-                  color="primary"
+                  //color="blue"
+                  className="color"
+                  style={{ "backgroundColor": "#55D4A5"}}
                   onClick={() => this.onCheckboxBtnClick(2)}
                   active={this.state.cSelected.includes(2)}
+                  outline={!this.state.cSelected.includes(2)}
+
                >
                   Two
                </Button>

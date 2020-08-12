@@ -73,6 +73,28 @@
   color: rgb(209, 30, 30);
 }
 
+.customButton{
+  border-radius: 20%;
+}
+
+
+.bg-gallery-1 {
+  background-image: url("../../img/gallery/bg-gallery-1.jpg");
+  background-size: cover;
+  background-size: 100% 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background 0.3s;
+}
+
+.customOpacity{
+  /* background-color: transparent; */
+  opacity: 0.75;
+}
+
+
+
 
 
 

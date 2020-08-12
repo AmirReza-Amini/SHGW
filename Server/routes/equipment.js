@@ -13,7 +13,7 @@ router.get('/fetchEquipmentsForUnload', async (req, res) => {
     
 
     var result = await db.query(queries.EQUIPMENT.fetchEquipmentsForUnload);
-    console.log('result',result)
+    //console.log('result',result)
    // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
 
     SendResponse(req, res, result, (result && result.length > 0))
