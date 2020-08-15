@@ -128,7 +128,7 @@ const onSubmit = (values, props) => {
     console.log(successResult,errorResult,damageList.length)
     if (successResult.length == damageList.length){
       toast.success(successResult[0].data.data[0]);
-      return props.history.push('/operationType/vessel/discharge/');
+      return props.history.push(props.location.pathname.replace('/damage',''));
     }
     else{
       console.log(errorResult.length +` مورد ` +errorResult[0].data.data[0]);
@@ -142,6 +142,8 @@ const onSubmit = (values, props) => {
 //#endregion -----------------------------------------------------------------
 
 const DamagePage = (props) => {
+
+  console.log('propsssss',props);
   //#region Selectors and State ---------------------------------------------
 
   const damageData = useSelector((state) => state.damage);
@@ -234,7 +236,7 @@ const DamagePage = (props) => {
   }
 
   const handleCancelButton=()=>{
-    props.history.replace('/operationType/vessel/discharge/');
+    props.history.replace(props.location.pathname.replace('/damage',''));
   }
   //#endregion ---------------------------------------------------------------
   const selectedValues = ["P", "S"];

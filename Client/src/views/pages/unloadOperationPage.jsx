@@ -15,7 +15,7 @@ import {
   voyageSelectedChanged,
 } from "../../redux/common/voyage/voyageActions";
 import {
-  fetchEquipmentsForUnload,
+  fetchEquipmentsForLoadUnload,
   equipmentSelectedChanged,
 } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
@@ -77,7 +77,6 @@ const onSubmit = (values, props, staffId) => {
     .filter((c) => c === "OG")
     .first();
 
-  let goToDamageForm = false;
   getCntrInfoForUnload(parameters).then((response) => {
     //console.log("response", response);
     let { data, result } = response.data;
@@ -157,9 +156,6 @@ const onSubmit = (values, props, staffId) => {
     } else {
       return toast.error("کانتینر یافت نشد");
     }
-    if (goToDamageForm) {
-      return <Link to="reeeee"></Link>;
-    }
   });
 };
 //#endregion -----------------------------------------------------------------
@@ -197,7 +193,7 @@ const UnloadOperationPage = (props) => {
       EquipmentData.equipments === null ||
       EquipmentData.equipments.length === 0
     ) {
-      dispatch(fetchEquipmentsForUnload());
+      dispatch(fetchEquipmentsForLoadUnload());
     }
     console.log("salam");
   }, []);

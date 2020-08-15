@@ -14,6 +14,9 @@ const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
 const LazyUnloadOperationPage = lazy(() =>
   import("../views/pages/unloadOperationPage")
 );
+
+const LazyLoadOperationsPage = lazy(()=>import("../views/pages/LoadOperationPage"));
+
 const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
 
@@ -72,6 +75,24 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyUnloadOperationPage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path="/operationType/vessel/load/damage"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyDamagePage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path="/operationType/vessel/load"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyLoadOperationsPage {...matchprops} />
               </Suspense>
             )}
           />

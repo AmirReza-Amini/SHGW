@@ -37,11 +37,11 @@ export const equipmentSelectedChanged = (equipment) => {
     };
   };
 
-  export const fetchEquipmentsForUnload = () => {
+  export const fetchEquipmentsForLoadUnload = () => {
     return async (dispatch) => {
       dispatch(fetchEquipmentsRequest());
       http
-        .get(apiEndpoint + "/fetchEquipmentsForUnload")
+        .get(apiEndpoint + "/fetchEquipmentsForLoadUnload")
         .then((response) => {
           const data = response.data.data.map((c) => {
             return { value: c.EquipmentID, label: c.EquipmentName };

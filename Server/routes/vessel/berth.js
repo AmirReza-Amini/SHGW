@@ -7,6 +7,7 @@ const setting = require("../../app-setting");
 const sworm = require("sworm");
 const db = sworm.db(setting.db.sqlConfig);
 
+//#region Unload Services -------------------------------------------------------------------------
 router.post("/getCntrInfoForUnload", async (req, res) => {
   //console.log("result", req);
   var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForUnload, {
@@ -149,6 +150,63 @@ router.post("/isExistCntrInInstructionLoading", async (req, res) => {
   } catch (error) {
     SendResponse(req, res, error, 400);
   }
+});
+
+//#endregion -------------------------------------------------------------------------------------
+
+router.post("/getCntrInfoForLoad", async (req, res) => {
+  //console.log("result", req);
+  var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForLoad, {
+    voyageId: req.body.voyageId,
+    cntrNo: req.body.cntrNo,
+  });
+  console.log("result", result);
+
+  SendResponse(req, res, result, result && result.length > 0);
+});
+
+
+router.post("/saveLoad", async (req, res) => {
+  //console.log("result", req);
+  var result = await db.query(queries.VESSEL.BERTH.saveLoad, {
+    voyageId: req.body.voyageId,
+    cntrNo: req.body.cntrNo,
+    berthId: req.body.berthId,
+    userId: req.body.userId,
+    equipmentId: req.body.equipmentId,
+    operatorId: req.body.operatorId,
+    truckNo: req.body.truckNo,
+    isShifting: req.body.isShifting,
+    sE: req.body.sE,
+    oG: req.body.oG,
+  });
+
+    let data = result[0][""][0] !=='0' ? {
+      ActId: result[0][""][0],
+      message: "عملیات با موفقیت انجام شد",
+    }:'خطا در انجام عملیات';
+
+    SendResponse(req, res, data, result[0][""][0] !=='0');
+
+    //#region 
+  //   db.transaction(() => {
+  //     return db.query(queries.VESSEL.BERTH.saveUnload, {
+  //     voyageId: req.body.voyageId,
+  //     cntrNo: req.body.cntrNo,
+  //     berthId: req.body.berthId,
+  //     userId: req.body.userId,
+  //     equipmentId: req.body.equipmentId,
+  //     operatorId: req.body.operatorId,
+  //     truckNo: req.body.truckNo,
+  //     isShifting: req.body.isShifting,
+  //     sE: req.body.sE,
+  //     oG: req.body.oG,
+  //   })
+  //       .then(() => SendResponse(req, res, 'عملیات با موفقیت انجام شد'))
+  //       .catch(() => SendResponse(req, res, { error: 'خطای سرور' }, false, 500))
+  //   });
+
+  //#endregion
 });
 
 module.exports = router;

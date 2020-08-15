@@ -34,7 +34,7 @@ class operationsPage extends Component {
     //   })
     // );
     // this.setState({ group });
-    navigator.geolocation.getCurrentPosition((success)=>{console.log(success)},(error)=>{console.log(error)});
+    //navigator.geolocation.getCurrentPosition((success)=>{console.log(success)},(error)=>{console.log(error)});
   }
 
   handleOperation = (operationType) => {
@@ -44,6 +44,8 @@ class operationsPage extends Component {
         console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/discharge");
       case "Load":
+        console.log("operations", this.props.match.path);
+        return this.props.history.push("/operationType/vessel/load");
     }
   };
   render() {

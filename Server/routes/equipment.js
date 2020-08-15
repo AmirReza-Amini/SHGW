@@ -7,12 +7,12 @@ const setting = require('../app-setting')
 const sworm = require('sworm');
 const db = sworm.db(setting.db.sqlConfig);
 
-router.get('/fetchEquipmentsForUnload', async (req, res) => {
+router.get('/fetchEquipmentsForLoadUnload', async (req, res) => {
     let count = req.params.count || 10;
     //console.log('resultdb',db)
     
 
-    var result = await db.query(queries.EQUIPMENT.fetchEquipmentsForUnload);
+    var result = await db.query(queries.EQUIPMENT.fetchEquipmentsForLoadUnload);
     //console.log('result',result)
    // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
 

@@ -3,6 +3,9 @@ import { apiUrl } from "../../config.json";
 
 const apiEndpoint = apiUrl + "/vessel/berth";
 
+
+//#region Unload Services -----------------------------------------------------
+
 export const getCntrInfoForUnload = (data) => {
   return http.post(apiEndpoint + "/getCntrInfoForUnload", data);
 };
@@ -25,4 +28,16 @@ export const addToLoadingList = (data) => {
 
 export const isExistCntrInInstructionLoading = (data) => {
   return http.post(apiEndpoint + "/isExistCntrInInstructionLoading", data);
+};
+
+//#endregion ----------------------------------------------------------------
+
+//#region Load Services -----------------------------------------------------
+
+export const getCntrInfoForLoad = (data) => {
+  return http.post(apiEndpoint + "/getCntrInfoForLoad", data);
+};
+
+export const saveLoad = (data) => {
+  return http.post(apiEndpoint + "/saveLoad", data);
 };

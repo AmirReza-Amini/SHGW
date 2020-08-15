@@ -1,0 +1,10 @@
+	EXEC sp_SaveLoad @Vehicle = @truckNo, -- nvarchar(15)
+	    @OperatorId = @operatorId, -- int
+	    @EquipmentId = @equipmentId, -- int
+	    @UserID = @userId, -- int
+	    @CntrNo = @cntrNo, -- nvarchar(12)
+	    @VoyageID = @voyageId, -- bigint
+	    @IsShifting = @isShifting, -- bit
+	    @SE = @sE, -- bit
+	    @OG = @oG, -- bit
+	    @BerthID = @berthId -- bigint
