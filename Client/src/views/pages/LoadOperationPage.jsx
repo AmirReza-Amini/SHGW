@@ -25,6 +25,10 @@ import {
     saveLoad
 } from "../../services/vessel/berth";
 
+import {
+    isPossibleSaveAct
+} from "../../services/act";
+
 
 toast.configure({ bodyClassName: "customFont" });
 
@@ -64,93 +68,83 @@ const onSubmit = (values, props, staffId) => {
     };
     // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
 
-    // let se = _(values.checkboxListSelected)
-    //     .filter((c) => c === "SE")
-    //     .first();
-    // let og = _(values.checkboxListSelected)
-    //     .filter((c) => c === "OG")
-    //     .first();
+    let se = _(values.checkboxListSelected)
+        .filter((c) => c === "SE")
+        .first();
+    let og = _(values.checkboxListSelected)
+        .filter((c) => c === "OG")
+        .first();
 
-    // getCntrInfoForLoad(parameters).then((response) => {
-    //     //console.log("response", response);
-    //     let { data, result } = response.data;
-    //     if (result) {
-    //         //---------------- Duplicate Act Check---------------------------------
-    //         if (data[0].ActID != null) {
-    //             return toast.error("اطلاعات این کانتینر قبلاً ثبت شده");
-    //         } else {
-    //             let parametersForUnload = {
-    //                 cntrNo: data[0].CntrNo,
-    //                 voyageId: data[0].VoyageID,
-    //                 berthId: data[0].BerthID,
-    //                 userId: 220,
-    //                 equipmentId: values.selectEquipmentType.value,
-    //                 operatorId: staffId,
-    //                 truckNo: values.truckNo,
-    //                 isShifting: data[0].ShiftingID !== null ? 1 : 0,
-    //                 sE: se ? 1 : 0,
-    //                 oG: og ? 1 : 0,
-    //             };
-    //             if (data[0].ManifestCntrID != null || data[0].ShiftingID !== null) {
-    //                 if (data[0].ShiftingID != null) {
-    //                     let paramData = {
-    //                         voyageId: parametersForUnload.voyageId,
-    //                         cntrNo: parametersForUnload.cntrNo,
-    //                     };
-    //                     isExistCntrInInstructionLoading(paramData)
-    //                         .then((res) => {
-    //                             if (!res.data.result) {
-    //                                 addToLoadingList(paramData)
-    //                                     .then((res) => {
-    //                                         console.log(
-    //                                             "res save addToLoadingList",
-    //                                             res.data.data[0]
-    //                                         );
-    //                                         if (res.data.result) toast.success(res.data.data[0]);
-    //                                         else return toast.error(res.data.data[0]);
-    //                                     })
-    //                                     .catch((error) => {
-    //                                         return toast.error(error);
-    //                                     });
-    //                             }
-    //                         })
-    //                         .catch((error) => {
-    //                             return toast.error(error);
-    //                         });
-    //                 }
-    //                 if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
-    //                     return toast.error("ترمینال تخلیه پلن نشده");
-    //                 } else {
-    //                     saveUnload(parametersForUnload)
-    //                         .then((res) => {
-    //                             console.log("res save unload", res, res.data.data[0]);
-    //                             if (res.data.result) {
-    //                                 toast.success(res.data.data[0]['message']);
-    //                                 return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
-    //                             } else return toast.error(res.data.data[0]);
-    //                         })
-    //                         .catch((error) => {
-    //                             return toast.error(error);
-    //                         });
-    //                 }
-    //             } else if (data[0].PortOfDischarge === "IRBND") {
-    //                 saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
-    //                     .then((res) => {
-    //                         console.log("res save unload INCREAMENT", res);
-    //                         if (res.data.result) {
-    //                             toast.success(res.data.data[0]['message']);
-    //                             return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
-    //                         } else return toast.error(res.data.data[0]);
-    //                     })
-    //                     .catch((error) => {
-    //                         return toast.error(error);
-    //                     });
-    //             }
-    //         }
-    //     } else {
-    //         return toast.error("کانتینر یافت نشد");
-    //     }
-    // });
+    getCntrInfoForLoad(parameters).then((response) => {
+        //console.log("response", response);
+        let { data, result } = response.data;
+        if (result) {
+            //---------------- Duplicate Act Check---------------------------------
+            if (data[0].ActID != null) {
+                return toast.error("اطلاعات این کانتینر قبلاً ثبت شده");
+            }
+            else {
+                let parametersForLoad = {
+                    cntrNo: data[0].CntrNo,
+                    voyageId: data[0].VoyageID,
+                    berthId: data[0].BerthID,
+                    userId: 220,
+                    equipmentId: values.selectEquipmentType.value,
+                    operatorId: staffId,
+                    truckNo: values.truckNo,
+                    isShifting: data[0].ShiftingID !== null ? 1 : 0,
+                    sE: se ? 1 : 0,
+                    oG: og ? 1 : 0,
+                };
+                console.log('response', response)
+                if (data[0].ShiftingID != null) {
+                    let paramData = {
+                        nextActType: 16,
+                        cntrNo: parametersForLoad.cntrNo,
+                    };
+
+                    isPossibleSaveAct(paramData)
+                        .then((res1) => {
+                            if (!res1.data.result) {
+                                saveLoad(paramData)
+                                    .then((res2) => {
+                                        console.log("res save load", res2, res2.data.data[0]);
+                                        if (res2.data.result) {
+                                            toast.success(res2.data.data[0]['message']);
+                                            return props.history.push('/operationType/vessel/load/damage', { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                        } else return toast.error(res2.data.data[0]);
+                                    })
+                                    .catch((error) => {
+                                        return toast.error(error);
+                                    });
+                            }
+                            else {
+                                return toast.error(res1.data.data[0]);
+                            }
+                        })
+                        .catch((error) => {
+                            return toast.error(error);
+                        });
+                }
+                else {
+                    saveLoad(parametersForLoad)
+                        .then((res) => {
+                            console.log("res save load", res, res.data.data[0]);
+                            if (res.data.result) {
+                                toast.success(res.data.data[0]['message']);
+                                return props.history.push('/operationType/vessel/load/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                            } else return toast.error(res.data.data[0]);
+                        })
+                        .catch((error) => {
+                            return toast.error(error);
+                        });
+                }
+            }
+        }
+        else {
+            return toast.error("کانتینر یافت نشد");
+        }
+    });
 };
 //#endregion -----------------------------------------------------------------
 

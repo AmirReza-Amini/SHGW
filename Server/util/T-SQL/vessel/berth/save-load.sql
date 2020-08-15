@@ -1,4 +1,4 @@
-	EXEC sp_SaveLoad @Vehicle = @truckNo, -- nvarchar(15)
+	EXEC SP_H_SaveLoad @Vehicle = @truckNo, -- nvarchar(15)
 	    @OperatorId = @operatorId, -- int
 	    @EquipmentId = @equipmentId, -- int
 	    @UserID = @userId, -- int
