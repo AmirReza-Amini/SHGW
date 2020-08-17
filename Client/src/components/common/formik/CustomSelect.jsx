@@ -1,5 +1,5 @@
 import React from "react";
-import { ErrorMessage, Field, FastField } from "formik";
+import { Field } from "formik";
 import { FormGroup, Label } from "reactstrap";
 import Select from "react-select";
 
@@ -15,10 +15,10 @@ const CustomSelect = (props) => {
   } = props;
   return (
     <FormGroup>
-      {label != null && label != "" && <Label for={name}>{label}</Label>}
+      {label !== null && label !== "" && <Label for={name}>{label}</Label>}
       <Field name={name} as="select">
         {(fieldProps) => {
-          const { field, form, meta } = fieldProps;
+          const {form, meta } = fieldProps;
           //console.log("Render props", props);
           return (
             <div>

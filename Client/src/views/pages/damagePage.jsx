@@ -1,71 +1,16 @@
-import React, { Fragment, useState } from "react";
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  Row,
-  Col,
-  Button,
-  CustomInput,
-  FormGroup,
-  Label,
-  Input,
-} from "reactstrap";
-import {
-  X,
-  CheckSquare,
-  User,
-  Briefcase,
-  MessageSquare,
-  Clock,
-  File,
-  Info,
-  FileText,
-  Mail,
-  AlertTriangle,
-} from "react-feather";
+import React, { Fragment, useState, useEffect } from "react";
+import { Card, CardBody, Row, Col, Button } from "reactstrap";
+import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
-import {
-  fetchVoyagesTopTenOpen,
-  voyageSelectedChanged,
-} from "../../redux/common/voyage/voyageActions";
-import {
-  fetchDamageDefinition
-} from "../../redux/common/damage/damageActions";
+import { fetchDamageDefinition } from "../../redux/common/damage/damageActions";
 import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damage';
-import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
-import {
-  getCntrInfoForUnload,
-  saveUnload,
-  addToShifting,
-  addToLoadingList,
-  isExistCntrInInstructionLoading,
-  saveUnloadIncrement,
-} from "../../services/vessel/berth";
-import { Redirect, Link } from "react-router-dom";
-import CustomButtonGroup from "../../components/common/formik/CustomButtonGroup";
-
-export const colourOptions = [
-  { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
-  { value: "blue", label: "Blue", color: "#0052CC", disabled: true },
-  { value: "purple", label: "Purple", color: "#5243AA" },
-  { value: "red", label: "Red", color: "#FF5630", isFixed: true },
-  { value: "orange", label: "Orange", color: "#FF8B00" },
-  { value: "yellow", label: "Yellow", color: "#FFC400" },
-  { value: "green", label: "Green", color: "#36B37E" },
-  { value: "forest", label: "Forest", color: "#00875A" },
-  { value: "slate", label: "Slate", color: "#253858" },
-  { value: "silver", label: "Silver", color: "#666666" },
-];
 
 toast.configure({ bodyClassName: "customFont rtl" });
 
@@ -86,75 +31,65 @@ const initialValues = {
 //#region Submit Formik ------------------------------------------------------
 
 const onSubmit = (values, props) => {
-  console.log("Form Submit Data", values);
-  if (values.selectedBottomDamages.length == 0 && values.selectedFrontDamages.length == 0 && values.selectedLeftDamages.length == 0 &&
-    values.selectedOtherDamages.length == 0 && values.selectedRearDamages.length == 0 && values.selectedRightDamages.length == 0 &&
-    values.selectedTopDamages.length == 0) {
+
+  //console.log("Form Submit Data", values);
+  if (values.selectedBottomDamages.length === 0 && values.selectedFrontDamages.length === 0 && values.selectedLeftDamages.length === 0 &&
+    values.selectedOtherDamages.length === 0 && values.selectedRearDamages.length === 0 && values.selectedRightDamages.length === 0 &&
+    values.selectedTopDamages.length === 0) {
     toast.error('خسارتی انتخاب نشده است');
     return;
   }
 
-  const data = _(values.selectedFrontDamages).join('');
   const damageList = [];
   if (values.selectedFrontDamages.length > 0) {
-    damageList.push({ side: 1, letters: _(values.selectedFrontDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedFrontDamages).join(''), Side: 1, StaffID: 220 });
   }
   if (values.selectedRearDamages.length > 0) {
-    damageList.push({ side: 2, letters: _(values.selectedRearDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedRearDamages).join(''), Side: 2, StaffID: 220 });
   }
   if (values.selectedRightDamages.length > 0) {
-    damageList.push({ side: 3, letters: _(values.selectedRightDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedRightDamages).join(''), Side: 3, StaffID: 220 });
   }
   if (values.selectedLeftDamages.length > 0) {
-    damageList.push({ side: 4, letters: _(values.selectedLeftDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedLeftDamages).join(''), Side: 4, StaffID: 220 });
   }
   if (values.selectedTopDamages.length > 0) {
-    damageList.push({ side: 5, letters: _(values.selectedTopDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedTopDamages).join(''), Side: 5, StaffID: 220 });
   }
   if (values.selectedBottomDamages.length > 0) {
-    damageList.push({ side: 6, letters: _(values.selectedBottomDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedBottomDamages).join(''), Side: 6, StaffID: 220 });
   }
   if (values.selectedOtherDamages.length > 0) {
-    damageList.push({ side: 7, letters: _(values.selectedOtherDamages).join('') });
+    damageList.push({ ActID: values.actId, Letters: _(values.selectedOtherDamages).join(''), Side: 7, StaffID: 220 });
   }
-
-  Promise.all(damageList.map((element) => {
-    return setDamageInfoByActId({ actId: values.actId, letters: element.letters, side: element.side, staffId: 220 });
-  })).then(response => {
-    console.log('damage promise all response', response);
-    const successResult=response.filter(c=>c.data.result==true);
-    //const successResult=response.map(c=>c.data);
-    const errorResult=response.filter(c=>c.data.result==false);
-    console.log(successResult,errorResult,damageList.length)
-    if (successResult.length == damageList.length){
-      toast.success(successResult[0].data.data[0]);
-      return props.history.push(props.location.pathname.replace('/damage',''));
+  //console.log('damageList', damageList);
+  setDamageInfoByActId({ data: damageList }).then(response => {
+    //console.log('damage promise all response', response);
+    let { result, data } = response.data;
+    if (result) {
+      toast.success(data[0]);
+      return props.history.push(props.location.pathname.replace('/damage', ''));
     }
-    else{
-      console.log(errorResult.length +` مورد ` +errorResult[0].data.data[0]);
-      toast.error(errorResult.length +` مورد ` +errorResult[0].data.data[0]);
-      return;
+    else {
+      toast.error(data[0]);
     }
-  }).catch(error=>{
-    console.log('damage promise all err', error);
+  }).catch(error => {
+    //console.log('damage promise all err', error);
   })
 };
-//#endregion -----------------------------------------------------------------
 
 const DamagePage = (props) => {
 
-  console.log('propsssss',props);
   //#region Selectors and State ---------------------------------------------
 
   const damageData = useSelector((state) => state.damage);
   const sidedDamages = damageData.damages.filter(c => c.isSided).map(c => c.value.trim());
-  //console.log('sidedDamages', sidedDamages);
   const notSidedDamages = damageData.damages.filter(c => !c.isSided).map(c => c.value.trim());
   //console.log('props', props)
   const [state, setState] = useState({
     cntrNo:
-      props.location.state != undefined ? props.location.state.cntrNo : "---",
-    actId: props.location.state != undefined ? props.location.state.actId : 0,
+      props.location.state !== undefined ? props.location.state.cntrNo : "---",
+    actId: props.location.state !== undefined ? props.location.state.actId : 0,
     selectedFrontDamages: [],
     selectedRearDamages: [],
     selectedTopDamages: [],
@@ -177,17 +112,17 @@ const DamagePage = (props) => {
     }
 
     getDamageInfoByActId({ actId: state.actId }).then(response => {
-     // console.log('res', response);
+      // console.log('res', response);
       let { data, result } = response.data;
       if (result) {
 
-        const defaultFrontDamages = _(data).filter(c => c.Side == 1 && c.Letters != null).first();
-        const defaultRearDamages = _(data).filter(c => c.Side == 2 && c.Letters != null).first();
-        const defaultRightDamages = _(data).filter(c => c.Side == 3 && c.Letters != null).first();
-        const defaultLeftDamages = _(data).filter(c => c.Side == 4 && c.Letters != null).first();
-        const defaultTopDamages = _(data).filter(c => c.Side == 5 && c.Letters != null).first();
-        const defaultBottomDamages = _(data).filter(c => c.Side == 6 && c.Letters != null).first();
-        const defaultOtherDamages = _(data).filter(c => c.Side == 7 && c.Letters != null).first();
+        const defaultFrontDamages = _(data).filter(c => c.Side === 1 && c.Letters !== null).first();
+        const defaultRearDamages = _(data).filter(c => c.Side === 2 && c.Letters !== null).first();
+        const defaultRightDamages = _(data).filter(c => c.Side === 3 && c.Letters !== null).first();
+        const defaultLeftDamages = _(data).filter(c => c.Side === 4 && c.Letters !== null).first();
+        const defaultTopDamages = _(data).filter(c => c.Side === 5 && c.Letters !== null).first();
+        const defaultBottomDamages = _(data).filter(c => c.Side === 6 && c.Letters != null).first();
+        const defaultOtherDamages = _(data).filter(c => c.Side === 7 && c.Letters !== null).first();
 
         setState({
           ...state,
@@ -214,20 +149,11 @@ const DamagePage = (props) => {
 
   //#region Event Handlers --------------------------------------------------
 
-  const handleVoyageSelectedChanged = (value) => {
-    //console.log("handleVoyageSelectedChanged", value);
-    //dispatch(voyageSelectedChanged(value));
-  };
-
-  const handleFrontDamageSelected = (value) => {
-    //console.log("handleFrontDamageSelected", value)
-  }
-
   const disableSubmitButton = (values) => {
     //console.log("disableSubmitButton", values, values.selectedBottomDamages.length);
-    if (values.selectedBottomDamages.length != 0 || values.selectedFrontDamages.length != 0 || values.selectedLeftDamages.length != 0 ||
-      values.selectedOtherDamages.length != 0 || values.selectedRearDamages.length != 0 || values.selectedRightDamages.length != 0 ||
-      values.selectedTopDamages.length != 0) {
+    if (values.selectedBottomDamages.length !== 0 || values.selectedFrontDamages.length !== 0 || values.selectedLeftDamages.length !== 0 ||
+      values.selectedOtherDamages.length !== 0 || values.selectedRearDamages.length !== 0 || values.selectedRightDamages.length !== 0 ||
+      values.selectedTopDamages.length !== 0) {
       return false;
     }
     else {
@@ -235,11 +161,10 @@ const DamagePage = (props) => {
     }
   }
 
-  const handleCancelButton=()=>{
-    props.history.replace(props.location.pathname.replace('/damage',''));
+  const handleCancelButton = () => {
+    props.history.replace(props.location.pathname.replace('/damage', ''));
   }
   //#endregion ---------------------------------------------------------------
-  const selectedValues = ["P", "S"];
   return (
     <Fragment>
       <Row className="justify-content-md-center">
@@ -284,37 +209,37 @@ const DamagePage = (props) => {
                               <div className="form-body">
                                 <Row >
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Front" name="selectedFrontDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedFrontDamages} />
+                                    <FormikControl control="customButtonGroup" label="Front" name="selectedFrontDamages" source={sidedDamages} defaultValues={state.selectedFrontDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Rear" name="selectedRearDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedRearDamages} />
+                                    <FormikControl control="customButtonGroup" label="Rear" name="selectedRearDamages" source={sidedDamages}  defaultValues={state.selectedRearDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Right" name="selectedRightDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedRightDamages} />
+                                    <FormikControl control="customButtonGroup" label="Right" name="selectedRightDamages" source={sidedDamages} defaultValues={state.selectedRightDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Left" name="selectedLeftDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedLeftDamages} />
+                                    <FormikControl control="customButtonGroup" label="Left" name="selectedLeftDamages" source={sidedDamages}  defaultValues={state.selectedLeftDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Top" name="selectedTopDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedTopDamages} />
+                                    <FormikControl control="customButtonGroup" label="Top" name="selectedTopDamages" source={sidedDamages}  defaultValues={state.selectedTopDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Bottom" name="selectedBottomDamages" source={sidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedBottomDamages} />
+                                    <FormikControl control="customButtonGroup" label="Bottom" name="selectedBottomDamages" source={sidedDamages}  defaultValues={state.selectedBottomDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Other" name="selectedOtherDamages" source={notSidedDamages} onSelectedChanged={handleFrontDamageSelected} defaultValues={state.selectedOtherDamages} />
+                                    <FormikControl control="customButtonGroup" label="Other" name="selectedOtherDamages" source={notSidedDamages}  defaultValues={state.selectedOtherDamages} />
                                   </Col>
                                 </Row>
                               </div>

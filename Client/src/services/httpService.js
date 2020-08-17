@@ -1,6 +1,5 @@
 import axios from "axios";
 import { toast } from 'react-toastify';
-import {toastr} from 'react-redux-toastr';
 
 axios.interceptors.response.use(null, error => {
   const expectedError =
@@ -11,7 +10,7 @@ axios.interceptors.response.use(null, error => {
     console.log("error", error);
   if (!expectedError) {
     console.log("Logging the error", error);
-    //toast("An Unexpected error occured!");
+    toast("An Unexpected error occured!");
     //toastr.error('Server Error','An Unexpected error occured!')
   }
 

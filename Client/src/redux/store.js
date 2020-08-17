@@ -3,8 +3,6 @@ import createDebounce from "redux-debounced";
 import thunk from "redux-thunk";
 import rootReducer from "./rootReducer";
 import logger from 'redux-logger';
-import { initVoyage } from "./common/voyage/voyageReducer";
-import { initEquipment } from "./common/equipment/equipmentReducer";
 
 const middlewares = [logger,thunk, createDebounce()];
 

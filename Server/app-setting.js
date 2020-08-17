@@ -17,7 +17,12 @@ module.exports = {
                 user: 'handheld',
                 password: 'H@nd!#($',
                 server: 'localhost',
-                database: 'Shrct'
+                database: 'Shrct',
+                pool: {
+                    max: 10,
+                    min: 0,
+                    idleTimeoutMillis: 60000
+                }
             }
         }
     },

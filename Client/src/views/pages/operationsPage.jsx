@@ -4,8 +4,6 @@ import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
 import operationGroups from "../../mockData/operationGroups";
 import CustomNavigation from "../../components/common/customNavigation";
-import * as Icon from "react-feather";
-import dischargeIcon from "../../assets/icons/svg/Discharge.svg";
 import _ from "lodash";
 
 class operationsPage extends Component {
@@ -20,7 +18,7 @@ class operationsPage extends Component {
     console.log("operations", this.props);
     const group = _.head(
       operationGroups.filter(function(item) {
-        return item.enName == a ? true : false;
+        return item.enName === a ? true : false;
       })
     );
     this.state.group = group;

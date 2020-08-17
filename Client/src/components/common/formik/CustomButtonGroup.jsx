@@ -18,7 +18,8 @@ class CustomButtonGroup extends Component {
             temp.splice(index, 1);
         }
         this.setState({ cSelected: [...temp] });
-        this.props.onSelectedChanged(temp);
+        console.log('this.props.onSelectedChanged',this.props)
+        if (this.props.onSelectedChanged) this.props.onSelectedChanged(temp);
         form.setFieldValue(this.props.name, temp);
     };
 
@@ -41,7 +42,7 @@ class CustomButtonGroup extends Component {
             <FormGroup>
                 <Row >
                     <Col md="12" >
-                        {label != null && label != "" && <Label for={name}>{label} : {JSON.stringify(this.state.cSelected)}</Label>}
+                        {label !== null && label !== "" && <Label for={name}>{label} : {JSON.stringify(this.state.cSelected)}</Label>}
                     </Col>
                     {/* <Col md="12"> */}
                     <Field>

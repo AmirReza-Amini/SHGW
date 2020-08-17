@@ -24,8 +24,8 @@ class InputMaskDebounce extends Component {
           const temp = { ...this.state };
           temp.value = event.target.value;
           this.setState({ mask: temp.mask, value: temp.value });
-          if (this.state.mask != "" && this.state.mask.length > 0) {
-            if ( _(event.target.value).replace("_", "").length == this.state.mask.length) {
+          if (this.state.mask !== "" && this.state.mask.length > 0) {
+            if ( _(event.target.value).replace("_", "").length === this.state.mask.length) {
              // console.log(event.target.value);
               form.setFieldValue(name, toUppercase?_(temp.value).toUpper():temp.value);
               this.props.onChange();
@@ -49,10 +49,10 @@ class InputMaskDebounce extends Component {
     const classN = "form-control " + className;
     return (
       <FormGroup>
-        {label != null && label != "" && <Label for={name}>{label}</Label>}
+        {label !== null && label !== "" && <Label for={name}>{label}</Label>}
         <Field name={name}>
           {(Fieldprops) => {
-            const { field, form, meta } = Fieldprops;
+            const { form, meta } = Fieldprops;
             //console.log('mask debounce props', Fieldprops);
             return (
               <div>

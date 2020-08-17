@@ -1,7 +1,7 @@
 import React from "react";
 import { ErrorMessage, Field } from "formik";
 import TextError from "./TextError";
-import { FormGroup, Label, Row, Col } from "reactstrap";
+import { FormGroup, Row } from "reactstrap";
 
 const CheckboxGroup = (props) => {
   const { label, name, options, className, ...rest } = props;

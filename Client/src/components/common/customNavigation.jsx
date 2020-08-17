@@ -10,12 +10,12 @@ const CustomNavigation = ({ path }) => {
   const items = _(path)
     .split("/")
     .value()
-    .filter((c) => c != "")
+    .filter((c) => c !== "")
     .map((c) => _.startCase(_.camelCase(c)));
   const routes = _(path)
     .split("/")
     .value()
-    .filter((c) => c != "");
+    .filter((c) => c !== "");
   //console.log(items, routes);
   return (
       <Breadcrumb tag="nav">

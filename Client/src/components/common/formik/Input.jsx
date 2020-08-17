@@ -11,7 +11,7 @@ const Input = (props) => {
   const classN = "form-control " + className;
   return (
     <FormGroup>
-      {label != null && label != "" && <Label for={name}>{label}</Label>}
+      {label !== null && label !== "" && <Label for={name}>{label}</Label>}
       <Field id={name} name={name} {...rest} className={classN} />
       <ErrorMessage name={name} component={TextError} />
     </FormGroup>

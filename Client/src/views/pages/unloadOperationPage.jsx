@@ -28,8 +28,6 @@ import {
   isExistCntrInInstructionLoading,
   saveUnloadIncrement,
 } from "../../services/vessel/berth";
-import { Redirect, Link } from "react-router-dom";
-import ButtonsCheckbox from '../../views/components/reactstrap/examples/buttonsCheckbox';
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -209,7 +207,7 @@ const UnloadOperationPage = (props) => {
     if (OperatorData.error) {
       errorMessage += "\n" + OperatorData.error;
     }
-    if (errorMessage != "") {
+    if (errorMessage !== "") {
       toast.error(errorMessage);
     }
   }, [VoyageData.error, VoyageData.error, OperatorData.error]);

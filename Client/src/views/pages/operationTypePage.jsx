@@ -4,8 +4,6 @@ import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
 import operationGroups from "../../mockData/operationGroups";
 import _ from "lodash";
-import Discharge from '../../assets/icons/svg/Discharge.svg';
-import * as Icon from "react-feather";
 class operationTypePage extends Component {
   state = {
     group: null,
@@ -25,6 +23,8 @@ class operationTypePage extends Component {
         return this.props.history.push("/operationType/vessel");
       case "CY":
         return this.props.history.push("/operationType/cy");
+        default:
+          return this.props.history.push("/");
     }
   };
   render() {

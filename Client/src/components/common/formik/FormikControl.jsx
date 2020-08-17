@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Input from './Input';
 import Textarea from './Textarea';
 import Select from './Select';

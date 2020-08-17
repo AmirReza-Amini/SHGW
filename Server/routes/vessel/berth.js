@@ -181,6 +181,7 @@ router.post("/saveLoad", async (req, res) => {
     oG: req.body.oG,
   });
 
+  console.log('save load ',result);
     let data = result[0][""][0] !=='0' ? {
       ActId: result[0][""][0],
       message: "عملیات با موفقیت انجام شد",

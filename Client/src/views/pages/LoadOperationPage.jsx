@@ -105,8 +105,8 @@ const onSubmit = (values, props, staffId) => {
 
                     isPossibleSaveAct(paramData)
                         .then((res1) => {
-                            if (!res1.data.result) {
-                                saveLoad(paramData)
+                            if (res1.data.result) {
+                                saveLoad(parametersForLoad)
                                     .then((res2) => {
                                         console.log("res save load", res2, res2.data.data[0]);
                                         if (res2.data.result) {
@@ -154,7 +154,6 @@ const LoadOperationPage = (props) => {
     const VoyageData = useSelector((state) => state.voyage);
     const EquipmentData = useSelector((state) => state.equipment);
     const OperatorData = useSelector((state) => state.operator);
-    const temp = { ...VoyageData, ...EquipmentData, ...OperatorData };
     const [state, setState] = useState({
         selectVoyageNo: VoyageData.selectedVoyage,
         selectEquipmentType: EquipmentData.selectedEquipment,
@@ -197,7 +196,7 @@ const LoadOperationPage = (props) => {
         if (OperatorData.error) {
             errorMessage += "\n" + OperatorData.error;
         }
-        if (errorMessage != "") {
+        if (errorMessage !== "") {
             toast.error(errorMessage);
         }
     }, [VoyageData.error, VoyageData.error, OperatorData.error]);
