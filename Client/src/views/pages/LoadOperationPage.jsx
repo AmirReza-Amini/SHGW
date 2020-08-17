@@ -10,24 +10,12 @@ import _ from "lodash";
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
-import {
-    fetchVoyagesTopTenOpen,
-    voyageSelectedChanged,
-} from "../../redux/common/voyage/voyageActions";
-import {
-    fetchEquipmentsForLoadUnload,
-    equipmentSelectedChanged,
-} from "../../redux/common/equipment/equipmentActions";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/common/voyage/voyageActions";
+import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
-import {
-    getCntrInfoForLoad,
-    saveLoad
-} from "../../services/vessel/berth";
-
-import {
-    isPossibleSaveAct
-} from "../../services/act";
+import { getCntrInfoForLoad, saveLoad } from "../../services/vessel/berth";
+import { isPossibleSaveAct } from "../../services/act";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -61,7 +49,7 @@ const validationSchema = Yup.object({
 //#region Submit Formik ------------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
-    console.log("Form Submit Data", values);
+    //console.log("Form Submit Data", values);
     let parameters = {
         cntrNo: values.containerNo,
         voyageId: values.selectVoyageNo.value,
@@ -96,7 +84,7 @@ const onSubmit = (values, props, staffId) => {
                     sE: se ? 1 : 0,
                     oG: og ? 1 : 0,
                 };
-                console.log('response', response)
+                //console.log('response', response)
                 if (data[0].ShiftingID != null) {
                     let paramData = {
                         nextActType: 16,
@@ -108,7 +96,7 @@ const onSubmit = (values, props, staffId) => {
                             if (res1.data.result) {
                                 saveLoad(parametersForLoad)
                                     .then((res2) => {
-                                        console.log("res save load", res2, res2.data.data[0]);
+                                        //console.log("res save load", res2, res2.data.data[0]);
                                         if (res2.data.result) {
                                             toast.success(res2.data.data[0]['message']);
                                             return props.history.push('/operationType/vessel/load/damage', { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
@@ -211,7 +199,7 @@ const LoadOperationPage = (props) => {
         getCntrInfoForLoad(data)
             .then((response) => {
                 setDisableSubmitButton(false);
-                console.log("cntrno change res", response);
+                //console.log("cntrno change res", response);
                 if (!response.data.result) {
                     setDisableSubmitButton(true);
                     return toast.error("کانتینر یافت نشد");
@@ -244,23 +232,24 @@ const LoadOperationPage = (props) => {
                 );
             })
             .catch((error) => {
-                console.log("cntrno change error", error);
+                //console.log("cntrno change error", error);
+                return toast.error(error);
             });
     };
 
     const handleOperatorCodeChange = (value) => {
-        console.log("operator code", value);
+        //console.log("operator code", value);
         if (value !== "") dispatch(fetchOperatorInfoBasedOnCode(value));
         //setOperatorCode(value)
     };
 
     const handleVoyageSelectedChanged = (value) => {
-        console.log("handleVoyageSelectedChanged", value);
+        //console.log("handleVoyageSelectedChanged", value);
         dispatch(voyageSelectedChanged(value));
     };
 
     const handleEquipmentSelectedChanged = (value) => {
-        console.log("handleEquipmentSelectedChanged", value);
+        //console.log("handleEquipmentSelectedChanged", value);
         dispatch(equipmentSelectedChanged(value));
     };
 
@@ -300,13 +289,13 @@ const LoadOperationPage = (props) => {
                                     enableReinitialize
                                 >
                                     {(formik) => {
-                                        console.log("Formik props values", formik.values);
-                                        console.log(
-                                            "in formik",
-                                            VoyageData,
-                                            OperatorData,
-                                            EquipmentData
-                                        );
+                                        // console.log("Formik props values", formik.values);
+                                        // console.log(
+                                        //     "in formik",
+                                        //     VoyageData,
+                                        //     OperatorData,
+                                        //     EquipmentData
+                                        // );
                                         return (
                                             <React.Fragment>
                                                 <Form>

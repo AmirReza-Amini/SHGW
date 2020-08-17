@@ -1,23 +1,16 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
 import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
-import {
-  fetchVoyagesTopTenOpen,
-  voyageSelectedChanged,
-} from "../../redux/common/voyage/voyageActions";
-import {
-  fetchEquipmentsForLoadUnload,
-  equipmentSelectedChanged,
-} from "../../redux/common/equipment/equipmentActions";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/common/voyage/voyageActions";
+import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
 import {
@@ -61,13 +54,11 @@ const validationSchema = Yup.object({
 //#region Submit Formik ------------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
-  console.log("Form Submit Data", values);
+  //console.log("Form Submit Data", values);
   let parameters = {
     cntrNo: values.containerNo,
     voyageId: values.selectVoyageNo.value,
   };
-  // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
-
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
     .first();
@@ -140,7 +131,7 @@ const onSubmit = (values, props, staffId) => {
         } else if (data[0].PortOfDischarge === "IRBND") {
           saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
             .then((res) => {
-              console.log("res save unload INCREAMENT", res);
+              //console.log("res save unload INCREAMENT", res);
               if (res.data.result) {
                 toast.success(res.data.data[0]['message']);
                 return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
@@ -164,7 +155,6 @@ const UnloadOperationPage = (props) => {
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);
-  const temp = { ...VoyageData, ...EquipmentData, ...OperatorData };
   const [state, setState] = useState({
     selectVoyageNo: VoyageData.selectedVoyage,
     selectEquipmentType: EquipmentData.selectedEquipment,
@@ -193,7 +183,6 @@ const UnloadOperationPage = (props) => {
     ) {
       dispatch(fetchEquipmentsForLoadUnload());
     }
-    console.log("salam");
   }, []);
 
   useEffect(() => {
@@ -222,7 +211,7 @@ const UnloadOperationPage = (props) => {
     getCntrInfoForUnload(data)
       .then((response) => {
         setDisableSubmitButton(false);
-        console.log("cntrno change res", response);
+        //console.log("cntrno change res", response);
         if (!response.data.result) {
           setDisableSubmitButton(true);
           return toast.error("کانتینر یافت نشد");
@@ -234,7 +223,7 @@ const UnloadOperationPage = (props) => {
           //setCntrInfo({});
           setDisableSubmitButton(true);
           toast.error("اطلاعات این کانتینر قبلا ثبت شده");
-        } 
+        }
         if (result.ManifestCntrID !== null) {
           guessedOperation = "تخلیه ی کانتینر (Unload)";
         } else if (result.ShiftingID !== null) {
@@ -249,19 +238,19 @@ const UnloadOperationPage = (props) => {
           result.PortOfDischarge !== "IRBND"
         ) {
           guessedOperation = "دید اپراتور (Visibility)";
-          if (result.ActID == null){
+          if (result.ActID == null) {
             addToShifting({ ...data, staffId: 220 })
-            .then((response) => {
-              console.log(response);
-              if (response.data.result) {
-                toast.success(response.data.data[0]);
-              } else {
-                toast.error(response.data.data[0]);
-              }
-            })
-            .catch((error) => {
-              toast.error(error);
-            });
+              .then((response) => {
+                //console.log(response);
+                if (response.data.result) {
+                  toast.success(response.data.data[0]);
+                } else {
+                  toast.error(response.data.data[0]);
+                }
+              })
+              .catch((error) => {
+                toast.error(error);
+              });
           }
         }
         setCntrInfo(
@@ -274,23 +263,24 @@ const UnloadOperationPage = (props) => {
         );
       })
       .catch((error) => {
-        console.log("cntrno change error", error);
+        //console.log("cntrno change error", error);
+        toast.error(error);
       });
   };
 
   const handleOperatorCodeChange = (value) => {
-    console.log("operator code", value);
+    //console.log("operator code", value);
     if (value !== "") dispatch(fetchOperatorInfoBasedOnCode(value));
     //setOperatorCode(value)
   };
 
   const handleVoyageSelectedChanged = (value) => {
-    console.log("handleVoyageSelectedChanged", value);
+    //console.log("handleVoyageSelectedChanged", value);
     dispatch(voyageSelectedChanged(value));
   };
 
   const handleEquipmentSelectedChanged = (value) => {
-    console.log("handleEquipmentSelectedChanged", value);
+    //console.log("handleEquipmentSelectedChanged", value);
     dispatch(equipmentSelectedChanged(value));
   };
 
@@ -298,10 +288,10 @@ const UnloadOperationPage = (props) => {
     props.history.push("/operationType/vessel")
   }
 
-  const handleDangerButton=()=>{
+  const handleDangerButton = () => {
     //console.log(CntrInfo)
-    if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID!=null)
-    props.history.push('/operationType/vessel/discharge/damage',{actId:CntrInfo.ActID,cntrNo:CntrInfo.BayCntrNo});
+    if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
+      props.history.push('/operationType/vessel/discharge/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
   }
 
   //#endregion ---------------------------------------------------------------
@@ -330,13 +320,13 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                    console.log("Formik props values", formik.values);
-                    console.log(
-                      "in formik",
-                      VoyageData,
-                      OperatorData,
-                      EquipmentData
-                    );
+                    //console.log("Formik props values", formik.values);
+                    // console.log(
+                    //   "in formik",
+                    //   VoyageData,
+                    //   OperatorData,
+                    //   EquipmentData
+                    // );
                     return (
                       <React.Fragment>
                         <Form>
@@ -581,7 +571,7 @@ const UnloadOperationPage = (props) => {
                             <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
                               <CheckSquare size={16} color="#FFF" /> ثبت
                             </Button>
-                            <Button color="danger" type="button" onClick={handleDangerButton} disabled={ !(CntrInfo && CntrInfo.ActID && CntrInfo.ActID !=null)}>
+                            <Button color="danger" type="button" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
                               <CheckSquare size={16} color="#FFF" /> خسارت
                             </Button>
                           </div>

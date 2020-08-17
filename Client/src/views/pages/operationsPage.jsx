@@ -1,4 +1,3 @@
-// Operation Type ..................................................................
 import React, { Component, Fragment } from "react";
 import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
@@ -7,42 +6,29 @@ import CustomNavigation from "../../components/common/customNavigation";
 import _ from "lodash";
 
 class operationsPage extends Component {
-  state = {
-    group: null,
-  };
+  state = { group: null };
 
   constructor(props) {
     super(props);
 
     let a = this.props.operations;
-    console.log("operations", this.props);
+    // console.log("operations", this.props);
     const group = _.head(
-      operationGroups.filter(function(item) {
+      operationGroups.filter(function (item) {
         return item.enName === a ? true : false;
       })
     );
     this.state.group = group;
   }
 
-  componentDidMount() {
-    // console.log(this.props.operations);
-    // const group = _.head(
-    //   operationGroups.filter(function(item) {
-    //     return item.enName === this.props.operations ? true : false;
-    //   })
-    // );
-    // this.setState({ group });
-    //navigator.geolocation.getCurrentPosition((success)=>{console.log(success)},(error)=>{console.log(error)});
-  }
-
   handleOperation = (operationType) => {
-    console.log(operationType);
+    //console.log(operationType);
     switch (operationType) {
       case "Discharge":
-        console.log("operations", this.props.match.path);
+        //console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/discharge");
       case "Load":
-        console.log("operations", this.props.match.path);
+        //console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/load");
     }
   };
@@ -72,7 +58,7 @@ class operationsPage extends Component {
                   color="#fff"
                   key={op.fnName}
                 /> */}
-                 {/* <img src={dischargeIcon} className="customIconSizes" />  */}
+                {/* <img src={dischargeIcon} className="customIconSizes" />  */}
               </MinimalStatisticsBG>
             </Col>
           ))}

@@ -8,19 +8,18 @@ const sworm = require("sworm");
 const db = sworm.db(setting.db.sqlConfig);
 
 //#region Unload Services -------------------------------------------------------------------------
+
 router.post("/getCntrInfoForUnload", async (req, res) => {
-  //console.log("result", req);
+
   var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForUnload, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
   });
-  //console.log("result", result);
-
   SendResponse(req, res, result, result && result.length > 0);
 });
 
 router.post("/saveUnload", async (req, res) => {
-  //console.log("result", req);
+
   var result = await db.query(queries.VESSEL.BERTH.saveUnload, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
@@ -63,7 +62,7 @@ router.post("/saveUnload", async (req, res) => {
 });
 
 router.post("/saveUnloadIncrement", async (req, res) => {
-  //console.log("result", req);
+
   var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
@@ -77,7 +76,6 @@ router.post("/saveUnloadIncrement", async (req, res) => {
     sE: req.body.sE,
     oG: req.body.oG,
   });
-  console.log("result", result);
 
   let data = result[0][""][0] !=='0' ? {
     ActId: result[0][""][0],
@@ -89,14 +87,13 @@ router.post("/saveUnloadIncrement", async (req, res) => {
 });
 
 router.post("/addToShifting", async (req, res) => {
-  //console.log("result", req);
   try {
     var result = await db.query(queries.VESSEL.BERTH.addToShifting, {
       voyageId: req.body.voyageId,
       cntrNo: req.body.cntrNo,
       staffId: req.body.staffId,
     });
-    //console.log("result", result);
+
     if (result && result.length > 0)
       SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
     else SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد", false);
@@ -106,13 +103,12 @@ router.post("/addToShifting", async (req, res) => {
 });
 
 router.post("/addToLoadingList", async (req, res) => {
-  //console.log("result", req);
   try {
     var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
       voyageId: req.body.voyageId,
       cntrNo: req.body.cntrNo,
     });
-    //console.log("result", result);
+
     if (result && result.length > 0)
       SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
     else
@@ -128,7 +124,6 @@ router.post("/addToLoadingList", async (req, res) => {
 });
 
 router.post("/isExistCntrInInstructionLoading", async (req, res) => {
-  //console.log("result", req);
   try {
     var result = await db.query(
       queries.VESSEL.BERTH.isExistCntrInInstructionLoading,
@@ -137,7 +132,7 @@ router.post("/isExistCntrInInstructionLoading", async (req, res) => {
         cntrNo: req.body.cntrNo,
       }
     );
-    //console.log("result", result);
+
     if (result && result.length > 0)
       SendResponse(req, res, result, result && result.length > 0);
     else
@@ -155,19 +150,17 @@ router.post("/isExistCntrInInstructionLoading", async (req, res) => {
 //#endregion -------------------------------------------------------------------------------------
 
 router.post("/getCntrInfoForLoad", async (req, res) => {
-  //console.log("result", req);
+
   var result = await db.query(queries.VESSEL.BERTH.getCntrInfoForLoad, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
   });
-  console.log("result", result);
-
   SendResponse(req, res, result, result && result.length > 0);
 });
 
 
 router.post("/saveLoad", async (req, res) => {
-  //console.log("result", req);
+
   var result = await db.query(queries.VESSEL.BERTH.saveLoad, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
@@ -181,7 +174,6 @@ router.post("/saveLoad", async (req, res) => {
     oG: req.body.oG,
   });
 
-  console.log('save load ',result);
     let data = result[0][""][0] !=='0' ? {
       ActId: result[0][""][0],
       message: "عملیات با موفقیت انجام شد",

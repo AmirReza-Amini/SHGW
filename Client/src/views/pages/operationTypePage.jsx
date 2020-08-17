@@ -1,13 +1,11 @@
-// Operation Type ..................................................................
 import React, { Component, Fragment } from "react";
 import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
 import operationGroups from "../../mockData/operationGroups";
 import _ from "lodash";
 class operationTypePage extends Component {
-  state = {
-    group: null,
-  };
+
+  state = { group: null };
 
   componentDidMount() {
     const group = _(operationGroups).value();
@@ -23,8 +21,8 @@ class operationTypePage extends Component {
         return this.props.history.push("/operationType/vessel");
       case "CY":
         return this.props.history.push("/operationType/cy");
-        default:
-          return this.props.history.push("/");
+      default:
+        return this.props.history.push("/");
     }
   };
   render() {
@@ -44,7 +42,7 @@ class operationTypePage extends Component {
                 textAlign="center"
               >
               </MinimalStatisticsBG>
-              
+
             </Col>
           ))}
         </Row>

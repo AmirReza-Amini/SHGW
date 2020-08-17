@@ -9,13 +9,8 @@ const db = sworm.db(setting.db.sqlConfig);
 
 router.get('/fetchOperatorInfoBasedOnCode/:code', async (req, res) => {
     let code = req.params.code || 0;
-    //console.log('resultdb',db)
-    
-
     var result = await db.query(queries.OPERATOR.fetchOperatorInfoBasedOnCode, { code: code });
-    console.log('result',result)
-   // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
-
+    // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
     SendResponse(req, res, result, (result && result.length > 0))
 })
 module.exports = router;

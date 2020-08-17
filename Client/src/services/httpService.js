@@ -9,8 +9,8 @@ axios.interceptors.response.use(null, error => {
 
     console.log("error", error);
   if (!expectedError) {
-    console.log("Logging the error", error);
-    toast("An Unexpected error occured!");
+    //console.log("Logging the error", error);
+    toast.error("An Unexpected error occured!");
     //toastr.error('Server Error','An Unexpected error occured!')
   }
 

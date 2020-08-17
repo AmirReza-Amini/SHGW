@@ -3,9 +3,6 @@ import { Field, ErrorMessage } from "formik";
 import TextError from "./TextError";
 import { FormGroup, Label } from "reactstrap";
 
-// const handlechange=(e)=>{
-//     console.log('e',e);
-// }
 const Input = (props) => {
   const { label, name, className, ...rest } = props;
   const classN = "form-control " + className;
