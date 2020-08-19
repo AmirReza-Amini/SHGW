@@ -4,6 +4,7 @@ const { LoadText } = require('../utility')
 module.exports = {
     VOYAGE: {
         loadLastVoyages: LoadText(__dirname + '/voyage/load-last-voyages.sql'),
+        getLoadUnloadStatisticsByVoyageId:LoadText(__dirname + '/voyage/get-load-unload-statistics-by-voyageid.sql')
     },
     EQUIPMENT: {
         fetchEquipmentsForLoadUnload: LoadText(__dirname + '/equipment/fetch-equipments-for-load-unload.sql')

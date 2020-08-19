@@ -7,8 +7,10 @@ const setting = require('./app-setting')
 const path = require('path')
 
 app.use(cors())
+require('./messaging/socket')(app, server);
 app.use(express.json());
 app.use(express.static(__dirname + '/www'));
+
 app.use(require('./middleware/log'))
 app.use(require('./bootstrap/init'));
 
@@ -20,9 +22,6 @@ require('./routes')(app);
 // });
 
 app.get('/*', (req, res) => res.sendFile(path.join(__dirname)));
-
-//uncomment if you mind to have realtime actions
-require('./messaging/socket')(app, server);
 
 server.listen((setting.portNo), () => {
   console.log(`Server started on ${setting.portNo} --- ${new Date()}`);

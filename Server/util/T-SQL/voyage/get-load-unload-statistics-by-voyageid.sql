@@ -1,0 +1,1 @@
+EXEC SP_H_GetLoadUnloadStatisticsByVoyageId2 @VoyageID = @voyageId -- bigint 

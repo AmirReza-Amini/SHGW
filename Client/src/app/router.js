@@ -7,18 +7,13 @@ import Spinner from "../components/spinner/spinner";
 import MainLayoutRoutes from "../layouts/routes/mainRoutes";
 import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
 
-const LazyOperationTypePage = lazy(() =>
-  import("../views/pages/operationTypePage")
-);
+const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
-const LazyUnloadOperationPage = lazy(() =>
-  import("../views/pages/unloadOperationPage")
-);
-
-const LazyLoadOperationsPage = lazy(()=>import("../views/pages/LoadOperationPage"));
-
+const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
+const LazyLoadOperationsPage = lazy(() => import("../views/pages/LoadOperationPage"));
 const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
+const LazyLoadUnloadPage=lazy(()=>import("../views/pages/statistics/loadUnloadStatisticsPage"));
 
 // Full Layout
 const LazyHome = lazy(() => import("../views/dashboard/ecommerceDashboard"));
@@ -62,6 +57,15 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
+            path="/operationType/vessel/discharge/loadUnloadStatistics"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyLoadUnloadPage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
             path="/operationType/vessel/discharge/damage"
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
@@ -75,6 +79,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyUnloadOperationPage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path="/operationType/vessel/load/loadUnloadStatistics"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyLoadUnloadPage {...matchprops} />
               </Suspense>
             )}
           />

@@ -1,8 +1,10 @@
-import http from '../services/httpService';
-import { apiUrl } from '../config.json';
+import http from "./httpService";
+import { apiUrl } from "../config.json";
 
-const apiEndpoint = apiUrl + "/voyages";
+const apiEndpoint = apiUrl + "/voyage";
 
-export const getTopTenOpenVoyages = () =>{
-    return http.get('https://jsonplaceholder.typicode.com/users')
+
+export const getLoadUnloadStatisticsByVoyageId = (data) =>{
+    console.log(apiEndpoint + '/getLoadUnloadStatisticsByVoyageId')
+    return http.post(apiEndpoint + '/getLoadUnloadStatisticsByVoyageId',data)
 }

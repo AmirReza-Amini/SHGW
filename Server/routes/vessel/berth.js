@@ -33,14 +33,18 @@ router.post("/saveUnload", async (req, res) => {
     oG: req.body.oG,
   });
 
-    let data = result[0][""][0] !=='0' ? {
-      ActId: result[0][""][0],
-      message: "عملیات با موفقیت انجام شد",
-    }:'خطا در انجام عملیات';
+  let data = result[0][""][0] !== '0' ? {
+    ActId: result[0][""][0],
+    message: "عملیات با موفقیت انجام شد",
+  } : 'خطا در انجام عملیات';
 
-    SendResponse(req, res, data, result[0][""][0] !=='0');
+  var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+    console.log(result2);
+    res.io.emit("get_data",result2);
 
-    //#region 
+  SendResponse(req, res, data, result[0][""][0] !== '0');
+
+  //#region 
   //   db.transaction(() => {
   //     return db.query(queries.VESSEL.BERTH.saveUnload, {
   //     voyageId: req.body.voyageId,
@@ -63,6 +67,7 @@ router.post("/saveUnload", async (req, res) => {
 
 router.post("/saveUnloadIncrement", async (req, res) => {
 
+  console.log('ezafe takhlie')
   var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
     voyageId: req.body.voyageId,
     cntrNo: req.body.cntrNo,
@@ -77,12 +82,16 @@ router.post("/saveUnloadIncrement", async (req, res) => {
     oG: req.body.oG,
   });
 
-  let data = result[0][""][0] !=='0' ? {
+  let data = result[0][""][0] !== '0' ? {
     ActId: result[0][""][0],
     message: "عملیات با موفقیت انجام شد",
-  }:'خطا در انجام عملیات';
+  } : 'خطا در انجام عملیات';
 
-  SendResponse(req, res, data, result[0][""][0] !=='0');
+  var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+    console.log('increment data',result2);
+    res.io.emit("get_data",result2);
+
+  SendResponse(req, res, data, result[0][""][0] !== '0');
 
 });
 
@@ -174,14 +183,18 @@ router.post("/saveLoad", async (req, res) => {
     oG: req.body.oG,
   });
 
-    let data = result[0][""][0] !=='0' ? {
-      ActId: result[0][""][0],
-      message: "عملیات با موفقیت انجام شد",
-    }:'خطا در انجام عملیات';
+  let data = result[0][""][0] !== '0' ? {
+    ActId: result[0][""][0],
+    message: "عملیات با موفقیت انجام شد",
+  } : 'خطا در انجام عملیات';
 
-    SendResponse(req, res, data, result[0][""][0] !=='0');
+  var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+    console.log(result2);
+    res.io.emit("get_data",result2);
 
-    //#region 
+  SendResponse(req, res, data, result[0][""][0] !== '0');
+
+  //#region 
   //   db.transaction(() => {
   //     return db.query(queries.VESSEL.BERTH.saveUnload, {
   //     voyageId: req.body.voyageId,

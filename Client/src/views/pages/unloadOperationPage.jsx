@@ -294,6 +294,11 @@ const UnloadOperationPage = (props) => {
       props.history.push('/operationType/vessel/discharge/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
   }
 
+  const handleStatisticsButton = () => {
+    console.log('VoyageData.selectedVoyage',VoyageData.selectedVoyage)
+    props.history.push('/operationType/vessel/discharge/loadUnloadStatistics', { voyageInfo: VoyageData.selectedVoyage});
+  }
+
   //#endregion ---------------------------------------------------------------
 
   return (
@@ -320,7 +325,7 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                    //console.log("Formik props values", formik.values);
+                    // console.log("Formik props values", formik);
                     // console.log(
                     //   "in formik",
                     //   VoyageData,
@@ -571,8 +576,11 @@ const UnloadOperationPage = (props) => {
                             <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
                               <CheckSquare size={16} color="#FFF" /> ثبت
                             </Button>
-                            <Button color="danger" type="button" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
+                            <Button color="danger" type="button" className="mr-1" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
                               <CheckSquare size={16} color="#FFF" /> خسارت
+                            </Button>
+                            <Button color="success" type="button" onClick={ handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
+                              <CheckSquare size={16} color="#FFF" /> آمار
                             </Button>
                           </div>
                         </Form>

@@ -2,12 +2,13 @@ module.exports = (app, server) => {
     const io = require('socket.io')(server);
 
     app.use((req, res, next) => {
-        res.socket = io;
+        res.io = io;
         next();
     });
 
     clientsCount = 0;
     io.on('connection', socket => {
+
         io.of('/').adapter.clients((err, clients) => {
             clientsCount = clients.length;
         });
