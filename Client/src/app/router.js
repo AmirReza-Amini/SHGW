@@ -10,10 +10,11 @@ import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
 const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
-const LazyLoadOperationsPage = lazy(() => import("../views/pages/LoadOperationPage"));
+const LazyLoadOperationsPage = lazy(() => import("../views/pages/loadOperationPage"));
 const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
-const LazyLoadUnloadPage=lazy(()=>import("../views/pages/statistics/loadUnloadStatisticsPage"));
+const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnloadStatisticsPage"));
+const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
 
 // Full Layout
 const LazyHome = lazy(() => import("../views/dashboard/ecommerceDashboard"));
@@ -106,6 +107,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoadOperationsPage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path="/operationType/vessel/stowage"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyStowagePage {...matchprops} />
               </Suspense>
             )}
           />

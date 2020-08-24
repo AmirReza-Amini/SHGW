@@ -45,6 +45,9 @@ router.post('/setDamageInfoByActId', async (req, res) => {
         request.input('DamageList', tvp);
         request.output('OutputResult', sql.NVarChar(2048));
         const temp = await request.execute('SP_SetDamgeBasedOnDamageList');
+    //     [ { Result: true, Message: 'OK', ID: 1 },
+    //       { Result: true, Message: 'OK', ID: 2 } ],
+       // console.log(temp);
         const { recordset: result } = temp;
         let message = "";
         if (result && result.length > 0) {

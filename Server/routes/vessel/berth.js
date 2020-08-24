@@ -32,15 +32,16 @@ router.post("/saveUnload", async (req, res) => {
     sE: req.body.sE,
     oG: req.body.oG,
   });
-
+  //[ { '': [ '12329941', 'OK' ] } ]
+  console.log('result unload save', result);
   let data = result[0][""][0] !== '0' ? {
     ActId: result[0][""][0],
     message: "عملیات با موفقیت انجام شد",
   } : 'خطا در انجام عملیات';
 
   var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    console.log(result2);
-    res.io.emit("get_data",result2);
+  console.log(result2);
+  res.io.emit("get_data", result2);
 
   SendResponse(req, res, data, result[0][""][0] !== '0');
 
@@ -88,8 +89,8 @@ router.post("/saveUnloadIncrement", async (req, res) => {
   } : 'خطا در انجام عملیات';
 
   var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    console.log('increment data',result2);
-    res.io.emit("get_data",result2);
+  console.log('increment data', result2);
+  res.io.emit("get_data", result2);
 
   SendResponse(req, res, data, result[0][""][0] !== '0');
 
@@ -183,14 +184,15 @@ router.post("/saveLoad", async (req, res) => {
     oG: req.body.oG,
   });
 
+  console.log('load save', result);
   let data = result[0][""][0] !== '0' ? {
     ActId: result[0][""][0],
     message: "عملیات با موفقیت انجام شد",
   } : 'خطا در انجام عملیات';
 
   var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    console.log(result2);
-    res.io.emit("get_data",result2);
+  console.log(result2);
+  res.io.emit("get_data", result2);
 
   SendResponse(req, res, data, result[0][""][0] !== '0');
 

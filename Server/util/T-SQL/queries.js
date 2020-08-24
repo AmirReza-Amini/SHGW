@@ -4,7 +4,7 @@ const { LoadText } = require('../utility')
 module.exports = {
     VOYAGE: {
         loadLastVoyages: LoadText(__dirname + '/voyage/load-last-voyages.sql'),
-        getLoadUnloadStatisticsByVoyageId:LoadText(__dirname + '/voyage/get-load-unload-statistics-by-voyageid.sql')
+        getLoadUnloadStatisticsByVoyageId: LoadText(__dirname + '/voyage/get-load-unload-statistics-by-voyageid.sql')
     },
     EQUIPMENT: {
         fetchEquipmentsForLoadUnload: LoadText(__dirname + '/equipment/fetch-equipments-for-load-unload.sql')
@@ -25,7 +25,10 @@ module.exports = {
             saveLoad: LoadText(__dirname + '/vessel/berth/save-load.sql')
         },
         DECK: {
-
+            getCntrInfoForStowage: LoadText(__dirname + '/vessel/deck/get-cntr-info-for-stowage.sql'),
+            getStowageInfoForCntrByVoyage: LoadText(__dirname + '/vessel/deck/get-stowage-info-for-cntr-by-voyage.sql'),
+            isOccoupiedBayAddressInVoyage: LoadText(__dirname + '/vessel/deck/is-occoupied-bay-address-in-voyage.sql'),
+            saveStowageAndShiftedup: LoadText(__dirname + '/vessel/deck/save-stowage-and-shiftedup.sql')
         }
     },
     DAMAGE: {

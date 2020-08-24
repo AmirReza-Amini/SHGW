@@ -1,9 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
 import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
@@ -14,8 +13,7 @@ import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/commo
 import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
-import { getCntrInfoForLoad, saveLoad } from "../../services/vessel/berth";
-import { isPossibleSaveAct } from "../../services/act";
+import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup } from "../../services/vessel/deck";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -27,21 +25,15 @@ const initialValues = {
     selectEquipmentType: "",
     containerNo: "",
     operatorCode: "",
-    truckNo: "",
-    checkboxListSelected: [],
+    bayAddress: ""
 };
-
-const checkboxListOptions = [
-    { key: "SE", value: "SE" },
-    { key: "OG", value: "OG" },
-];
 
 const validationSchema = Yup.object({
     selectVoyageNo: Yup.string().required("!شماره سفر را وارد کنید"),
     selectEquipmentType: Yup.string().required("!شماره دستگاه را وارد کنید"),
     containerNo: Yup.string().required("!شماره کانتینر را وارد کنید"),
     operatorCode: Yup.string().required("!کد اپراتور را وارد کنید"),
-    truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
+    bayAddress: Yup.string().required("را وارد کنید Bay آدرس")
 });
 
 //#endregion
@@ -49,94 +41,66 @@ const validationSchema = Yup.object({
 //#region Submit Formik ------------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
-    //console.log("Form Submit Data", values);
+    console.log("Form Submit Data", values);
     let parameters = {
         cntrNo: values.containerNo,
         voyageId: values.selectVoyageNo.value,
     };
-    // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
 
-    let se = _(values.checkboxListSelected)
-        .filter((c) => c === "SE")
-        .first();
-    let og = _(values.checkboxListSelected)
-        .filter((c) => c === "OG")
-        .first();
-
-    getCntrInfoForLoad(parameters).then((response) => {
-        //console.log("response", response);
-        let { data, result } = response.data;
-        if (result) {
-            //---------------- Duplicate Act Check---------------------------------
-            if (data[0].ActID != null) {
-                return toast.error("اطلاعات این کانتینر قبلاً ثبت شده");
+    _(values).forEach()
+    const data = { loadingBayAddress: `0${values.bayAddress.split(" ").join("")}`, voyageId: values.selectVoyageNo.value };
+    isOccoupiedBayAddressInVoyage(data)
+        .then(response => {
+            console.log('response', response)
+            if (!response.data.result) {
+                getStowageInfoForCntrByVoyage(parameters)
+                    .then(response2 => {
+                        console.log('response2', response2)
+                        if (response2.data.result) {
+                            const paramsForSaving = {
+                                cntrNo: values.containerNo,
+                                voyageId: values.selectVoyageNo.value,
+                                userId: 220,
+                                equipmentId: values.selectEquipmentType.value,
+                                operatorId: staffId,
+                                bayAddress: data.loadingBayAddress,
+                                actType: response2.data.data[0].ACTType
+                            }
+                            saveStowageAndShiftedup(paramsForSaving).then(response3 => {
+                                console.log('response3', response3)
+                                if (response3.data.result) {
+                                    return toast.success(response3.data.data[0]);
+                                }
+                                else {
+                                    return toast.error(response3.data.data[0]);
+                                }
+                            }).catch(error => {
+                                return toast.error(error);
+                            });
+                        }
+                        else {
+                            return toast.error("خطا در انجام عملیات");
+                        }
+                    })
+                    .catch(error => {
+                        {
+                            return toast.error(error);
+                        }
+                    })
             }
             else {
-                let parametersForLoad = {
-                    cntrNo: data[0].CntrNo,
-                    voyageId: data[0].VoyageID,
-                    berthId: data[0].BerthID,
-                    userId: 220,
-                    equipmentId: values.selectEquipmentType.value,
-                    operatorId: staffId,
-                    truckNo: values.truckNo,
-                    isShifting: data[0].ShiftingID !== null ? 1 : 0,
-                    sE: se ? 1 : 0,
-                    oG: og ? 1 : 0,
-                };
-                //console.log('response', response)
-                if (data[0].ShiftingID != null) {
-                    let paramData = {
-                        nextActType: 16,
-                        cntrNo: parametersForLoad.cntrNo,
-                    };
-
-                    isPossibleSaveAct(paramData)
-                        .then((res1) => {
-                            if (res1.data.result) {
-                                saveLoad(parametersForLoad)
-                                    .then((res2) => {
-                                        //console.log("res save load", res2, res2.data.data[0]);
-                                        if (res2.data.result) {
-                                            toast.success(res2.data.data[0]['message']);
-                                            return props.history.push('/operationType/vessel/load/damage', { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
-                                        } else return toast.error(res2.data.data[0]);
-                                    })
-                                    .catch((error) => {
-                                        return toast.error(error);
-                                    });
-                            }
-                            else {
-                                return toast.error(res1.data.data[0]);
-                            }
-                        })
-                        .catch((error) => {
-                            return toast.error(error);
-                        });
-                }
-                else {
-                    saveLoad(parametersForLoad)
-                        .then((res) => {
-                            console.log("res save load", res, res.data.data[0]);
-                            if (res.data.result) {
-                                toast.success(res.data.data[0]['message']);
-                                return props.history.push('/operationType/vessel/load/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
-                            } else return toast.error(res.data.data[0]);
-                        })
-                        .catch((error) => {
-                            return toast.error(error);
-                        });
-                }
+                return toast.error(response.data.data[0]);
+                // setValidBayAddress({ message: response.data.data[0], result: false });
+                // setDisableSubmitButton(true);
             }
-        }
-        else {
-            return toast.error("کانتینر یافت نشد");
-        }
-    });
+        })
+        .catch(error => {
+            return toast.error(error);
+        });
 };
 //#endregion -----------------------------------------------------------------
 
-const LoadOperationPage = (props) => {
+const StowagePage = (props) => {
     //#region Selectors and State ---------------------------------------------
 
     const VoyageData = useSelector((state) => state.voyage);
@@ -147,12 +111,12 @@ const LoadOperationPage = (props) => {
         selectEquipmentType: EquipmentData.selectedEquipment,
         containerNo: "",
         operatorCode: OperatorData.operator.staffCode,
-        truckNo: "",
-        checkboxListSelected: []
+        bayAddress: ""
     });
     const [CntrInfo, setCntrInfo] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+    const [validBayAddress, setValidBayAddress] = useState({ message: '', result: false });
     const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch();
 
@@ -170,7 +134,6 @@ const LoadOperationPage = (props) => {
         ) {
             dispatch(fetchEquipmentsForLoadUnload());
         }
-        console.log("salam");
     }, []);
 
     useEffect(() => {
@@ -195,11 +158,11 @@ const LoadOperationPage = (props) => {
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
-        // console.log("voyage and cntr", data);
-        getCntrInfoForLoad(data)
+        //console.log("voyage and cntr", data);
+        getCntrInfoForStowage(data)
             .then((response) => {
                 setDisableSubmitButton(false);
-                console.log("cntrno change res", response);
+                //console.log("cntrno change res", response);
                 if (!response.data.result) {
                     setDisableSubmitButton(true);
                     return toast.error("کانتینر یافت نشد");
@@ -207,20 +170,11 @@ const LoadOperationPage = (props) => {
 
                 let guessedOperation = "";
                 const result = response.data.data[0];
-                if (result.ActID !== null) {
-                    //setCntrInfo({});
-                    setDisableSubmitButton(true);
-                    toast.error("اطلاعات این کانتینر قبلا ثبت شده");
+                if (result.OperationType === 'Loading') {
+                    guessedOperation = "بارگیری"
                 }
-                if (result.ShiftingID !== null) {
-                    if (result.ShiftingTallyManID != null) {
-                        guessedOperation = "دید اپراتور (Visibility)";
-                    }
-                    else {
-                        guessedOperation = "شیفتینگ (Shifting)";
-                    }
-                } else {
-                    guessedOperation = "بارگیری کانتینر (Load)";
+                else if (result.OperationType === 'Shifting') {
+                    guessedOperation = "شیفتینگ";
                 }
                 setCntrInfo(
                     guessedOperation !== ""
@@ -230,12 +184,51 @@ const LoadOperationPage = (props) => {
                         }
                         : response.data.data[0]
                 );
+                getStowageInfoForCntrByVoyage(data).then(response2 => {
+                    if (!response2.data.result) {
+                        return toast.error('اطلاعات Bay وجود ندارد');
+                    }
+
+                    if (response2.data.result.length > 1) {
+                        return toast.error('وجود اطلاعات متناقض');
+                    }
+
+                    if (response2.data.data[0].Operation === 'Stowage' || response2.data.data[0].Operation === 'Shifted Up') {
+                        let temp = { ...CntrInfo };
+                        console.log('temp', temp);
+                        //temp.BayAddress = response2.data.data[0].LoadingBayAddress;
+                        //setCntrInfo(temp);
+                        return toast.warn('اطلاعات این کانتینر قبلا ثبت شده');
+                    }
+
+                })
+
             })
             .catch((error) => {
                 //console.log("cntrno change error", error);
-                return toast.error(error);
+                toast.error(error);
             });
     };
+
+    const handleBayAddressChange = (value) => {
+        setValidBayAddress(false);
+        setDisableSubmitButton(false);
+        //console.log('bay address changed', value);
+        const data = { loadingBayAddress: `0${value.split(" ").join("")}`, voyageId: VoyageData.selectedVoyage.value };
+        console.log('bay address changed', value, data);
+        isOccoupiedBayAddressInVoyage(data).then(response => {
+            console.log('bay occ', response);
+            if (response.data.result) {
+                //return toast.error(response.data.data[0]);
+                setValidBayAddress({ message: response.data.data[0], result: false });
+                setDisableSubmitButton(true);
+            }
+            else {
+                //return toast.success(response.data.data[0]);
+                setValidBayAddress({ message: response.data.data[0], result: true });
+            }
+        })
+    }
 
     const handleOperatorCodeChange = (value) => {
         //console.log("operator code", value);
@@ -245,6 +238,7 @@ const LoadOperationPage = (props) => {
 
     const handleVoyageSelectedChanged = (value) => {
         //console.log("handleVoyageSelectedChanged", value);
+        setValidBayAddress(null);
         dispatch(voyageSelectedChanged(value));
     };
 
@@ -255,12 +249,6 @@ const LoadOperationPage = (props) => {
 
     const handleCancelButton = () => {
         props.history.push("/operationType/vessel")
-    }
-
-    const handleDangerButton = () => {
-        //console.log(CntrInfo)
-        if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
-            props.history.push('/operationType/vessel/load/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
     }
 
     //#endregion ---------------------------------------------------------------
@@ -289,12 +277,12 @@ const LoadOperationPage = (props) => {
                                     enableReinitialize
                                 >
                                     {(formik) => {
-                                        // console.log("Formik props values", formik.values);
+                                        // console.log("Formik props values", formik);
                                         // console.log(
-                                        //     "in formik",
-                                        //     VoyageData,
-                                        //     OperatorData,
-                                        //     EquipmentData
+                                        //   "in formik",
+                                        //   VoyageData,
+                                        //   OperatorData,
+                                        //   EquipmentData
                                         // );
                                         return (
                                             <React.Fragment>
@@ -349,37 +337,38 @@ const LoadOperationPage = (props) => {
                                                                             />
                                                                         </Col>
                                                                     </Row>
-                                                                    <Row>
-                                                                        <Col md="6">
-                                                                            <FormikControl
-                                                                                control="inputMaskDebounce"
-                                                                                name="operatorCode"
-                                                                                mask=""
-                                                                                debounceTime={2000}
-                                                                                placeholder="کد اپراتور"
-                                                                                className="rtl"
-                                                                                onChange={() =>
-                                                                                    handleOperatorCodeChange(
-                                                                                        formik.values.operatorCode
-                                                                                    )
-                                                                                }
-                                                                                defaultValue={
-                                                                                    OperatorData.operator.staffCode
-                                                                                }
-                                                                            />
-                                                                        </Col>
-                                                                        <Col md="6">
-                                                                            <FormikControl
-                                                                                control="input"
-                                                                                type="text"
-                                                                                name="operatorCodeInfo"
-                                                                                className="rtl"
-                                                                                disabled={true}
-                                                                                value={OperatorData.operator.name}
-                                                                            />
-                                                                        </Col>
-                                                                    </Row>
                                                                 </Collapse>
+                                                            </Col>
+                                                        </Row>
+
+                                                        <Row>
+                                                            <Col md="6">
+                                                                <FormikControl
+                                                                    control="inputMaskDebounce"
+                                                                    name="operatorCode"
+                                                                    mask=""
+                                                                    debounceTime={2000}
+                                                                    placeholder="کد اپراتور"
+                                                                    className="rtl"
+                                                                    onChange={() =>
+                                                                        handleOperatorCodeChange(
+                                                                            formik.values.operatorCode
+                                                                        )
+                                                                    }
+                                                                    defaultValue={
+                                                                        OperatorData.operator.staffCode
+                                                                    }
+                                                                />
+                                                            </Col>
+                                                            <Col md="6">
+                                                                <FormikControl
+                                                                    control="input"
+                                                                    type="text"
+                                                                    name="operatorCodeInfo"
+                                                                    className="rtl"
+                                                                    disabled={true}
+                                                                    value={OperatorData.operator.name}
+                                                                />
                                                             </Col>
                                                         </Row>
                                                         <Row>
@@ -387,6 +376,7 @@ const LoadOperationPage = (props) => {
                                                                 <FormikControl
                                                                     control="inputMaskDebounce"
                                                                     name="containerNo"
+                                                                    id="containerNo"
                                                                     mask="aaaa 9999999"
                                                                     debounceTime={0}
                                                                     placeholder="شماره کانتینر"
@@ -402,21 +392,24 @@ const LoadOperationPage = (props) => {
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col md="6">
+                                                            <Col md="12">
                                                                 <FormikControl
-                                                                    control="input"
-                                                                    type="text"
-                                                                    name="truckNo"
-                                                                    className="rtl"
-                                                                    placeholder="شماره کشنده"
+                                                                    control="inputMaskDebounce"
+                                                                    name="bayAddress"
+                                                                    id="bayAddress"
+                                                                    mask="99 99 99"
+                                                                    debounceTime={0}
+                                                                    placeholder="Bay آدرس"
+                                                                    className="ltr"
+                                                                    onChange={() =>
+                                                                        handleBayAddressChange(
+                                                                            formik.values.bayAddress
+                                                                        )
+                                                                    }
+                                                                // defaultValue={CntrInfo.LoadingBayAddress}
                                                                 />
-                                                            </Col>
-                                                            <Col md="6">
-                                                                <FormikControl
-                                                                    control="checkbox"
-                                                                    name="checkboxListSelected"
-                                                                    options={checkboxListOptions}
-                                                                />
+                                                                {validBayAddress && validBayAddress.result && <div className="success">{validBayAddress.message}</div>}
+                                                                {validBayAddress && !validBayAddress.result && <div className="error">{validBayAddress.message}</div>}
                                                             </Col>
                                                         </Row>
                                                     </div>
@@ -429,14 +422,29 @@ const LoadOperationPage = (props) => {
                                                             }}
                                                         >
                                                             اطلاعات تکمیلی
-                            </p>
+                                                        </p>
+                                                        <p
+                                                            className="mb-0 rtl"
+                                                            style={{ textAlign: "right" }}
+                                                        >
+
+                                                            <span className="labelDescription">
+                                                                آدرس بِی:
+                                                            </span>{" "}
+                                                            <span className="labelValue">
+                                                                {CntrInfo.LoadingBayAddress}
+                                                            </span>
+
+
+
+                                                        </p>
                                                         <p
                                                             className="mb-0 rtl"
                                                             style={{ textAlign: "right" }}
                                                         >
                                                             <span className="labelDescription">
                                                                 سایز و نوع کانتینر:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
                                                             </span>
@@ -447,7 +455,7 @@ const LoadOperationPage = (props) => {
                                                         >
                                                             <span className="labelDescription">
                                                                 وضعیت پر یا خالی:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.FullEmptyStatus}
                                                             </span>
@@ -456,9 +464,18 @@ const LoadOperationPage = (props) => {
                                                             className="mb-0 rtl"
                                                             style={{ textAlign: "right" }}
                                                         >
+                                                            <span className="labelDescription">وزن ناخالص:</span>{" "}
+                                                            <span className="labelValue">
+                                                                {CntrInfo.GrossWeight}
+                                                            </span>
+                                                        </p>
+                                                        <p
+                                                            className="mb-0 rtl"
+                                                            style={{ textAlign: "right" }}
+                                                        >
                                                             <span className="labelDescription">
                                                                 بندر تخلیه:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.PortOfDischarge}
                                                             </span>
@@ -467,29 +484,9 @@ const LoadOperationPage = (props) => {
                                                             className="mb-0 rtl"
                                                             style={{ textAlign: "right" }}
                                                         >
-                                                            <span className="labelDescription">ترمینال:</span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.TerminalName}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                محل بارگیری:
-                              </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.LoadPlanningLocation}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
-                                                        >
                                                             <span className="labelDescription">
                                                                 وضعیت خطرناک بودن:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.IMDGCode}
                                                             </span>
@@ -501,19 +498,18 @@ const LoadOperationPage = (props) => {
                                                         >
                                                             <span className="labelDescription">
                                                                 رده ی وزنی:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="labelValue">
-                                                                {CntrInfo.LoadPlanningWeight}
+                                                                {CntrInfo.Grade}
                                                             </span>
                                                         </p>
-
                                                         <p
                                                             className="mb-0 rtl"
                                                             style={{ textAlign: "right" }}
                                                         >
                                                             <span className="labelDescription">
                                                                 نوع عملیات:
-                              </span>{" "}
+                                                            </span>{" "}
                                                             <span className="guessedOperation">
                                                                 {CntrInfo.GuessedOperation}
                                                             </span>
@@ -523,11 +519,8 @@ const LoadOperationPage = (props) => {
                                                         <Button color="warning" className="mr-1" onClick={handleCancelButton} type="button">
                                                             <X size={16} color="#FFF" /> لغو
                             </Button>
-                                                        <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
+                                                        <Button color="primary" type="submit" disabled={disableSubmitButton}>
                                                             <CheckSquare size={16} color="#FFF" /> ثبت
-                            </Button>
-                                                        <Button color="danger" type="button" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
-                                                            <CheckSquare size={16} color="#FFF" /> خسارت
                             </Button>
                                                     </div>
                                                 </Form>
@@ -544,4 +537,4 @@ const LoadOperationPage = (props) => {
     );
 };
 
-export default LoadOperationPage;
+export default StowagePage;

@@ -30,6 +30,8 @@ class operationsPage extends Component {
       case "Load":
         //console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/load");
+        case "Stowage":
+          return this.props.history.push("/operationType/vessel/stowage");
     }
   };
   render() {

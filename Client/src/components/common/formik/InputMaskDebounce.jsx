@@ -9,15 +9,16 @@ class InputMaskDebounce extends Component {
     super(props);
     this.state = {
       mask: this.props.mask,
-      value: "",
+      value: ''
     };
   }
+
 
   onChange = (event, form) => {
     //console.log('event',event)
     // console.log('props',this.props);
     event.persist();
-    const { debounceTime, name,toUppercase } = this.props;
+    const { debounceTime, name, toUppercase } = this.props;
     if (!this.debouncedFn) {
       this.debouncedFn = _.debounce(() => {
         if (event.target) {
@@ -25,17 +26,17 @@ class InputMaskDebounce extends Component {
           temp.value = event.target.value;
           this.setState({ mask: temp.mask, value: temp.value });
           if (this.state.mask !== "" && this.state.mask.length > 0) {
-            if ( _(event.target.value).replace("_", "").length === this.state.mask.length) {
-             // console.log(event.target.value);
-              form.setFieldValue(name, toUppercase?_(temp.value).toUpper():temp.value);
+            if (_(event.target.value).replace("_", "").length === this.state.mask.length) {
+              // console.log(event.target.value);
+              form.setFieldValue(name, toUppercase ? _(temp.value).toUpper() : temp.value);
               this.props.onChange();
             }
-            else{
+            else {
               //form.setFieldValue(name, temp.value);
             }
           } else {
-              form.setFieldValue(name, toUppercase?_(temp.value).toUpper():temp.value);
-              this.props.onChange();
+            form.setFieldValue(name, toUppercase ? _(temp.value).toUpper() : temp.value);
+            this.props.onChange();
           }
 
           //console.log(searchString)
@@ -45,7 +46,7 @@ class InputMaskDebounce extends Component {
     this.debouncedFn();
   };
   render() {
-    const { label, name, className, placeholder,defaultValue } = this.props;
+    const { label, name, className, placeholder, defaultValue } = this.props;
     const classN = "form-control " + className;
     return (
       <FormGroup>
@@ -53,6 +54,7 @@ class InputMaskDebounce extends Component {
         <Field name={name}>
           {(Fieldprops) => {
             const { form, meta } = Fieldprops;
+            //console.log(this.state);
             //console.log('mask debounce props', Fieldprops);
             return (
               <div>
@@ -65,7 +67,7 @@ class InputMaskDebounce extends Component {
                   className={classN}
                   defaultValue={defaultValue}
                 />
-                {meta.touched && (meta.error ) ? (
+                {meta.touched && (meta.error) ? (
                   <div className="error">{meta.error}</div>
                 ) : null}
               </div>

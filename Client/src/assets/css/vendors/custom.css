@@ -60,6 +60,11 @@
   text-align: right;
 }
 
+.success{
+  color: rgb(46, 136, 46);
+  text-align: right;
+}
+
 .labelDescription{
   color: black;
   font-weight: bold;
