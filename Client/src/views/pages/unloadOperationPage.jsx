@@ -151,7 +151,7 @@ const onSubmit = (values, props, staffId) => {
 
 const UnloadOperationPage = (props) => {
   //#region Selectors and State ---------------------------------------------
-
+  const tempstate = useSelector(state => state);
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);
@@ -163,6 +163,7 @@ const UnloadOperationPage = (props) => {
     truckNo: "",
     checkboxListSelected: []
   });
+  console.log(tempstate);
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
@@ -295,8 +296,8 @@ const UnloadOperationPage = (props) => {
   }
 
   const handleStatisticsButton = () => {
-    console.log('VoyageData.selectedVoyage',VoyageData.selectedVoyage)
-    props.history.push('/operationType/vessel/discharge/loadUnloadStatistics', { voyageInfo: VoyageData.selectedVoyage});
+    console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
+    props.history.push('/operationType/vessel/discharge/loadUnloadStatistics', { voyageInfo: VoyageData.selectedVoyage });
   }
 
   //#endregion ---------------------------------------------------------------
@@ -579,7 +580,7 @@ const UnloadOperationPage = (props) => {
                             <Button color="danger" type="button" className="mr-1" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
                               <CheckSquare size={16} color="#FFF" /> خسارت
                             </Button>
-                            <Button color="success" type="button" onClick={ handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
+                            <Button color="success" type="button" onClick={handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
                               <CheckSquare size={16} color="#FFF" /> آمار
                             </Button>
                           </div>

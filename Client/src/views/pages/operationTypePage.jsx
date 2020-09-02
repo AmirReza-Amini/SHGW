@@ -3,6 +3,7 @@ import { Row, Col } from "reactstrap";
 import MinimalStatisticsBG from "../../components/cards/minimalStatisticsBGCard";
 import operationGroups from "../../mockData/operationGroups";
 import _ from "lodash";
+
 class operationTypePage extends Component {
 
   state = { group: null };

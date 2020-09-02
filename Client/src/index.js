@@ -9,6 +9,7 @@ import { store } from "./redux/store";
 import ReduxToastr from 'react-redux-toastr'
 
 import "./index.scss";
+//import "antd/dist/antd.css";
 import Spinner from "./components/spinner/spinner";
 
 const LazyApp = lazy(() => import("./app/app"));

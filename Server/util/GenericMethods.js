@@ -24,6 +24,7 @@ softDelete = async (entity, req, res) => {
 }
 
 hardDelete = async (entity, req, res) => {
+    console.log(req.body)
     let doc = await entity.findByIdAndRemove(req.body._id);
     if (doc)
         SendResponse(req, res, doc);

@@ -3,7 +3,7 @@ module.exports = {
     db: {
         mongo: {
             main: {
-                name: 'Hand-Held-Gate-Way-DB',
+                name: 'SHGW',
                 address: 'localhost:27017'
             },
             log: {

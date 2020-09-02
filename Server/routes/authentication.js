@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user.model');
+const Users = require('../models/users.model');
 const Setting = require('../models/setting.model');
 const md5 = require('md5');
 const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting')
@@ -62,7 +62,7 @@ router.post('/login/verification', auth, async (req, res) => {
 
 router.put('/changePassword/:id',
   async (req, res) => {
-    let doc = await User.findOne({
+    let doc = await Users.findOne({
       _id: req.body._id,
       isDeleted: false
     }).populate('accessLevel');
