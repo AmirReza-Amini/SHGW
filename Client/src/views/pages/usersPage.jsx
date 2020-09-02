@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { toast } from 'react-toastify';
 import {
     Card,
-    CardTitle,
-    CardText,
     CardBody,
     Button,
     Form,
     FormGroup,
-    Input,
     Row,
     Col,
     Modal, ModalHeader, ModalBody, ModalFooter
@@ -16,9 +13,10 @@ import {
 import { connect } from "react-redux";
 import { getUsers, deleteUserInfo, editUserInfo } from '../../services/user';
 import { getPermissions } from '../../services/permission';
+import { getUserTypes } from '../../services/userType';
 
-import { User, X, Check, Edit2, Trash2 } from "react-feather";
-import { Table, Tag, Space, Checkbox } from 'antd';
+import { User, X, Check, Edit2, Trash2, DollarSign } from "react-feather";
+import { Table, Tag, Space, Checkbox, Switch, Radio } from 'antd';
 
 // const antdClass = require("antd/dist/antd.css");
 import antdClass from 'antd/dist/antd.css';
@@ -72,6 +70,11 @@ class UsersPage extends Component {
             title: 'User Type',
             dataIndex: 'userType',
             key: 'userType',
+            render: userType => (
+                <Tag color={userType === "Admin" ? "blue" : "volcano"}>{
+                    userType
+                }</Tag>
+            ),
             sorter: {
                 compare: (a, b) => a.userType.localeCompare(b.userType),
                 multiple: 1
@@ -83,7 +86,7 @@ class UsersPage extends Component {
             dataIndex: 'isActive',
             key: 'isActive',
             render: isActive => (
-                <Tag color={isActive ? "geekblue" : "red"}>{
+                <Tag color={isActive ? "cyan" : "red"}>{
                     isActive ? "Active" : "Inactive"
                 }</Tag>
             )
@@ -115,7 +118,7 @@ class UsersPage extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { ListOfPermissions: [], ListOfUsers: [], ListOfUsersForTable: [], selectedRowKeys: [], editModal: false, deleteModal: false, currentRow: {} };
+        this.state = { ListOfUserTypes: [], ListOfPermissions: [], ListOfUsers: [], ListOfUsersForTable: [], selectedRowKeys: [], editModal: false, deleteModal: false, currentRow: {} };
     }
 
     createDataModelForDataTabel(data) {
@@ -134,6 +137,11 @@ class UsersPage extends Component {
         getPermissions().then(res => {
             if (res.data.result) {
                 this.setState({ ListOfPermissions: res.data.data });
+            }
+        });
+        getUserTypes().then(res => {
+            if (res.data.result) {
+                this.setState({ ListOfUserTypes: res.data.data });
             }
         })
     }
@@ -285,6 +293,23 @@ class UsersPage extends Component {
 
     //#endregion ------------------------------------------------------------
 
+    handleUserPermissionGrantedChange = (switchValue, permissionName) => {
+        const currentRow = { ...this.state.currentRow };
+        const permissions = [...currentRow.permissions];
+        const indexOfP = _(permissions).findIndex(c => c.name == permissionName);
+        permissions[indexOfP] = { ...permissions[indexOfP] };
+        permissions[indexOfP].isGranted = switchValue;
+        currentRow.permissions = permissions;
+        this.setState({ currentRow: currentRow })
+        //console.log(switchValue);
+    }
+
+    handleUserTypeChange = ({ value }) => {
+        console.log('handleUserTypeChange', value);
+        const currentRow = { ...this.state.currentRow };
+        currentRow.userType = value;
+        this.setState({currentRow})
+    }
     render() {
         const { selectedRowKeys } = this.state.selectedRowKeys;
         console.log('render state', this.state);
@@ -368,13 +393,45 @@ class UsersPage extends Component {
                                     let defaultValue = permission.access.filter(c => c.value == true).map(item => item.key);
                                     //  console.log('access', access);
                                     return (
+
                                         <Col md="12" key={permission.name}>
-                                            <Tag color="geekblue" className="mr-1">{permission.name}</Tag>
-                                            <Checkbox.Group options={access} defaultValue={defaultValue} onChange={(checkedValues) => this.handleUserPermissionsChange(checkedValues, permission.name)} />
+                                            <Row>
+                                                <Col md="8">
+                                                    <Tag color="magenta">{permission.name + ' Permission'}</Tag>
+                                                </Col>
+                                                <Col md="4" style={{ justifyContent: "right", direction: "rtl", display: "flex" }} >
+                                                    {/* <span className="ml-1 pb-90">{permission.isGranted ? 'Granted' : 'Not Granted'}</span> */}
+                                                    <Switch
+                                                        name={permission.name}
+                                                        size="default"
+                                                        defaultChecked={permission.isGranted}
+                                                        checkedChildren={permission.isGranted ? "Granted" : ""}
+                                                        unCheckedChildren={!permission.isGranted ? "Not Granted" : ""}
+                                                        onChange={(value) => this.handleUserPermissionGrantedChange(value, permission.name)}
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col md="12" className="ml-1">
+                                                    <Checkbox.Group disabled={!permission.isGranted} options={access} defaultValue={defaultValue} onChange={(checkedValues) => this.handleUserPermissionsChange(checkedValues, permission.name)} />
+                                                </Col>
+                                            </Row>
+                                            <hr />
                                         </Col>
                                     )
                                 })
                             }
+                            <Col md="12">
+                                <Tag color="magenta">User Type</Tag>
+                                {this.state.ListOfUserTypes &&
+                                    <Radio.Group
+                                        options={this.state.ListOfUserTypes.map(c => c.name)}
+                                        value={this.state.currentRow.userType}
+                                        onChange={(e) => this.handleUserTypeChange(e.target)}
+                                    />
+                                }
+
+                            </Col>
                         </Row>
                     </ModalBody>
                     <ModalFooter>

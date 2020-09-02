@@ -3,6 +3,7 @@ module.exports = app => {
   require('./vessel')(app);
   app.use('/', require('./home'));
   app.use('/app/log', require('./log'));
+  app.use('/api/userType', require('./userType'));
   app.use('/api/user', require('./user'));
   app.use('/api/permission', require('./permission'));
   app.use('/api/auth', require('./authentication'));

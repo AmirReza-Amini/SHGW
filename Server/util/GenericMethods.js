@@ -50,7 +50,6 @@ getAll = async (entity, req, res, opt = {}, sendResponse = true) => {
         .skip(skip)
         .limit(take)
         .populate(populate);
-
     if (!sendResponse)
         return doc;
     SendResponse(req, res, doc, doc != null)
