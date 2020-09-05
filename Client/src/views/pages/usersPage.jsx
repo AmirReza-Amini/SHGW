@@ -1,27 +1,18 @@
 import React, { Component } from 'react';
-import { toast } from 'react-toastify';
-import {
-    Card,
-    CardBody,
-    Button,
-    Form,
-    FormGroup,
-    Row,
-    Col,
-    Modal, ModalHeader, ModalBody, ModalFooter
-} from "reactstrap";
 import { connect } from "react-redux";
-import { getUsers, deleteUserInfo, editUserInfo } from '../../services/user';
-import { getPermissions } from '../../services/permission';
-import { getUserTypes } from '../../services/userType';
-
-import { User, X, Check, Edit2, Trash2, DollarSign } from "react-feather";
+import { toast } from 'react-toastify';
+import { User, X, Check, Edit2, Trash2 } from "react-feather";
 import { Table, Tag, Space, Checkbox, Switch, Radio } from 'antd';
+import { Card, CardBody, Button, Form, FormGroup, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 // const antdClass = require("antd/dist/antd.css");
 import antdClass from 'antd/dist/antd.css';
 import antdClass2 from "../../assets/css/vendors/customAntdTable.css";
 import _ from 'lodash';
+
+import { getUsers, deleteUserInfo, editUserInfo } from '../../services/user';
+import { getPermissions } from '../../services/permission';
+import { getUserTypes } from '../../services/userType';
 
 
 const mapStateToProps = (state) => {
@@ -34,7 +25,7 @@ toast.configure({ bodyClassName: "customFont" });
 class UsersPage extends Component {
 
     //#region VARIABLES ----------------------------------------------------
-    
+
     Columns = [
         {
             title: 'First Name',
