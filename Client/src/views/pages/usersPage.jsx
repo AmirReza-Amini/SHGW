@@ -34,6 +34,7 @@ toast.configure({ bodyClassName: "customFont" });
 class UsersPage extends Component {
 
     //#region VARIABLES ----------------------------------------------------
+    
     Columns = [
         {
             title: 'First Name',
@@ -111,7 +112,10 @@ class UsersPage extends Component {
                 </Space>
             ),
         }
-    ]
+    ];
+
+    UserStatus = ["Active", "Inactive"];
+
     //#endregion -----------------------------------------------------------
 
     //#region INITIALIZE FUNCTIONS -----------------------------------------
@@ -206,6 +210,31 @@ class UsersPage extends Component {
         this.setState({ currentRow: currentRow });
     }
 
+    handleUserPermissionGrantedChange = (switchValue, permissionName) => {
+        const currentRow = { ...this.state.currentRow };
+        const permissions = [...currentRow.permissions];
+        const indexOfP = _(permissions).findIndex(c => c.name == permissionName);
+        permissions[indexOfP] = { ...permissions[indexOfP] };
+        permissions[indexOfP].isGranted = switchValue;
+        currentRow.permissions = permissions;
+        this.setState({ currentRow: currentRow })
+        //console.log(switchValue);
+    }
+
+    handleUserTypeChange = ({ value }) => {
+        console.log('handleUserTypeChange', value);
+        const currentRow = { ...this.state.currentRow };
+        currentRow.userType = value;
+        this.setState({ currentRow })
+    }
+
+    handleUserStatusChange = ({ value }) => {
+        console.log('handleUserStatusChange', value);
+        const currentRow = { ...this.state.currentRow };
+        currentRow.isActive = value === "Active" ? true : false;
+        this.setState({ currentRow })
+    }
+
     handleCancelEditUserInfo = () => {
         this.setState({ currentRow: {} });
         this.editToggle();
@@ -239,6 +268,7 @@ class UsersPage extends Component {
 
         })
     }
+
     //#endregion -----------------------------------------------------------------------------------------
 
     //#region DELETE USER INFO EVENTS ---------------------------------------
@@ -293,23 +323,6 @@ class UsersPage extends Component {
 
     //#endregion ------------------------------------------------------------
 
-    handleUserPermissionGrantedChange = (switchValue, permissionName) => {
-        const currentRow = { ...this.state.currentRow };
-        const permissions = [...currentRow.permissions];
-        const indexOfP = _(permissions).findIndex(c => c.name == permissionName);
-        permissions[indexOfP] = { ...permissions[indexOfP] };
-        permissions[indexOfP].isGranted = switchValue;
-        currentRow.permissions = permissions;
-        this.setState({ currentRow: currentRow })
-        //console.log(switchValue);
-    }
-
-    handleUserTypeChange = ({ value }) => {
-        console.log('handleUserTypeChange', value);
-        const currentRow = { ...this.state.currentRow };
-        currentRow.userType = value;
-        this.setState({currentRow})
-    }
     render() {
         const { selectedRowKeys } = this.state.selectedRowKeys;
         console.log('render state', this.state);
@@ -431,6 +444,16 @@ class UsersPage extends Component {
                                     />
                                 }
 
+                            </Col>
+                            <Col md="12" className="mt-1">
+                                <Tag color="magenta">User Status</Tag>
+                                {this.UserStatus &&
+                                    <Radio.Group
+                                        options={this.UserStatus}
+                                        value={this.state.currentRow.isActive ? "Active" : "Inactive"}
+                                        onChange={(e) => this.handleUserStatusChange(e.target)}
+                                    />
+                                }
                             </Col>
                         </Row>
                     </ModalBody>
