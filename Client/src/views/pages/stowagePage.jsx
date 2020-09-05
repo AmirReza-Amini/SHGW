@@ -18,7 +18,7 @@ import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAdd
 
 toast.configure({ bodyClassName: "customFont" });
 
-//#region Initial Values
+//#region INITIAL VALUES ---------------------------------------------------
 
 const initialValues = {
     selectVoyageNo: "",
@@ -36,9 +36,9 @@ const validationSchema = Yup.object({
     bayAddress: Yup.string().required("را وارد کنید Bay آدرس")
 });
 
-//#endregion
+//#endregion ---------------------------------------------------------------
 
-//#region Submit Formik ------------------------------------------------------
+//#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
     console.log("Form Submit Data", values);
@@ -98,10 +98,11 @@ const onSubmit = (values, props, staffId) => {
             return toast.error(error);
         });
 };
-//#endregion -----------------------------------------------------------------
+//#endregion ---------------------------------------------------------------
 
 const StowagePage = (props) => {
-    //#region Selectors and State ---------------------------------------------
+
+    //#region SELECTORS AND STATE ------------------------------------------
 
     const VoyageData = useSelector((state) => state.voyage);
     const EquipmentData = useSelector((state) => state.equipment);
@@ -120,9 +121,9 @@ const StowagePage = (props) => {
     const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch();
 
-    //#endregion
+    //#endregion -----------------------------------------------------------
 
-    //#region Initialize Functions --------------------------------------------
+    //#region INITIAL FUNCTIONS --------------------------------------------
 
     useEffect(() => {
         if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
@@ -152,9 +153,9 @@ const StowagePage = (props) => {
         }
     }, [VoyageData.error, VoyageData.error, OperatorData.error]);
 
-    //#endregion --------------------------------------------------------------
+    //#endregion -----------------------------------------------------------
 
-    //#region Event Handlers --------------------------------------------------
+    //#region EVENT HANDLRES -----------------------------------------------
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
@@ -215,9 +216,9 @@ const StowagePage = (props) => {
         setDisableSubmitButton(false);
         //console.log('bay address changed', value);
         const data = { loadingBayAddress: `0${value.split(" ").join("")}`, voyageId: VoyageData.selectedVoyage.value };
-        console.log('bay address changed', value, data);
+        //console.log('bay address changed', value, data);
         isOccoupiedBayAddressInVoyage(data).then(response => {
-            console.log('bay occ', response);
+            //console.log('bay occ', response);
             if (response.data.result) {
                 //return toast.error(response.data.data[0]);
                 setValidBayAddress({ message: response.data.data[0], result: false });
@@ -251,7 +252,7 @@ const StowagePage = (props) => {
         props.history.push("/operationType/vessel")
     }
 
-    //#endregion ---------------------------------------------------------------
+    //#endregion -----------------------------------------------------------
 
     return (
         <Fragment>

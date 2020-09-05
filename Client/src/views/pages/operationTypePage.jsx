@@ -6,12 +6,18 @@ import _ from "lodash";
 
 class operationTypePage extends Component {
 
+  //#region INITIAL AND STATE ----------------------------------------------
+
   state = { group: null };
 
   componentDidMount() {
     const group = _(operationGroups).value();
     this.setState({ group });
   }
+
+  //#endregion -------------------------------------------------------------
+
+  //#region EVENT HANDLRES -------------------------------------------------
 
   handleOperationType = (operationType) => {
     //console.log(this.props);
@@ -26,6 +32,9 @@ class operationTypePage extends Component {
         return this.props.history.push("/");
     }
   };
+
+  //#endregion -------------------------------------------------------------
+  
   render() {
     if (!this.state.group) return null;
     return (

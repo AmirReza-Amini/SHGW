@@ -25,7 +25,7 @@ import {
 
 toast.configure({ bodyClassName: "customFont" });
 
-//#region Initial Values
+//#region INITIAL VALUES ---------------------------------------------------
 
 const initialValues = {
   selectVoyageNo: "",
@@ -49,9 +49,9 @@ const validationSchema = Yup.object({
   truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
 
-//#endregion
+//#endregion ---------------------------------------------------------------
 
-//#region Submit Formik ------------------------------------------------------
+//#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
   //console.log("Form Submit Data", values);
@@ -147,10 +147,13 @@ const onSubmit = (values, props, staffId) => {
     }
   });
 };
-//#endregion -----------------------------------------------------------------
+
+//#endregion ---------------------------------------------------------------
 
 const UnloadOperationPage = (props) => {
-  //#region Selectors and State ---------------------------------------------
+
+  //#region SELECTORS AND STATE --------------------------------------------
+
   const tempstate = useSelector(state => state);
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
@@ -163,16 +166,16 @@ const UnloadOperationPage = (props) => {
     truckNo: "",
     checkboxListSelected: []
   });
-  console.log(tempstate);
+ // console.log(tempstate);
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
 
-  //#endregion
+  //#endregion -------------------------------------------------------------
 
-  //#region Initialize Functions --------------------------------------------
+  //#region INITIAL FUNCTIONS ----------------------------------------------
 
   useEffect(() => {
     if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
@@ -202,9 +205,9 @@ const UnloadOperationPage = (props) => {
     }
   }, [VoyageData.error, VoyageData.error, OperatorData.error]);
 
-  //#endregion --------------------------------------------------------------
+  //#endregion -------------------------------------------------------------
 
-  //#region Event Handlers --------------------------------------------------
+  //#region EVENT HANDLRES -------------------------------------------------
 
   const handleContainerNoChange = (value) => {
     const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
@@ -300,7 +303,7 @@ const UnloadOperationPage = (props) => {
     props.history.push('/operationType/vessel/discharge/loadUnloadStatistics', { voyageInfo: VoyageData.selectedVoyage });
   }
 
-  //#endregion ---------------------------------------------------------------
+  //#endregion -------------------------------------------------------------
 
   return (
     <Fragment>

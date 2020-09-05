@@ -109,7 +109,7 @@ class UsersPage extends Component {
 
     //#endregion -----------------------------------------------------------
 
-    //#region INITIALIZE FUNCTIONS -----------------------------------------
+    //#region INITIAL FUNCTIONS -----------------------------------------
 
     constructor(props) {
         super(props)

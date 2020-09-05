@@ -14,7 +14,7 @@ import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damag
 
 toast.configure({ bodyClassName: "customFont rtl" });
 
-//#region Initial Values
+//#region INITIAL VALUES ---------------------------------------------------
 
 const initialValues = {
   selectedFrontDamages: [],
@@ -28,7 +28,7 @@ const initialValues = {
 
 //#endregion
 
-//#region Submit Formik ------------------------------------------------------
+//#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props) => {
 
@@ -78,9 +78,11 @@ const onSubmit = (values, props) => {
   })
 };
 
+//#endregion ---------------------------------------------------------------
+
 const DamagePage = (props) => {
 
-  //#region Selectors and State ---------------------------------------------
+  //#region SELECTORS AND STATE --------------------------------------------
 
   const damageData = useSelector((state) => state.damage);
   const sidedDamages = damageData.damages.filter(c => c.isSided).map(c => c.value.trim());
@@ -101,9 +103,9 @@ const DamagePage = (props) => {
   //console.log('salam use state');
   const dispatch = useDispatch();
 
-  //#endregion
+  //#endregion -------------------------------------------------------------
 
-  //#region Initialize Functions --------------------------------------------
+  //#region INITIAL FUNCTIONS ----------------------------------------------
 
   useEffect(() => {
     //console.log('salam use effect')
@@ -145,9 +147,9 @@ const DamagePage = (props) => {
 
   }, []);
 
-  //#endregion --------------------------------------------------------------
+  //#endregion -------------------------------------------------------------
 
-  //#region Event Handlers --------------------------------------------------
+  //#region EVENT HANDLRES -------------------------------------------------
 
   const disableSubmitButton = (values) => {
     //console.log("disableSubmitButton", values, values.selectedBottomDamages.length);
@@ -164,7 +166,8 @@ const DamagePage = (props) => {
   const handleCancelButton = () => {
     props.history.replace(props.location.pathname.replace('/damage', ''));
   }
-  //#endregion ---------------------------------------------------------------
+  //#endregion -------------------------------------------------------------
+  
   return (
     <Fragment>
       <Row className="justify-content-md-center">

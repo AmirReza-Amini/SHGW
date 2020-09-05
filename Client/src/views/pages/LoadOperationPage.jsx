@@ -20,7 +20,7 @@ import { isPossibleSaveAct } from "../../services/act";
 
 toast.configure({ bodyClassName: "customFont" });
 
-//#region Initial Values
+//#region INITIAL VALUES ---------------------------------------------------
 
 const initialValues = {
     selectVoyageNo: "",
@@ -44,9 +44,9 @@ const validationSchema = Yup.object({
     truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
 });
 
-//#endregion
+//#endregion ---------------------------------------------------------------
 
-//#region Submit Formik ------------------------------------------------------
+//#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
     //console.log("Form Submit Data", values);
@@ -134,10 +134,11 @@ const onSubmit = (values, props, staffId) => {
         }
     });
 };
-//#endregion -----------------------------------------------------------------
+//#endregion ---------------------------------------------------------------
 
 const LoadOperationPage = (props) => {
-    //#region Selectors and State ---------------------------------------------
+
+    //#region SELECTORS AND STATE ------------------------------------------
 
     const VoyageData = useSelector((state) => state.voyage);
     const EquipmentData = useSelector((state) => state.equipment);
@@ -156,9 +157,9 @@ const LoadOperationPage = (props) => {
     const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch();
 
-    //#endregion
+    //#endregion -----------------------------------------------------------
 
-    //#region Initialize Functions --------------------------------------------
+    //#region INITAL FUNCTIONS ---------------------------------------------
 
     useEffect(() => {
         if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
@@ -189,9 +190,9 @@ const LoadOperationPage = (props) => {
         }
     }, [VoyageData.error, VoyageData.error, OperatorData.error]);
 
-    //#endregion --------------------------------------------------------------
+    //#endregion -----------------------------------------------------------
 
-    //#region Event Handlers --------------------------------------------------
+    //#region EVENT HANDLRES -----------------------------------------------
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
@@ -263,7 +264,7 @@ const LoadOperationPage = (props) => {
             props.history.push('/operationType/vessel/load/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
     }
 
-    //#endregion ---------------------------------------------------------------
+    //#endregion -----------------------------------------------------------
 
     return (
         <Fragment>

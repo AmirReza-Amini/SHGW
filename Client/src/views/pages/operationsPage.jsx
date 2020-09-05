@@ -6,6 +6,9 @@ import CustomNavigation from "../../components/common/customNavigation";
 import _ from "lodash";
 
 class operationsPage extends Component {
+
+  //#region INITIAL AND STATE ----------------------------------------------
+
   state = { group: null };
 
   constructor(props) {
@@ -21,6 +24,11 @@ class operationsPage extends Component {
     this.state.group = group;
   }
 
+  //#endregion -------------------------------------------------------------
+
+
+  //#region EVENT HANDLRES -------------------------------------------------
+
   handleOperation = (operationType) => {
     //console.log(operationType);
     switch (operationType) {
@@ -30,10 +38,13 @@ class operationsPage extends Component {
       case "Load":
         //console.log("operations", this.props.match.path);
         return this.props.history.push("/operationType/vessel/load");
-        case "Stowage":
-          return this.props.history.push("/operationType/vessel/stowage");
+      case "Stowage":
+        return this.props.history.push("/operationType/vessel/stowage");
     }
   };
+
+  //#endregion -------------------------------------------------------------
+  
   render() {
     if (!this.state.group) return null;
     return (
