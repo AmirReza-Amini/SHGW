@@ -54,7 +54,7 @@ class MainLayout extends PureComponent {
                   {context => (
                   
                      <div
-                        className={classnames("wrapper ", {
+                        className={classnames("wrapper bg-gallery-1", {
                            "menu-collapsed": context.foldedContent || this.state.width < 991,
                            "main-layout": !context.foldedContent,
                            [`${templateConfig.sidebar.size}`]: (this.state.sidebarSize === ''),
@@ -72,11 +72,11 @@ class MainLayout extends PureComponent {
                            handleSidebarSize={this.handleSidebarSize.bind(this)}
                            handleLayout={this.handleLayout.bind(this)}
                         />
-                        <Navbar
+                        {/* <Navbar
                            toggleSidebarMenu={this.toggleSidebarMenu.bind(this)}
                            sidebarState={this.state.sidebarState}
-                        />
-                        <main>{this.props.children}</main>
+                        /> */}
+                        <main className = "scroll">{this.props.children}</main>
                         <Footer />
                      </div>
                   )}

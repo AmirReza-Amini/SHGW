@@ -93,12 +93,15 @@
   transition: background 0.3s;
 }
 
-.customOpacity{
-  /* background-color: transparent; */
-  /* opacity: 0.8; */
+.bg-transparency{
+  background-color:rgba(206,206,206, .3)
 }
 
-
+.scroll{
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 1000px;
+}
 
 
 

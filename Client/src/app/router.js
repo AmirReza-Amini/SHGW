@@ -6,6 +6,7 @@ import Spinner from "../components/spinner/spinner";
 // import internal(own) modules
 import MainLayoutRoutes from "../layouts/routes/mainRoutes";
 import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
+import LoginLayoutRoute from "../layouts/routes/loginRoutes";
 
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
@@ -48,13 +49,13 @@ class Router extends Component {
               </Suspense>
             )}
           />
-          <MainLayoutRoutes
+          <LoginLayoutRoute
             exact
             path="/login"
             render={(matchprops) => (
-              <Suspense fallback={<Spinner />}>
+              // <Suspense fallback={<Spinner />}>
                 <LazyLoginPage {...matchprops} />
-              </Suspense>
+              // </Suspense>
             )}
           />
           <MainLayoutRoutes

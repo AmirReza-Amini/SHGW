@@ -16,7 +16,7 @@ module.exports = {
             config: {
                 user: 'handheld',
                 password: 'H@nd!#($',
-                server: 'localhost',
+                server: '192.168.6.42',
                 database: 'Shrct',
                 pool: {
                     max: 10,

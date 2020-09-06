@@ -12,6 +12,7 @@ module.exports = app => {
   app.use('/api/operator', require('./operator'));
   app.use('/api/damage', require('./damage'));
   app.use('/api/act', require('./act'));
+  app.use('/api/area', require('./area'));
 
   app.use(errorLoger);
 };

@@ -1,148 +1,181 @@
-// login ..................................................................
-import React, { Component } from "react";
-import Select from "react-select";
-import { NavLink } from "react-router-dom";
-import {
-  Row,
-  Col,
-  Input,
-  Form,
-  FormGroup,
-  Button,
-  Label,
-  Card,
-  CardBody,
-  CardFooter,
-} from "reactstrap";
+import React, { Fragment, useState } from "react";
+import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
+import { X, CheckSquare } from "react-feather";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import _ from "lodash";
 
-const colourOptions = [
-  { value: "0", label: "SPMCO" },
-  { value: "1", label: "SINA" },
-];
+import FormikControl from "../../components/common/formik/FormikControl";
 
-class loginPage extends Component {
-  state = {
-    isChecked: true,
+import { getAreas } from "../../services/area";
+
+
+toast.configure({ bodyClassName: "customFont" });
+
+//#region INITIAL VALUES ---------------------------------------------------
+
+const initialValues = {
+  username: "",
+  password: "",
+ selectedArea: {}
+};
+
+const validationSchema = Yup.object({
+  username: Yup.string().required("!نام کاربری را وارد کنید"),
+  password: Yup.string().required("!رمز عبور را وارد کنید"),
+  //selectedArea: Yup.string().required("محوطه عملیات را انتخاب کنید")
+});
+
+//#endregion ---------------------------------------------------------------
+
+//#region SUBMIT FORMIK ----------------------------------------------------
+
+const onSubmit = (values) => {
+  console.log("Form Submit Data", values);
+  let parameters = {
+    username: values.username,
+    password: values.password,
+   selectedArea: values.selectedArea
   };
-  handleChecked = (e) => {
-    this.setState((prevState) => ({
-      isChecked: !prevState.isChecked,
-    }));
+
+  // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
+};
+//#endregion ---------------------------------------------------------------
+
+const LoginPage = (props) => {
+
+  //#region STATE ------------------------------------------
+
+  const [state, setState] = useState({
+   areaList: []
+  });
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+
+  //#endregion -----------------------------------------------------------
+
+  //#region INITAL FUNCTIONS ---------------------------------------------
+
+  useEffect(() => {
+    getAreas().then(res => {
+      if (res.data.result) {
+        setState({ areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } }) })
+      }
+    })
+    console.log("salam");
+  }, []);
+
+  useEffect(() => {
+    let errorMessage = "";
+  }, []);
+
+  //#endregion -----------------------------------------------------------
+
+  //#region EVENT HANDLRES -----------------------------------------------
+
+  const handleAreaSelectedChanged = (value) => {
+    //console.log("handleVoyageSelectedChanged", value);
+    //dispatch(voyageSelectedChanged(value));
   };
 
-  render() {
-    return (
-      <div className="container">
-        <Row className="full-height-vh">
-          <Col
-            xs="12"
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Card className="gradient-indigo-blue text-center width-400">
-              <CardBody>
-                <h2 className="white py-4">
-                  شرکت توسعه خدمات دریایی و بندری سینا
-                </h2>
-                <Form className="pt-2">
-                  <FormGroup>
-                    <Col md="12">
-                      <Select
-                        className="basic-single rtl"
-                        classNamePrefix="select"
-                        name="color"
-                        options={colourOptions}
-                        placeholder="انتخاب محوطه عملیات"
-                      />
-                    </Col>
-                  </FormGroup>
+  //#endregion -----------------------------------------------------------
 
-                  <FormGroup>
-                    <Col md="12">
-                      <Input
-                        type="email"
-                        className="form-control rtl"
-                        name="inputEmail"
-                        id="inputEmail"
-                        placeholder="نام کاربری"
-                        required
-                      />
-                    </Col>
-                  </FormGroup>
+  return (
 
-                  <FormGroup>
-                    <Col md="12">
-                      <Input
-                        type="password"
-                        className="form-control rtl"
-                        name="inputPass"
-                        id="inputPass"
-                        placeholder="رمز عبور"
-                        required
-                      />
-                    </Col>
-                  </FormGroup>
 
-                  <FormGroup>
-                    <Row>
-                      <Col md="12">
-                        <div className="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0 ml-3">
-                          <Input
-                            type="checkbox"
-                            className="custom-control-input"
-                            checked={this.state.isChecked}
-                            onChange={this.handleChecked}
-                            id="rememberme"
-                          />
-                          <Label
-                            className="custom-control-label float-right white"
-                            for="rememberme"
-                          >
-                            <h6>مرا به خاطر بسپار</h6>
-                          </Label>
-                        </div>
-                      </Col>
-                    </Row>
-                  </FormGroup>
-                  <FormGroup>
-                    <Col md="12">
-                      <Button
-                        type="submit"
-                        color="danger"
-                        block
-                        className="btn-green btn-raised"
-                      >
-                        ثبت
-                      </Button>
-                      <Button
-                        type="button"
-                        color="secondary"
-                        block
-                        className="btn-raised"
-                      >
-                        لغو
-                      </Button>
-                    </Col>
-                  </FormGroup>
-                </Form>
-              </CardBody>
-              <CardFooter>
-                <div className="float-right">
-                  <NavLink to="/pages/forgot-password" className="text-white">
-                    فراموشی رمز عبور ؟
-                  </NavLink>
-                </div>
-                {/* <div className="float-right">
-                           <NavLink to="/pages/register" className="text-white">
-                              Register Now
-                           </NavLink>
-                        </div> */}
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-    );
-  }
-}
+    <div className="container">
+      <Row className="full-height-vh">
+        <Col
+          xs="12"
+          className="d-flex align-items-center justify-content-center"
+        >
+          <Card className=" text-center width-400 bg-transparency" >
+            <CardBody>
+              <h2 className="white py-4">
+                شرکت توسعه خدمات دریایی و بندری سینا
+                  </h2>
+              <div className="pt-2">
 
-export default loginPage;
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                  onSubmit={(values) => {
+                    console.log("values", values);
+                    onSubmit(values);
+                  }}
+                  validateOnBlur={true}
+                 // validateOnMount = {true}
+                  enableReinitialize
+                >
+                  {(formik) => {
+                    console.log("Formik props values", formik);
+
+                    return (
+                      <React.Fragment>
+                        <Row>
+                          <Col md="12">
+                            <FormikControl
+                              control="customSelect"
+                              name="selectedArea"
+                              selectedValue={
+                                state.selectedArea
+                              }
+                              options={state.areaList}
+                              placeholder="انتخاب محوطه"
+                              onSelectedChanged={
+                                handleAreaSelectedChanged
+                              }
+                            />
+
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col md="12">
+                            <FormikControl
+                              control="input"
+                              type="text"
+                              name="username"
+                              id="username"
+                              className="rtl"
+                              placeholder="نام کاربری"
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md="12">
+                            <FormikControl
+                              control="input"
+                              type="text"
+                              id="password"
+                              name="password"
+                              className="rtl"
+                              placeholder="کلمه عبور"
+                            />
+                          </Col>
+                        </Row>
+                        <div className="form-actions center">
+
+                            <Button color="primary" type="submit" className="mr-1" disabled={!formik.isValid}>
+                              <CheckSquare size={16} color="#FFF" /> ورود
+                            </Button>
+
+                          </div>
+                      </React.Fragment>
+                    );
+                  }}
+                </Formik>
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+
+
+  );
+};
+
+export default LoginPage;

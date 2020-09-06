@@ -3,7 +3,7 @@ import _ from "lodash";
 import { Breadcrumb, BreadcrumbItem } from "reactstrap";
 import { NavLink } from "react-router-dom";
 
-const CustomNavigation = ({ path }) => {
+const CustomNavigation = ({ path ,className }) => {
   if (path === null || path === "") {
     return null;
   }
@@ -16,13 +16,14 @@ const CustomNavigation = ({ path }) => {
     .split("/")
     .value()
     .filter((c) => c !== "");
+
   //console.log(items, routes);
   return (
-      <Breadcrumb tag="nav">
+      <Breadcrumb tag="nav"  className ="bg-transparency">
         {items.map((item, index) => {
           if (items.length - 1 === index) {
             return (
-              <BreadcrumbItem active key={item}>
+              <BreadcrumbItem active key={item} >
                 {item}
               </BreadcrumbItem>
             );
@@ -37,7 +38,7 @@ const CustomNavigation = ({ path }) => {
             });
             //console.log(link);
             return (
-              <BreadcrumbItem key={item}>
+              <BreadcrumbItem key={item} >
                 <NavLink to={link}>{item}</NavLink>
               </BreadcrumbItem>
             );

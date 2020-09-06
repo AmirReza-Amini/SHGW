@@ -9,11 +9,11 @@ const sql = require('mssql');
 const db = sworm.db(setting.db.sqlConfig);
 const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
 pool.connect(error => {
-    console.log('error sql connection', error);
+    console.log('error sql connection damage', error);
 });
 
 pool.on('error', err => {
-    console.log('error sql on', err);
+    console.log('error sql on damage', err);
 })
 
 router.get('/fetchDamageDefinition', async (req, res) => {
