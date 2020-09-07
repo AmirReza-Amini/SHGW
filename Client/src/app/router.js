@@ -1,12 +1,13 @@
 // import external modules
 import React, { Component, Suspense, lazy } from "react";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import Spinner from "../components/spinner/spinner";
 import { connect } from "react-redux";
 // import internal(own) modules
 import MainLayoutRoutes from "../layouts/routes/mainRoutes";
+import LoginLayoutRoute from "../layouts/routes/loginRoutes"
 import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
-
+import * as auth from "../services/authService"
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
 const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
@@ -18,13 +19,21 @@ const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
 
 // Full Layout
-const LazyHome = lazy(() => import("../views/dashboard/ecommerceDashboard"));
+const LazyHome = lazy(() => import("../views/pages/operationTypePage"));
 
 // Error Pages
 const LazyErrorPage = lazy(() => import("../views/pages/error"));
 
 class Router extends Component {
+  state = {};
+  componentWillMount()
+  {
+    const user = auth.getCurrentUser();
+    
+    this.setState({ user });
+  }
   render() {
+    console.log('from render')
     return (
       // Set the directory path if you are deplying in sub-folder
       <BrowserRouter basename="/">
@@ -33,13 +42,22 @@ class Router extends Component {
           <MainLayoutRoutes
             exact
             path="/"
-            render={(matchprops) => (
-              <Suspense fallback={<Spinner />}>
-                <LazyHome {...matchprops} />
-              </Suspense>
-            )}
+            render={(matchprops) => {
+              if (this.state.user) {
+               return (<Suspense fallback={<Spinner />}>
+                  <LazyHome {...matchprops} user = {this.state.user} />
+                </Suspense>)
+
+              }
+              else { 
+
+                 return(<Redirect to='/login'/>)
+              }
+            }
+            }
+
           />
-           <MainLayoutRoutes
+          <MainLayoutRoutes
             exact
             path="/users"
             render={(matchprops) => (
@@ -48,7 +66,7 @@ class Router extends Component {
               </Suspense>
             )}
           />
-          <MainLayoutRoutes
+          <LoginLayoutRoute
             exact
             path="/login"
             render={(matchprops) => (
@@ -180,7 +198,7 @@ class Router extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    user:state.user
+    user: state.user
   }
 }
 
@@ -191,4 +209,4 @@ const mapDispatchToProps = dispatch => {
   };
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Router);
+export default connect(mapStateToProps, mapDispatchToProps)(Router);
