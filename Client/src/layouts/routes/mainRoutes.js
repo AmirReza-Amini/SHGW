@@ -6,6 +6,7 @@ import { Route } from "react-router-dom";
 import MainLayout from "../mainLayout";
 
 const MainLayoutRoute = ({ render, ...rest }) => {
+   console.log('kkkkk',render);
    return (
       <Route
          {...rest}

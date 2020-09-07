@@ -27,8 +27,9 @@ module.exports = {
         }
     },
     jwtExpireTime: 3000,
-    tokenHashKey: 'YOUR_TOKEN_HASH_KEY',
-    jwtSecret: "YOUR_JWT_SECRET_KEY"
+    tokenHashKey: '8c10%$#f9be0b053082',
+    requiresAuth: true,
+    jwtSecret: "9057c4f0-b57e-4320-9a7e-c028bc3e54cb"
 
 
 }

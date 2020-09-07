@@ -6,7 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // import internal(own) modules
 import Router from "./router";
+import { BrowserRouter } from "react-router-dom";
 
-const App = props => <Router />;
+const App = props => <Router />
+ 
 
 export default App;

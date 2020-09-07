@@ -7,50 +7,34 @@ const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting')
 const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 const auth = require('../middleware/auth')
-const { SendResponse, ConnectionString } = require('../util/utility')
-const r = require('redis')
+const { SendResponse } = require('../util/utility')
+const r = require('redis');
+const { MD5 } = require('crypto-js');
 const redis = r.createClient();
 
 
-router.post('/login', async (req, res) => {
+router.post('/', async (req, res) => {
 
-  let cnnStr = (await Setting
-    .findOne()
-    .select(`cnnStrList.${req.body.area.toUpperCase()}`))
-    .cnnStrList[req.body.area.toUpperCase()]
 
-  if (!cnnStr)
-    return await SendResponse(req, res, 'Invalid Area')
-  let str = ConnectionString.Build(cnnStr);
-  redis.set(req.body.username, str);
-  let s = await ConnectionString.Get(req.body.username);
 
-  SendResponse(req, res, s);
+  let user = await Users.findOne({
+    userCode: req.body.username,
+    password: md5(req.body.password),
+    area:req.body.area
+  })
+  console.log('from server ', md5(req.body.password))
+  if (user) {
+    if (!user.isActive)
+      SendResponse(req, res, { error: 'اکانت مورد نظر غیر فعال می باشد' }, false);
+    else {
+      
 
-  // let doc = await User.findOne({
-  //   username: req.body.username,
-  //   password: md5(req.body.password).toUpperCase(),
-  //   isDeleted: false
-  // }).populate('accessLevel');
-  // if (doc) {
-  //   if (!doc.active)
-  //     SendResponse(req, res, { error: 'اکانت مورد نظر غیر فعال می باشد' }, false);
-  //   else {
-  //     doc.logins.push(new Date());
-  //     await doc.save();
-  //     const token = jwt.sign({
-  //       id: doc._id,
-  //       lastName: doc.lastName,
-  //       firstName: doc.firstName,
-  //       accessLevel: doc.accessLevel,
-
-  //       contactInfo: doc.contactInfo
-  //     }, jwtSecret, { expiresIn: jwtExpireTime });
-
-  //     SendResponse(req, res, { token: AES.encrypt(token, tokenHashKey).toString(), id: doc._id, tt: token });
-  //   }
-  // } else
-  //   SendResponse(req, res, { error: 'کاربری با مشخصات وارد شده یافت نشد' }, false);
+      const token = user.generateAuthToken();
+      console.log('token',token); 
+      SendResponse(req, res, { token: token});
+    }
+  } else
+    SendResponse(req, res, { error: 'کاربری با مشخصات وارد شده یافت نشد' }, false);
 });
 router.post('/login/verification', auth, async (req, res) => {
   let token = req.body.token;
@@ -60,29 +44,29 @@ router.post('/login/verification', auth, async (req, res) => {
   }
 });
 
-router.put('/changePassword/:id',
-  async (req, res) => {
-    let doc = await Users.findOne({
-      _id: req.body._id,
-      isDeleted: false
-    }).populate('accessLevel');
-    await Log({ root: 'User.js', message: { title: `Password Changed for ${req.body._id}` } })
+// router.put('/changePassword/:id',
+//   async (req, res) => {
+//     let doc = await Users.findOne({
+//       _id: req.body._id,
+//       isDeleted: false
+//     }).populate('accessLevel');
+//     await Log({ root: 'User.js', message: { title: `Password Changed for ${req.body._id}` } })
 
-    if (doc.password !== md5(req.body.oldPassword).toUpperCase()) {
-      SendResponse(req, res, { error: 'رمز عبور فعلی صحیح نمیباشد' }, false)
-    } else {
-      doc.password = md5(req.body.password).toUpperCase()
-      await doc.save();
+//     if (doc.password !== md5(req.body.oldPassword).toUpperCase()) {
+//       SendResponse(req, res, { error: 'رمز عبور فعلی صحیح نمیباشد' }, false)
+//     } else {
+//       doc.password = md5(req.body.password).toUpperCase()
+//       await doc.save();
 
-      const token = jwt.sign({
-        id: doc._id,
-        lastName: doc.lastName,
-        firstName: doc.firstName,
-        accessLevel: doc.accessLevel,
-        contactInfo: doc.contactInfo
-      }, jwtSecret, { expiresIn: '30s' });
-      SendResponse(req, res, { token: AES.encrypt(token, tokenHashKey).toString() });
-    }
-  })
+//       const token = jwt.sign({
+//         id: doc._id,
+//         lastName: doc.lastName,
+//         firstName: doc.firstName,
+//         accessLevel: doc.accessLevel,
+//         contactInfo: doc.contactInfo
+//       }, jwtSecret, { expiresIn: '30s' });
+//       SendResponse(req, res, { token: AES.encrypt(token, tokenHashKey).toString() });
+//     }
+//   })
 
 module.exports = router;
