@@ -10,6 +10,7 @@ const db = sworm.db(setting.db.sqlConfig);
 router.get('/:count?', async (req, res) => {
     let count = req.params.count || 10;
     var result = await db.query(queries.VOYAGE.loadLastVoyages, { count: count });
+    console.log('from voyage', result);
     SendResponse(req, res, result, (result && result.length > 0))
 });
 

@@ -43,12 +43,11 @@ const onSubmit = async (values, props) => {
   try {
     await auth.login(_.pick(parameters, ["username", "password", "area"]));
     const { state } = props.location;
-    console.log('props',props);
     window.location = state ? state.from.pathname : "/";
 
   } catch (err) {
     if (err.response && err.response.status === 400) {
-      toast.error(err.response.data)
+      toast.error(err.response.data.data[0])
     }
   }
 };

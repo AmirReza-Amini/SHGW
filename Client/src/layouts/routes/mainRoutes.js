@@ -6,14 +6,15 @@ import auth from "../../services/authService";
 // import internal(own) modules
 import MainLayout from "../mainLayout";
 
-const MainLayoutRoute = ({render, ...rest }) => {
-
+const MainLayoutRoute = ({path ,render, ...rest }) => {
+console.log('from mainrout', {...rest},path)
    return (
    
       <Route
          {...rest}
+         path = {path}
          render={matchProps => {
-            if (!auth.getCurrentUser()) {
+            if (!auth.getCurrentUser() || path === "/operationType/vessel/discharge") {
              return ( <Redirect
               to={{
                 pathname: "/login",

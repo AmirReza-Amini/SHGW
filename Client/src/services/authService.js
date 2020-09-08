@@ -10,6 +10,7 @@ http.setJwt(getJwt());
 
 export async function login(user) {
   const { data } = await http.post(apiEndpoint, user);
+  console.log("from authserv" ,data)
   const jwt = data.data[0].token;
   localStorage.setItem(tokenKey, jwt);
   

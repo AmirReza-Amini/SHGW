@@ -17,6 +17,7 @@ const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
 const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnloadStatisticsPage"));
 const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
+const LazyLogout = lazy(() => import("../views/pages/logoutPage"));
 
 // Full Layout
 const LazyHome = lazy(() => import("../views/pages/operationTypePage"));
@@ -171,6 +172,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyOperationTypePage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path="/logout"
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyLogout {...matchprops} />
               </Suspense>
             )}
           />

@@ -49,53 +49,54 @@ class SideMenuHelper extends PureComponent {
                {props.badgeText}
             </Badge>
          ) : (
-            ""
-         )}
+               ""
+            )}
       </li>
    );
 
-   static MenuMultiItems = props => (
-      <Fragment>
-         <li className={`has-sub nav-item  ${props.selected === true && props.collapsedSidebar === false ? `open` : ""}`}>
-             {/* eslint-disable-next-line */}
-            <a
-               onClick={() => {
-                  props.toggle(props.index);
-               }}
-            >
-               <i className="menu-icon">{props.Icon ? props.Icon : null}</i>
-               <span className="menu-item-text d-inline"> {props.name}</span>
-               {props.badgeText ? (
-                  <Badge className="menu-item-badge menu-multiple-item-badge" color={props.badgeColor} pill>
-                     {props.badgeText}
-                  </Badge>
-               ) : (
-                  ""
-               )}
+   static MenuMultiItems = props => {
+      return ( !props.hidden &&
+         <Fragment>
+            <li className={`has-sub nav-item  ${props.selected === true && props.collapsedSidebar === false ? `open` : ""}`}>
+               {/* eslint-disable-next-line */}
+               <a
+                  onClick={() => {
+                     props.toggle(props.index);
+                  }}
+               >
+                  <i className="menu-icon">{props.Icon ? props.Icon : null}</i>
+                  <span className="menu-item-text d-inline"> {props.name}</span>
+                  {props.badgeText ? (
+                     <Badge className="menu-item-badge menu-multiple-item-badge" color={props.badgeColor} pill>
+                        {props.badgeText}
+                     </Badge>
+                  ) : (
+                        ""
+                     )}
 
-               <span className="item-arrow">{props.ArrowRight}</span>
-            </a>
-            
-            <ul>
-               {Children.map(props.children, (child, index) => {
-                  if (child.props.children.type === undefined) {
-                     return <li>{child}</li>;
-                  } else {
-                     return (
-                        <li
-                           onClick={() => {
-                              props.handleClick();
-                           }}
-                        >
-                           {child}
-                        </li>
-                     );
-                  }
-               })}
-            </ul>
-         </li>
-      </Fragment>
-   );
+                  <span className="item-arrow">{props.ArrowRight}</span>
+               </a>
+
+               <ul>
+                  {Children.map(props.children, (child, index) => {
+                     if (child.props.children.type === undefined) {
+                        return <li>{child}</li>;
+                     } else {
+                        return (
+                           <li
+                              onClick={() => {
+                                 props.handleClick();
+                              }}
+                           >
+                              {child}
+                           </li>
+                        );
+                     }
+                  })}
+               </ul>
+            </li>
+         </Fragment>);
+   };
 
    render() {
       const Nodes = Children.map(this.props.children, (child, index) => {

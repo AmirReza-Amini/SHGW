@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
   console.log('from server ', md5(req.body.password))
   if (user) {
     if (!user.isActive)
-      SendResponse(req, res, { error: 'اکانت مورد نظر غیر فعال می باشد' }, false);
+    //return res.status(400).send('اکانت مورد نظر غیر فعال می باشد');
+      SendResponse(req, res,  'اکانت مورد نظر غیر فعال می باشد' , false,400);
     else {
       
 
