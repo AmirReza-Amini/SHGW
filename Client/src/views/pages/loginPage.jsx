@@ -43,12 +43,14 @@ const onSubmit = async (values, props) => {
   try {
     await auth.login(_.pick(parameters, ["username", "password", "area"]));
     const { state } = props.location;
-    window.location = state ? state.from.pathname : "/";
+    console.log(props)
+    window.location = state && state.from ? state.from.pathname : "/";
 
   } catch (err) {
-    if (err.response && err.response.status === 400) {
+  // if (err.response && err.response.status === 400)
+     
       toast.error(err.response.data.data[0])
-    }
+    
   }
 };
 //#endregion ---------------------------------------------------------------
@@ -73,7 +75,11 @@ const LoginPage = (props) => {
         setState({ areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } }) })
       }
     })
-    console.log("salam");
+    const { message } = props.location.state;
+    if (props.location.state && message && message.length > 0) {
+      toast.error(message);
+    }
+    console.log('from login effevt',props)
   }, []);
 
   useEffect(() => {

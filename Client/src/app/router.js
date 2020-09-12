@@ -8,6 +8,8 @@ import MainLayoutRoutes from "../layouts/routes/mainRoutes";
 import LoginLayoutRoute from "../layouts/routes/loginRoutes"
 import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
 import * as auth from "../services/authService"
+import urls from '../urls.json'
+import usersPage from "../views/pages/usersPage";
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
 const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
@@ -18,58 +20,56 @@ const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnlo
 const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
 const LazyLogout = lazy(() => import("../views/pages/logoutPage"));
+const LazyMaintainance = lazy(() => import("../views/pages/maintainance"));
 
 // Full Layout
-const LazyHome = lazy(() => import("../views/pages/operationTypePage"));
+const LazyHome = lazy(() => import("../views/dashboard/ecommerceDashboard"));
 
 // Error Pages
 const LazyErrorPage = lazy(() => import("../views/pages/error"));
 
 class Router extends Component {
   state = {};
-  componentWillMount()
-  {
-    const user = auth.getCurrentUser();
-    
-    this.setState({ user });
-  }
+  // componentWillMount() {
+  //   const user = auth.getCurrentUser();
+
+  //   this.setState({ user });
+  // }
   render() {
-    console.log('from render')
+    //console.log('from render')
     return (
       // Set the directory path if you are deplying in sub-folder
       <BrowserRouter basename="/">
         <Switch>
-          {/* Dashboard Views */}
           <MainLayoutRoutes
             exact
-            path="/"
-            render={(matchprops) => {
-              if (this.state.user) {
-               return (<Suspense fallback={<Spinner />}>
-                  <LazyHome {...matchprops} user = {this.state.user} />
-                </Suspense>)
-
-              }
-              else { 
-
-                 return(<Redirect to='/login'/>)
-              }
-            }
-            }
-
+            path={urls.Home}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyHome {...matchprops} />
+              </Suspense>)}
           />
           <MainLayoutRoutes
             exact
-            path="/users"
+            path={urls.Users}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyUsersPage {...matchprops} />
               </Suspense>
             )}
           />
+          <MainLayoutRoutes
+            exact
+            path={urls.Dashboard}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyMaintainance {...matchprops} />
+              </Suspense>
+            )}
+          />
           <LoginLayoutRoute
             exact
-            path="/login"
+            path={urls.Login}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoginPage {...matchprops} />
@@ -78,7 +78,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/gate"
+            path={urls.Gate}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyOperationsPage {...matchprops} operations="Gate" />
@@ -87,7 +87,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/discharge/loadUnloadStatistics"
+            path={urls.DischargeStatistics}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoadUnloadPage {...matchprops} />
@@ -96,7 +96,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/discharge/damage"
+            path={urls.DischargeDamage}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyDamagePage {...matchprops} />
@@ -105,7 +105,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/discharge"
+            path={urls.Discharge}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyUnloadOperationPage {...matchprops} />
@@ -114,7 +114,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/load/loadUnloadStatistics"
+            path={urls.LoadStatistics}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoadUnloadPage {...matchprops} />
@@ -123,7 +123,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/load/damage"
+            path={urls.LoadDamage}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyDamagePage {...matchprops} />
@@ -132,7 +132,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/load"
+            path={urls.Load}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoadOperationsPage {...matchprops} />
@@ -141,7 +141,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel/stowage"
+            path={urls.Stowage}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyStowagePage {...matchprops} />
@@ -150,7 +150,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/vessel"
+            path={urls.Vessel}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyOperationsPage {...matchprops} operations="Vessel" />
@@ -159,7 +159,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType/cy"
+            path={urls.CY}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyOperationsPage {...matchprops} operations="CY" />
@@ -168,7 +168,7 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/operationType"
+            path={urls.OperationType}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyOperationTypePage {...matchprops} />
@@ -177,23 +177,13 @@ class Router extends Component {
           />
           <MainLayoutRoutes
             exact
-            path="/logout"
+            path={urls.Logout}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLogout {...matchprops} />
               </Suspense>
             )}
           />
-          <ErrorLayoutRoute
-            exact
-            path="/pages/error"
-            render={(matchprops) => (
-              <Suspense fallback={<Spinner />}>
-                <LazyErrorPage {...matchprops} />
-              </Suspense>
-            )}
-          />
-
           <ErrorLayoutRoute
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>

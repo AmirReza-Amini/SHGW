@@ -35,27 +35,28 @@ class SideMenuHelper extends PureComponent {
       this.props.toggleSidebarMenu("close");
    };
 
-   static MenuSingleItem = props => (
-      <li
-         className="nav-item"
-         onClick={() => {
-            props.closeOther(props.index);
-            props.handleClick();
-         }}
-      >
-         {props.children}
-         {props.badgeText ? (
-            <Badge className="menu-item-badge menu-single-item-badge" color={props.badgeColor} pill>
-               {props.badgeText}
-            </Badge>
-         ) : (
-               ""
-            )}
-      </li>
-   );
+   static MenuSingleItem = props => {
+      return (!props.hidden &&
+         <li
+            className="nav-item"
+            onClick={() => {
+               props.closeOther(props.index);
+               props.handleClick();
+            }}
+         >
+            {props.children}
+            {props.badgeText ? (
+               <Badge className="menu-item-badge menu-single-item-badge" color={props.badgeColor} pill>
+                  {props.badgeText}
+               </Badge>
+            ) : (
+                  ""
+               )}
+         </li>)
+   };
 
    static MenuMultiItems = props => {
-      return ( !props.hidden &&
+      return (!props.hidden &&
          <Fragment>
             <li className={`has-sub nav-item  ${props.selected === true && props.collapsedSidebar === false ? `open` : ""}`}>
                {/* eslint-disable-next-line */}

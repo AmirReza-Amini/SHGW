@@ -22,7 +22,7 @@ router.route('/')
       await Insert(Users, req, res);
     }
   })
-  .put([auth,admin],async (req, res) => { await Update(Users, req, res) })
+  .put([auth, admin], async (req, res) => { await Update(Users, req, res) })
 
 router.route('/:id')
   .get(async (req, res) => {

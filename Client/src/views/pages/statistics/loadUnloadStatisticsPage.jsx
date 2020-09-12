@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from "react";
 import socketIOClient from "socket.io-client";
 import { Row, Col, Card, CardTitle, CardHeader, CardBody } from "reactstrap";
-import { Doughnut ,Pie} from "react-chartjs-2";
+import { Doughnut, Pie } from "react-chartjs-2";
 import 'chart.piecelabel.js';
+import config from '../../../config.json'
 
 import { getLoadUnloadStatisticsByVoyageId } from "../../../services/voyageService";
 import _ from "lodash";
+import { toast } from "react-toastify";
+import CustomNavigation from "../../../components/common/customNavigation";
 
 var socket;
 class loadUnloadStatisticsPage extends Component {
@@ -14,17 +17,17 @@ class loadUnloadStatisticsPage extends Component {
         super(props);
         this.state = {
             label: props.location.state !== undefined ? props.location.state.voyageInfo.label : "---",
-            value: props.location.state !== undefined ? props.location.state.voyageInfo.value : "---", chartData: {}
+            value: props.location.state !== undefined ? props.location.state.voyageInfo.value : 0, chartData: {}
         }
-        console.log('state const', this.state);
-        socket = socketIOClient("http://192.168.6.42:4000");
+       // console.log('state const', this.state);
+        socket = socketIOClient(config.socketAddress);
     }
 
     getData = foodItems => {
         //console.log(foodItems);
         //let temp = { ...this.state };
         // temp.chartData = foodItems;
-        console.log('socketttttt',foodItems)
+       // console.log('socketttttt', foodItems)
         this.generateChartData(foodItems);
         //this.setState(temp);
     };
@@ -112,8 +115,8 @@ class loadUnloadStatisticsPage extends Component {
                                 //"#7E57C2",
                                 "#26C6DA",
                                 "#BDBDBD",
-                               // "#FF7043",
-                               // "#8D6E63",
+                                // "#FF7043",
+                                // "#8D6E63",
                                 "#81C784",
                                 "#FFA726",
                                 "#01579B",
@@ -130,18 +133,18 @@ class loadUnloadStatisticsPage extends Component {
                     animation: {
                         duration: 5000, // general animation time
                         easing: "easeOutBack"
-                     },
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
-                    legend:{
-                        position:'left',
-                        labels:{
-                            boxWidth:10
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            boxWidth: 10
                         }
                     },
                     pieceLabel: {
                         render: 'value'
-                     }
+                    }
                 }
             }
             let temp = { ...this.state };
@@ -150,7 +153,7 @@ class loadUnloadStatisticsPage extends Component {
         }
     }
     componentDidMount() {
-        console.log('state cdm', this.state.value);
+     //   console.log('state cdm', this.state.value);
 
         var state_current = this;
         socket.on("get_data", state_current.getData);
@@ -161,7 +164,11 @@ class loadUnloadStatisticsPage extends Component {
                 if (result)
                     this.generateChartData(data);
             })
-            .catch(err => console.log('rrrrrr', err));
+            .catch(err => {
+               // console.log('rrrrrr', err.response)
+                //   this.setState({chartData:[]})
+                return toast.error(err.response.data.data[0]);
+            });
     }
     componentWillUnmount() {
         socket.off("get_data");
@@ -181,25 +188,34 @@ class loadUnloadStatisticsPage extends Component {
         }
     };
     handleClick = () => {
-        getLoadUnloadStatisticsByVoyageId({ voyageId: this.state.value }).then(res => console.log('handleclickresult', res)).catch(err => console.log(err));
+        getLoadUnloadStatisticsByVoyageId({ voyageId: this.state.value }).then(res =>
+             console.log()
+             ).catch(err => console.log(err));
     }
     render() {
-        console.log(this.state)
-        if (!this.state.chartData || !this.state.chartData.data) return null;
+       // console.log(this.state)
+
         return (
             <Fragment>
                 <Row className="row-eq-height">
                     {/* salam
                     <button onClick={this.handleClick}>get Data</button> */}
                     <Col sm="12">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="rtl customFont" style={{ float: "right" }}>آمار تخلیه و بارگیری برای سفر {this.state.label}</CardTitle>
-                            </CardHeader>
-                            <CardBody>
-                                <Pie height={400} data={this.state.chartData.data} options={this.state.chartData.options}/>
-                            </CardBody>
-                        </Card>
+                        <div>
+                            <CustomNavigation path={this.props.match.path} />
+                        </div>
+                        {
+                            this.state.chartData && this.state.chartData.data &&
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="rtl customFont" style={{ float: "right" }}>آمار تخلیه و بارگیری برای سفر {this.state.label}</CardTitle>
+                                </CardHeader>
+                                <CardBody>
+                                    <Pie height={400} data={this.state.chartData.data} options={this.state.chartData.options} />
+                                </CardBody>
+                            </Card>
+                        }
+
                     </Col>
                 </Row>
             </Fragment>

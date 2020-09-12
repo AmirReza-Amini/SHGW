@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import urls from '../../urls.json'
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
@@ -121,7 +122,7 @@ const onSubmit = (values, props, staffId) => {
                 console.log("res save unload", res, res.data.data[0]);
                 if (res.data.result) {
                   toast.success(res.data.data[0]['message']);
-                  return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                  return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
                 } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
@@ -134,7 +135,7 @@ const onSubmit = (values, props, staffId) => {
               //console.log("res save unload INCREAMENT", res);
               if (res.data.result) {
                 toast.success(res.data.data[0]['message']);
-                return props.history.push('/operationType/vessel/discharge/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
               } else return toast.error(res.data.data[0]);
             })
             .catch((error) => {
@@ -289,18 +290,18 @@ const UnloadOperationPage = (props) => {
   };
 
   const handleCancelButton = () => {
-    props.history.push("/operationType/vessel")
+    props.history.push(props.location.pathname.replace("/discharge",''))
   }
 
   const handleDangerButton = () => {
     //console.log(CntrInfo)
     if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
-      props.history.push('/operationType/vessel/discharge/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
+      props.history.push(urls.DischargeDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
   }
 
   const handleStatisticsButton = () => {
-    console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
-    props.history.push('/operationType/vessel/discharge/loadUnloadStatistics', { voyageInfo: VoyageData.selectedVoyage });
+    //console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
+    props.history.push(urls.DischargeStatistics, { voyageInfo: VoyageData.selectedVoyage });
   }
 
   //#endregion -------------------------------------------------------------

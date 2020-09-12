@@ -1,0 +1,39 @@
+{
+    "Load": "/operationType/vessel/load",
+    "Discharge": "/operationType/vessel/discharge",
+    "Stowage": "/operationType/vessel/stowage",
+    "DischargeDamage": "/operationType/vessel/discharge/damage",
+    "LoadDamage": "/operationType/vessel/load/damage",
+    "DischargeStatistics": "/operationType/vessel/discharge/loadUnloadStatistics",
+    "LoadStatistics": "/operationType/vessel/load/loadUnloadStatistics",
+    
+    "AcceptFromICD": "/operationType/gate/acceptFromIcd",
+    "DeliverToICD": "/operationType/gate/deliverToIcd",
+    "FullGateIn": "/operationType/gate/fullGateIn",
+    "EmptyGateIn": "/operationType/gate/emptyGateIn",
+    "EmptyGateOut": "/operationType/gate/emptyGateOut",
+    
+    "YardOperation": "/operationType/cy/yardOperation",
+    "Movement": "/operationType/cy/movement",
+    "Send": "/operationType/cy/send",
+    "Receive": "/operationType/cy/receive",
+    "FullGateOut": "/operationType/cy/fullGateOut",
+    "PlugIn": "/operationType/cy/plugIn",
+    "PlugOut": "/operationType/cy/plugOut",
+
+    "Vessel":"/operationType/vessel",
+    "Gate":"/operationType/gate",
+    "CY":"/operationType/cy",
+
+    "OperationType":"/operationType",
+    
+    "Users": "/admin/users",
+    "Dashboard": "/admin/dashboard",
+    
+    "Logout": "/logout",
+    "Login": "/login",
+    
+    "Home": "/"
+}
+
+

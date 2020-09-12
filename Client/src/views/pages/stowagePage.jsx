@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import urls from '../../urls.json';
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
@@ -249,7 +250,7 @@ const StowagePage = (props) => {
     };
 
     const handleCancelButton = () => {
-        props.history.push("/operationType/vessel")
+        props.history.push(props.location.pathname.replace('/stowage',''))
     }
 
     //#endregion -----------------------------------------------------------

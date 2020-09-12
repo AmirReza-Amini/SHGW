@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import urls from '../../urls.json'
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
@@ -99,7 +100,7 @@ const onSubmit = (values, props, staffId) => {
                                         //console.log("res save load", res2, res2.data.data[0]);
                                         if (res2.data.result) {
                                             toast.success(res2.data.data[0]['message']);
-                                            return props.history.push('/operationType/vessel/load/damage', { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                            return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
                                         } else return toast.error(res2.data.data[0]);
                                     })
                                     .catch((error) => {
@@ -120,7 +121,7 @@ const onSubmit = (values, props, staffId) => {
                             console.log("res save load", res, res.data.data[0]);
                             if (res.data.result) {
                                 toast.success(res.data.data[0]['message']);
-                                return props.history.push('/operationType/vessel/load/damage', { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
                             } else return toast.error(res.data.data[0]);
                         })
                         .catch((error) => {
@@ -171,7 +172,7 @@ const LoadOperationPage = (props) => {
         ) {
             dispatch(fetchEquipmentsForLoadUnload());
         }
-        console.log("salam");
+        //console.log("salam");
     }, []);
 
     useEffect(() => {
@@ -255,13 +256,13 @@ const LoadOperationPage = (props) => {
     };
 
     const handleCancelButton = () => {
-        props.history.push("/operationType/vessel")
+        props.history.push(props.location.pathname.replace('/load',''));
     }
 
     const handleDangerButton = () => {
         //console.log(CntrInfo)
         if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
-            props.history.push('/operationType/vessel/load/damage', { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
+            props.history.push(urls.LoadDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
     }
 
     //#endregion -----------------------------------------------------------

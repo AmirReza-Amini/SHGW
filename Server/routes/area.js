@@ -6,7 +6,7 @@ const { GetAll, Insert, Update, GetOne, Delete, HardDelete, } = require('../util
 
 router.route('/')
     .get(async (req, res) => {
-        //console.log('Area', req.body)
+        console.log('Area', req.body)
         await GetAll(Area, req, res,{condition:{isActive:true}})
     })
     .post(async (req, res) => {

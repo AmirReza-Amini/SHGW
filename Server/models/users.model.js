@@ -15,24 +15,24 @@ const userSchema = new mongoose.Schema({
 });
 
 
-  userSchema.methods.generateAuthToken = function () {
+//   userSchema.methods.generateAuthToken = function () {
 
-  const token = jwt.sign({
-    id: this._id,
-    lastName: this.lastName,
-    firstName: this.firstName,
-    permissions: this.permissions,
-    area:this.area,
-    userType: this.userType
-  }, jwtSecret, { expiresIn: jwtExpireTime });
+//   const token = jwt.sign({
+//     id: this._id,
+//     lastName: this.lastName,
+//     firstName: this.firstName,
+//     permissions: this.permissions,
+//     area:this.area,
+//     userType: this.userType
+//   }, jwtSecret, { expiresIn: jwtExpireTime });
 
-  const tokenCrypted = AES.encrypt(
-    token,
-    tokenHashKey
-  ).toString();
+//   const tokenCrypted = AES.encrypt(
+//     token,
+//     tokenHashKey
+//   ).toString();
 
-  return tokenCrypted;
-};
+//   return tokenCrypted;
+// };
 
 const userModel = mongoose.model('users', userSchema);
 

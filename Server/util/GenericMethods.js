@@ -77,7 +77,7 @@ FindAndUpdate = async (entity, req, res, condition, update) => {
 
         mapper.Map(update, doc);
         try {
-            await doc.updateOne();
+            await doc.save();
             SendResponse(req, res, doc);
         } catch (error) {
             console.log(error);

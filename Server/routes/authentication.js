@@ -7,7 +7,7 @@ const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting')
 const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 const auth = require('../middleware/auth')
-const { SendResponse } = require('../util/utility')
+const { SendResponse  ,GenerateAuthToken} = require('../util/utility')
 const r = require('redis');
 const { MD5 } = require('crypto-js');
 const redis = r.createClient();
@@ -22,20 +22,19 @@ router.post('/', async (req, res) => {
     password: md5(req.body.password),
     area:req.body.area
   })
-  console.log('from server ', md5(req.body.password))
+  //console.log('from server ', md5(req.body.password))
   if (user) {
     if (!user.isActive)
-    //return res.status(400).send('اکانت مورد نظر غیر فعال می باشد');
       SendResponse(req, res,  'اکانت مورد نظر غیر فعال می باشد' , false,400);
     else {
       
 
-      const token = user.generateAuthToken();
-      console.log('token',token); 
+      const token = GenerateAuthToken(user);
+      //console.log('token',token); 
       SendResponse(req, res, { token: token});
     }
   } else
-    SendResponse(req, res, { error: 'کاربری با مشخصات وارد شده یافت نشد' }, false);
+    SendResponse(req, res,  'کاربری با مشخصات وارد شده یافت نشد', false,400);
 });
 router.post('/login/verification', auth, async (req, res) => {
   let token = req.body.token;

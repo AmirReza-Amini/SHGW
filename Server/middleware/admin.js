@@ -6,7 +6,8 @@ module.exports = function(req, res, next) {
   // 403 Forbidden
   if (!requiresAuth) return next();
 
-  if (req.user.userType !=="Admin") return  SendResponse(req, res, { error: 'دسترسی مقدور نمیباشد..' }, false,403)
+  //console.log('from admin middleware ' , req.user);
+  if (req.user.userType !=="Admin") return  SendResponse(req, res, 'دسترسی مقدور نمیباشد..', false,403)
 
   next();
 };

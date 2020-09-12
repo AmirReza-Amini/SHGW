@@ -316,7 +316,7 @@ class UsersPage extends Component {
 
     render() {
         const { selectedRowKeys } = this.state.selectedRowKeys;
-        console.log('render state', this.state);
+       // console.log('render state', this.state);
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,

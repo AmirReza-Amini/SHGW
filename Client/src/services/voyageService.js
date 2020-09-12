@@ -5,6 +5,6 @@ const apiEndpoint = apiUrl + "/voyage";
 
 
 export const getLoadUnloadStatisticsByVoyageId = (data) =>{
-    console.log(apiEndpoint + '/getLoadUnloadStatisticsByVoyageId')
+   // console.log(apiEndpoint + '/getLoadUnloadStatisticsByVoyageId')
     return http.post(apiEndpoint + '/getLoadUnloadStatisticsByVoyageId',data)
 }

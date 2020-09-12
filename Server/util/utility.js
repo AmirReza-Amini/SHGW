@@ -2,6 +2,9 @@ const fs = require('fs');
 const Log = require('./Logger');
 const r = require('redis')
 const redis = r.createClient();
+const jwt = require('jsonwebtoken');
+const AES = require('crypto-js/aes');
+const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting');
 
 map = (source, dest, excludeList = []) => {
     let propertyList = Object.getOwnPropertyNames(source).filter(m => !excludeList.includes(m));
@@ -16,13 +19,34 @@ sendResponse = (req, res, data, result = true, code = 200) => {
     req.body.to = req.body.from;
     req.body.data = data;
     delete req.body.from;
-
+    const a = req.user ? generateAuthToken(req.user) : '';
+    //console.log('toke is:', a);
     Log({ type: result ? 'info' : 'error', res: req.body })
+
     res.status(code).json(
         Object.assign(req.base, {
             result: result,
-            data: Array.isArray(data) ? data : [data]
+            data: Array.isArray(data) ? data : [data],
+            token: a
         }))
+}
+
+generateAuthToken = (user) => {
+    const token = jwt.sign({
+        id: user._id,
+        lastName: user.lastName,
+        firstName: user.firstName,
+        permissions: user.permissions,
+        area: user.area,
+        userType: user.userType
+    }, jwtSecret, { expiresIn: jwtExpireTime });
+
+    const tokenCrypted = AES.encrypt(
+        token,
+        tokenHashKey
+    ).toString();
+
+    return tokenCrypted
 }
 
 buildConnectionString = (cnnData) => {
@@ -48,5 +72,6 @@ module.exports = {
     ConnectionString: {
         Build: buildConnectionString,
         Get: getConnectionString
-    }
+    },
+    GenerateAuthToken: generateAuthToken
 }
