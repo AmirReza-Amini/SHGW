@@ -4,10 +4,7 @@ import {
   FETCH_VOYAGES_SUCCESS,
   VOYAGE_SELECTED_CHANGED,
 } from "./voyageTypes";
-import http from "../../../services/httpService";
-import { apiUrl } from "../../../config.json";
-
-const apiEndpoint = apiUrl + "/voyage/";
+import {getVoyageTopTenOpen} from '../../../services/voyageService';
 
 export const fetchVoyagesRequest = () => {
   return {
@@ -39,10 +36,9 @@ export const voyageSelectedChanged = (voyage) => {
 export const fetchVoyagesTopTenOpen = () => {
   return async (dispatch) => {
     dispatch(fetchVoyagesRequest());
-    http
-      .get(apiEndpoint)
+    getVoyageTopTenOpen()
       .then((response) => {
-        //console.log('res',response)
+        console.log('res',response)
         const data = response.data.data.map((c) => {
           return {
             value: c.VoyageID,

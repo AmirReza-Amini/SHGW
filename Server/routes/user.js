@@ -7,11 +7,11 @@ const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 router.route('/')
-  .get(async (req, res) => {
+  .get([auth, admin],async (req, res) => {
     console.log('user', req.body)
     await GetAll(Users, req, res)
   })
-  .post(async (req, res) => {
+  .post([auth, admin],async (req, res) => {
     if (req.body.option)
       await GetAll(Users, req, res, req.body.option)
 
@@ -25,20 +25,20 @@ router.route('/')
   .put([auth, admin], async (req, res) => { await Update(Users, req, res) })
 
 router.route('/:id')
-  .get(async (req, res) => {
+  .get([auth, admin],async (req, res) => {
     await GetOne(Users, req, res,
       opt = {
         populate: "accessLevel"
       })
   })
-  .put(async (req, res) => { await Update(Users, req, res) })
-  .get(async (req, res) => {
+  .put([auth, admin],async (req, res) => { await Update(Users, req, res) })
+  .get([auth, admin],async (req, res) => {
     await GetOne(Users, req, res,
       opt = {
         populate: "accessLevel"
       })
   })
-  .delete(async (req, res) => {
+  .delete([auth, admin],async (req, res) => {
     req.body._id = req.params.id;
     await HardDelete(Users, req, res)
   })

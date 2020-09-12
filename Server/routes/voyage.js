@@ -6,23 +6,23 @@ const queries = require('../util/T-SQL/queries')
 const setting = require('../app-setting')
 const sworm = require('sworm');
 const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
 const db = sworm.db(setting.db.sqlConfig);
 
-router.get('/:count?', async (req, res) => {
-    let count = req.params.count || 10;
-    var result = await db.query(queries.VOYAGE.loadLastVoyages, { count: count });
-    //console.log('from voyage', result);
-    SendResponse(req, res, result, (result && result.length > 0))
+router.get('/:count?',auth, async (req, res) => {
+  let count = req.params.count || 10;
+  console.log('from voyage', req.params,count);
+  var result = await db.query(queries.VOYAGE.loadLastVoyages, { count: count });
+  
+  SendResponse(req, res, result, (result && result.length > 0))
 });
 
-router.post('/getLoadUnloadStatisticsByVoyageId',[auth,admin], async (req, res) => {
-    let voyageId = req.body.voyageId || 0;
-  //  console.log(req.body);
-    var result = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: voyageId });
-    //console.log(result);
-    res.io.emit("get_data",result);
-    SendResponse(req, res, result, (result && result.length > 0))
+router.post('/getLoadUnloadStatisticsByVoyageId', auth, async (req, res) => {
+  let voyageId = req.body.voyageId || 0;
+  // console.log(req.body);
+  var result = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: voyageId });
+  //console.log(result);
+  res.io.emit("get_data", result);
+  SendResponse(req, res, result, (result && result.length > 0))
 })
 
 

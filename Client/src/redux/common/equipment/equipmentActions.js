@@ -4,10 +4,7 @@ import {
   FETCH_EQUIPMENTS_SUCCESS,
   EQUIPMENT_SELECTED_CHANGED,
 } from "./equipmentTypes";
-import http from "../../../services/httpService";
-import { apiUrl } from "../../../config.json";
-
-const apiEndpoint = apiUrl + "/equipment/";
+import {getEquipmentsForLoadUnload} from '../../../services/equipmentService';
 
 
 export const fetchEquipmentsRequest = () => {
@@ -40,8 +37,7 @@ export const equipmentSelectedChanged = (equipment) => {
   export const fetchEquipmentsForLoadUnload = () => {
     return async (dispatch) => {
       dispatch(fetchEquipmentsRequest());
-      http
-        .get(apiEndpoint + "/fetchEquipmentsForLoadUnload")
+      getEquipmentsForLoadUnload()
         .then((response) => {
           const data = response.data.data.map((c) => {
             return { value: c.EquipmentID, label: c.EquipmentName };

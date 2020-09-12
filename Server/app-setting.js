@@ -26,7 +26,7 @@ module.exports = {
             }
         }
     },
-    jwtExpireTime: 15,
+    jwtExpireTime: 300,
     tokenHashKey: '8c10%$#f9be0b053082',
     requiresAuth: true,
     jwtSecret: "9057c4f0-b57e-4320-9a7e-c028bc3e54cb"

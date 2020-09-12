@@ -6,34 +6,40 @@ const queries = require('../util/T-SQL/queries')
 const setting = require('../app-setting')
 const sworm = require('sworm');
 const sql = require('mssql');
+const auth = require('../middleware/auth');
+
 const db = sworm.db(setting.db.sqlConfig);
-const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
-pool.connect(error => {
-    console.log('error sql connection damage', error);
-});
 
-pool.on('error', err => {
-    console.log('error sql on damage', err);
-})
+router.get('/getDamageDefinition', auth, async (req, res) => {
 
-router.get('/fetchDamageDefinition', async (req, res) => {
-    
+    console.log(req.body);
     var result = await db.query(queries.DAMAGE.fetchDamageDefinition);
     SendResponse(req, res, result, (result && result.length > 0))
 })
 
 
 
-router.post('/getDamageInfoByActId', async (req, res) => {
+router.post('/getDamageInfoByActId', auth, async (req, res) => {
 
     let actId = req.body.actId || 0;
     var result = await db.query(queries.DAMAGE.getDamageInfoByActId, { actId: actId });
     SendResponse(req, res, result, (result && result.length > 0))
 })
 
-router.post('/setDamageInfoByActId', async (req, res) => {
+router.post('/setDamageInfoByActId', auth, async (req, res) => {
 
     try {
+
+        const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
+        pool.connect(error => {
+            console.log('error sql connection damage', error);
+        });
+
+        pool.on('error', err => {
+            console.log('error sql on damage', err);
+        })
+
+
         const tvp = new sql.Table();
         tvp.columns.add('ActID', sql.BigInt);
         tvp.columns.add('Letters', sql.NVarChar(20));
@@ -45,9 +51,9 @@ router.post('/setDamageInfoByActId', async (req, res) => {
         request.input('DamageList', tvp);
         request.output('OutputResult', sql.NVarChar(2048));
         const temp = await request.execute('SP_SetDamgeBasedOnDamageList');
-    //     [ { Result: true, Message: 'OK', ID: 1 },
-    //       { Result: true, Message: 'OK', ID: 2 } ],
-       // console.log(temp);
+        //     [ { Result: true, Message: 'OK', ID: 1 },
+        //       { Result: true, Message: 'OK', ID: 2 } ],
+        // console.log(temp);
         const { recordset: result } = temp;
         let message = "";
         if (result && result.length > 0) {

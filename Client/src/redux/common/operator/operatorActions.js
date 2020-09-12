@@ -3,10 +3,7 @@ import {
   FETCH_OPERATOR_REQUEST,
   FETCH_OPERATOR_FAILURE,
 } from "./operatorTypes";
-import http from "../../../services/httpService";
-import { apiUrl } from "../../../config.json";
-
-const apiEndpoint = apiUrl + "/operator/";
+import {getOperatorInfoBasedOnCode} from '../../../services/operatorService';
 
 export const fetchOperatorRequest = () => {
   return {
@@ -31,8 +28,7 @@ export const fetchOperatorFailure = (error) => {
 export const fetchOperatorInfoBasedOnCode = (code) => {
   return async (dispatch) => {
     dispatch(fetchOperatorRequest());
-    http
-      .get(apiEndpoint + `/fetchOperatorInfoBasedOnCode/${code}`)
+    getOperatorInfoBasedOnCode(code)
       .then((response) => {
         if (response.data.result){
           const data = response.data.data.map((c) => {

@@ -8,8 +8,8 @@ const CryptoJs = require('crypto-js');
 module.exports = async (req, res, next) => {
     if (!requiresAuth) return next();
     const encryptedToken = req.headers['x-auth-token'];
-    console.log('from server:' ,encryptedToken);
-    if (!encryptedToken) return SendResponse(req, res, { error: 'دسترسی مقدور نیست. توکن یافت نشد' }, false,401);//res.sendStatus(401).send('Access denied. No token provided');
+    //console.log('from server:' ,encryptedToken);
+    if (!encryptedToken) return SendResponse(req, res,'دسترسی مقدور نیست. توکن یافت نشد', false,401);//res.sendStatus(401).send('Access denied. No token provided');
     try {
         //let encryptedToken = token.split(' ')[1].replace(/['"]+/g, '');
         let token = AES.decrypt(encryptedToken, tokenHashKey).toString(CryptoJs.enc.Utf8)

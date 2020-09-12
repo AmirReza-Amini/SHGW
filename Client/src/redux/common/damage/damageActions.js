@@ -5,6 +5,7 @@ import {
 } from "./damageTypes";
 import http from "../../../services/httpService";
 import { apiUrl } from "../../../config.json";
+import {getDamageDefinition} from '../../../services/damage';
 
 const apiEndpoint = apiUrl + "/damage/";
 
@@ -31,8 +32,7 @@ export const fetchDamageFailure = (error) => {
 export const fetchDamageDefinition = () => {
   return async (dispatch) => {
     dispatch(fetchDamageRequest());
-    http
-      .get(apiEndpoint + "fetchDamageDefinition")
+    getDamageDefinition()
       .then((response) => {
         const data = response.data.data.map((c) => {
           return {

@@ -7,10 +7,10 @@ module.exports = {
         getLoadUnloadStatisticsByVoyageId: LoadText(__dirname + '/voyage/get-load-unload-statistics-by-voyageid.sql')
     },
     EQUIPMENT: {
-        fetchEquipmentsForLoadUnload: LoadText(__dirname + '/equipment/fetch-equipments-for-load-unload.sql')
+        getEquipmentsForLoadUnload: LoadText(__dirname + '/equipment/get-equipments-for-load-unload.sql')
     },
     OPERATOR: {
-        fetchOperatorInfoBasedOnCode: LoadText(__dirname + '/operator/fetch-operator-info-based-on-code.sql')
+        getOperatorInfoBasedOnCode: LoadText(__dirname + '/operator/get-operator-info-based-on-code.sql')
     },
     VESSEL: {
         BERTH: {
@@ -32,7 +32,7 @@ module.exports = {
         }
     },
     DAMAGE: {
-        fetchDamageDefinition: LoadText(__dirname + '/damage/fetch-damage-definition.sql'),
+        getDamageDefinition: LoadText(__dirname + '/damage/get-damage-definition.sql'),
         getDamageInfoByActId: LoadText(__dirname + '/damage/get-damage-info-by-actId.sql'),
         setDamageInfoByActId: LoadText(__dirname + '/damage/set-damage-info-by-actId.sql')
     },
