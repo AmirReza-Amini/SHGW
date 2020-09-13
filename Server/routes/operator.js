@@ -8,10 +8,16 @@ const sworm = require('sworm');
 const db = sworm.db(setting.db.sqlConfig);
 const auth = require('../middleware/auth');
 
-router.get('/getOperatorInfoBasedOnCode/:code',auth, async (req, res) => {
-    let code = req.params.code || 0;
-    var result = await db.query(queries.OPERATOR.getOperatorInfoBasedOnCode, { code: code });
-     res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
-    SendResponse(req, res, result, (result && result.length > 0))
+router.get('/getOperatorInfoBasedOnCode/:code', auth, async (req, res) => {
+
+    try {
+        let code = req.params.code || 0;
+        var result = await db.query(queries.OPERATOR.getOperatorInfoBasedOnCode, { code: code });
+        res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
+        SendResponse(req, res, result, (result && result.length > 0))
+    } catch (error) {
+        return SendResponse(req, res, `getOperatorInfoBasedOnCode(${req.params.code})`, false, 500);
+    }
+
 })
 module.exports = router;

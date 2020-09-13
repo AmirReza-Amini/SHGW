@@ -26,8 +26,18 @@ axios.interceptors.response.use(null, error => {
 
   //console.log("error", error);
   if (!expectedError) {
-     toast.error("خطا در برقراری ارتباط با سرور. لطفا با ادمین سایت تماس بگیرید");
+    // status code 500
+    toast.error("خطا در برقراری ارتباط با سرور. لطفا با ادمین سایت تماس بگیرید");
+    console.log(error.response,error); // eeno bayad log begirim
     //toastr.error('Server Error','An Unexpected error occured!')
+  }
+
+  if (expectedError) {
+    switch (error.response.status) {
+      case 403:
+        toast.error('دسترسی غیر مجاز');
+        break;
+    }
   }
 
   return Promise.reject(error);

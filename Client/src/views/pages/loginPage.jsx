@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, CardBody, Row, Col, Button } from "reactstrap";
-import { LogIn, CloudLightning } from "react-feather";
+import { LogIn } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useEffect } from "react";
@@ -41,21 +41,22 @@ const onSubmit = async (values, props) => {
   };
 
   try {
-    await auth.login(_.pick(parameters, ["username", "password", "area"]));
-    const { state } = props.location;
-    //console.log(props, state);
-    //console.log('ssssssss', props.location.state);
-    //window.location = state && state.from ? state.from.pathname : "/";
-    if (state && state.from)
-      return props.history.replace(state && state.from ? state.from.pathname : '/', { ...state.from.state })
-    else
-      window.location = "/";
-
-
+    const { result, message } = await auth.login(_.pick(parameters, ["username", "password", "area"]));
+    if (!result)
+      return toast.error(message);
+    else {
+      const { state } = props.location;
+      //console.log(props, state);
+      //console.log('ssssssss', props.location.state);
+      //window.location = state && state.from ? state.from.pathname : "/";
+      if (state && state.from)
+        return props.history.replace(state && state.from ? state.from.pathname : '/', { ...state.from.state })
+      else
+        window.location = "/";
+    }
   } catch (err) {
     if (err.response && err.response.status === 401)
       return toast.error(err.response.data.data[0])
-
   }
 };
 //#endregion ---------------------------------------------------------------
@@ -76,10 +77,13 @@ const LoginPage = (props) => {
   useEffect(() => {
     getAreas().then(res => {
       if (res.data.result) {
-        //console.log('from area', res.data.data)
         setState({ areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } }) })
       }
-    })
+      else {
+        return toast.error(res.data.data[0]);
+      }
+    }).catch(error => { });
+    
     const { message } = props.location.state;
     if (props.location.state && message && message.length > 0) {
       toast.error(message);
@@ -113,7 +117,7 @@ const LoginPage = (props) => {
                   initialValues={initialValues}
                   validationSchema={validationSchema}
                   onSubmit={async (values) => {
-                    console.log("values", values);
+                    //console.log("values", values);
                     await onSubmit(values, props);
                   }}
                   //validateOnBlur={true}

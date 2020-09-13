@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Events = require('../util/EventList')
 const { SendResponse } = require('../util/utility')
 const queries = require('../util/T-SQL/queries')
 const setting = require('../app-setting')
