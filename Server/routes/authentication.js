@@ -14,9 +14,6 @@ const redis = r.createClient();
 
 
 router.post('/', async (req, res) => {
-
-
-
   let user = await Users.findOne({
     userCode: req.body.username,
     password: md5(req.body.password),
@@ -25,16 +22,14 @@ router.post('/', async (req, res) => {
   //console.log('from server ', md5(req.body.password))
   if (user) {
     if (!user.isActive)
-      SendResponse(req, res,  'اکانت مورد نظر غیر فعال می باشد' , false,400);
+      SendResponse(req, res,  'اکانت مورد نظر غیر فعال می باشد' , false,401);
     else {
-      
-
       const token = GenerateAuthToken(user);
       //console.log('token',token); 
       SendResponse(req, res, { token: token});
     }
   } else
-    SendResponse(req, res,  'کاربری با مشخصات وارد شده یافت نشد', false,400);
+    SendResponse(req, res,  'کاربری با مشخصات وارد شده یافت نشد', false,401);
 });
 router.post('/login/verification', auth, async (req, res) => {
   let token = req.body.token;
@@ -43,30 +38,5 @@ router.post('/login/verification', auth, async (req, res) => {
     SendResponse(req, res, { verify });
   }
 });
-
-// router.put('/changePassword/:id',
-//   async (req, res) => {
-//     let doc = await Users.findOne({
-//       _id: req.body._id,
-//       isDeleted: false
-//     }).populate('accessLevel');
-//     await Log({ root: 'User.js', message: { title: `Password Changed for ${req.body._id}` } })
-
-//     if (doc.password !== md5(req.body.oldPassword).toUpperCase()) {
-//       SendResponse(req, res, { error: 'رمز عبور فعلی صحیح نمیباشد' }, false)
-//     } else {
-//       doc.password = md5(req.body.password).toUpperCase()
-//       await doc.save();
-
-//       const token = jwt.sign({
-//         id: doc._id,
-//         lastName: doc.lastName,
-//         firstName: doc.firstName,
-//         accessLevel: doc.accessLevel,
-//         contactInfo: doc.contactInfo
-//       }, jwtSecret, { expiresIn: '30s' });
-//       SendResponse(req, res, { token: AES.encrypt(token, tokenHashKey).toString() });
-//     }
-//   })
 
 module.exports = router;

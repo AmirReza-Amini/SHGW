@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Card, CardBody, Row, Col, Button } from "reactstrap";
-import { X, CheckSquare } from "react-feather";
+import { X, CheckSquare, LogIn } from "react-feather";
 import { Formik, Form } from "formik";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
 import { fetchDamageDefinition } from "../../redux/common/damage/damageActions";
 import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damage';
+import { Redirect } from "react-router-dom";
 
 
 toast.configure({ bodyClassName: "customFont rtl" });
@@ -74,13 +75,25 @@ const onSubmit = (values, props) => {
       toast.error(data[0]);
     }
   }).catch(error => {
-    //console.log('damage promise all err', error);
+    toast.error(error.response.data.data[0]);
+    if (error.response.status == 401) {
+      console.log('props damage locatopn', props);
+      return props.history.replace('/login', { from: props.location })
+      // return <Redirect
+      //   to={{
+      //     pathname: "/login",
+      //     state: { from: props.location }
+      //   }}
+      // />;
+    }
+    console.log('damage promise all err', error.response);
   })
 };
 
 //#endregion ---------------------------------------------------------------
 
 const DamagePage = (props) => {
+  console.log('damage props', props);
 
   //#region SELECTORS AND STATE --------------------------------------------
 
@@ -167,7 +180,7 @@ const DamagePage = (props) => {
     props.history.replace(props.location.pathname.replace('/damage', ''));
   }
   //#endregion -------------------------------------------------------------
-  
+
   return (
     <Fragment>
       <Row className="justify-content-md-center">
@@ -217,7 +230,7 @@ const DamagePage = (props) => {
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Rear" name="selectedRearDamages" source={sidedDamages}  defaultValues={state.selectedRearDamages} />
+                                    <FormikControl control="customButtonGroup" label="Rear" name="selectedRearDamages" source={sidedDamages} defaultValues={state.selectedRearDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
@@ -227,22 +240,22 @@ const DamagePage = (props) => {
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Left" name="selectedLeftDamages" source={sidedDamages}  defaultValues={state.selectedLeftDamages} />
+                                    <FormikControl control="customButtonGroup" label="Left" name="selectedLeftDamages" source={sidedDamages} defaultValues={state.selectedLeftDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Top" name="selectedTopDamages" source={sidedDamages}  defaultValues={state.selectedTopDamages} />
+                                    <FormikControl control="customButtonGroup" label="Top" name="selectedTopDamages" source={sidedDamages} defaultValues={state.selectedTopDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Bottom" name="selectedBottomDamages" source={sidedDamages}  defaultValues={state.selectedBottomDamages} />
+                                    <FormikControl control="customButtonGroup" label="Bottom" name="selectedBottomDamages" source={sidedDamages} defaultValues={state.selectedBottomDamages} />
                                   </Col>
                                 </Row>
                                 <Row>
                                   <Col md="12">
-                                    <FormikControl control="customButtonGroup" label="Other" name="selectedOtherDamages" source={notSidedDamages}  defaultValues={state.selectedOtherDamages} />
+                                    <FormikControl control="customButtonGroup" label="Other" name="selectedOtherDamages" source={notSidedDamages} defaultValues={state.selectedOtherDamages} />
                                   </Col>
                                 </Row>
                               </div>

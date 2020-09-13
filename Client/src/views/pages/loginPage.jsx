@@ -43,14 +43,19 @@ const onSubmit = async (values, props) => {
   try {
     await auth.login(_.pick(parameters, ["username", "password", "area"]));
     const { state } = props.location;
-    console.log(props)
-    window.location = state && state.from ? state.from.pathname : "/";
+    //console.log(props, state);
+    //console.log('ssssssss', props.location.state);
+    //window.location = state && state.from ? state.from.pathname : "/";
+    if (state && state.from)
+      return props.history.replace(state && state.from ? state.from.pathname : '/', { ...state.from.state })
+    else
+      window.location = "/";
+
 
   } catch (err) {
-  // if (err.response && err.response.status === 400)
-     
-      toast.error(err.response.data.data[0])
-    
+    if (err.response && err.response.status === 401)
+      return toast.error(err.response.data.data[0])
+
   }
 };
 //#endregion ---------------------------------------------------------------
@@ -71,7 +76,7 @@ const LoginPage = (props) => {
   useEffect(() => {
     getAreas().then(res => {
       if (res.data.result) {
-        console.log('from area', res.data.data)
+        //console.log('from area', res.data.data)
         setState({ areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } }) })
       }
     })
@@ -79,7 +84,7 @@ const LoginPage = (props) => {
     if (props.location.state && message && message.length > 0) {
       toast.error(message);
     }
-    console.log('from login effevt',props)
+    //console.log('from login effevt', props)
   }, []);
 
   useEffect(() => {

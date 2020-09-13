@@ -7,13 +7,14 @@ const setting = require('../app-setting')
 const sworm = require('sworm');
 const sql = require('mssql');
 const auth = require('../middleware/auth');
+const pool = require('../bootstrap/sqlserver');
 
 const db = sworm.db(setting.db.sqlConfig);
 
 router.get('/getDamageDefinition', auth, async (req, res) => {
 
     console.log(req.body);
-    var result = await db.query(queries.DAMAGE.fetchDamageDefinition);
+    var result = await db.query(queries.DAMAGE.getDamageDefinition);
     SendResponse(req, res, result, (result && result.length > 0))
 })
 
@@ -30,15 +31,16 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
 
     try {
 
-        const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
-        pool.connect(error => {
-            console.log('error sql connection damage', error);
-        });
+        // const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
+        // pool.connect(error => {
+        //     console.log('error sql connection damage', error);
+        // });
 
-        pool.on('error', err => {
-            console.log('error sql on damage', err);
-        })
+        // pool.on('error', err => {
+        //     console.log('error sql on damage', err);
+        // })
 
+        console.log(req.body)
 
         const tvp = new sql.Table();
         tvp.columns.add('ActID', sql.BigInt);
@@ -78,6 +80,7 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
         }
     }
     catch (err) {
+        console.log(err)
         message = "خطا در برقراری ارتباط با سرور"
         return SendResponse(req, res, message, false);
     }

@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 
 axios.interceptors.response.use(res => {
-  console.log('interceptor response', res.data.token);
+  //console.log('interceptor response', res.data.token);
   if (res.status === 200 && res.data.token) {
     //console.log('new token', res.data.token)
     localStorage.setItem('token', res.data.token)
@@ -12,7 +12,7 @@ axios.interceptors.response.use(res => {
 })
 
 axios.interceptors.request.use(req => {
-  console.log('set http jewt', localStorage.getItem('token'))
+  //console.log('set http jewt', localStorage.getItem('token'))
   req.headers.common['x-auth-token'] = localStorage.getItem('token');
   return req
 })
@@ -26,7 +26,7 @@ axios.interceptors.response.use(null, error => {
 
   //console.log("error", error);
   if (!expectedError) {
-    // toast.error("خطای نا شناخنه. با ادمین سایت تماس بگیرید");
+     toast.error("خطا در برقراری ارتباط با سرور. لطفا با ادمین سایت تماس بگیرید");
     //toastr.error('Server Error','An Unexpected error occured!')
   }
 

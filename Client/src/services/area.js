@@ -5,7 +5,7 @@ const apiEndpoint = apiUrl + "/area";
 
 
 export const getAreas = () => {
-    console.log(apiEndpoint)
+    //console.log(apiEndpoint)
     return http.get(apiEndpoint);
 }
 
