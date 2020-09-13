@@ -11,25 +11,35 @@ const pool = require('../bootstrap/sqlserver');
 const db = sworm.db(setting.db.sqlConfig);
 
 router.get('/getDamageDefinition', auth, async (req, res) => {
-
-    console.log(req.body);
-    var result = await db.query(queries.DAMAGE.getDamageDefinition);
-    SendResponse(req, res, result, (result && result.length > 0))
+    try {
+        // console.log(req.body);
+        var result = await db.query(queries.DAMAGE.getDamageDefinition);
+        SendResponse(req, res, result, (result && result.length > 0))
+    } catch (error) {
+        return SendResponse(req, res, 'getDamageDefinition', false, 500);
+    }
 })
 
 
 
 router.post('/getDamageInfoByActId', auth, async (req, res) => {
-
-    let actId = req.body.actId || 0;
-    var result = await db.query(queries.DAMAGE.getDamageInfoByActId, { actId: actId });
-    SendResponse(req, res, result, (result && result.length > 0))
+    if (!req.body.actId)
+        return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);
+    try {
+        let actId = req.body.actId || 0;
+        var result = await db.query(queries.DAMAGE.getDamageInfoByActId, { actId: actId });
+        SendResponse(req, res, result, (result && result.length > 0))
+    } catch (error) {
+        return SendResponse(req, res, 'getDamageInfoByActId', false, 500);
+    }
 })
 
 router.post('/setDamageInfoByActId', auth, async (req, res) => {
 
+    if (!req.body.data)
+        return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);
+        
     try {
-
         // const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
         // pool.connect(error => {
         //     console.log('error sql connection damage', error);
@@ -39,7 +49,7 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
         //     console.log('error sql on damage', err);
         // })
 
-        console.log(req.body)
+        //console.log(req.body)
 
         const tvp = new sql.Table();
         tvp.columns.add('ActID', sql.BigInt);
@@ -79,10 +89,7 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err)
-        message = "خطا در برقراری ارتباط با سرور"
-        return SendResponse(req, res, message, false);
+        return SendResponse(req, res, 'setDamageInfoByActId', false, 500);
     }
-    // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
 })
 module.exports = router;

@@ -5,10 +5,11 @@ const { SendResponse } = require('../util/utility')
 const queries = require('../util/T-SQL/queries')
 const setting = require('../app-setting')
 const sworm = require('sworm');
+const auth = require('../middleware/auth');
 const db = sworm.db(setting.db.sqlConfig);
 
 
-router.post('/isPossibleSaveAct', async (req, res) => {
+router.post('/isPossibleSaveAct', auth, async (req, res) => {
 
     if (!req.body.cntrNo || !req.body.nextActType)
         return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);

@@ -7,41 +7,43 @@ const { SendResponse } = require('../../util/utility');
 const queries = require("../../util/T-SQL/queries");
 const setting = require("../../app-setting");
 const sworm = require("sworm");
+const auth = require('../../middleware/auth');
 const db = sworm.db(setting.db.sqlConfig);
-
-
-// router.route('/')
-//     .get(async (req, res) => {
-//        SendResponse(req,res,{res:'Hello from Vessel'})
-//     })
 
 
 //#region Stowage Services -------------------------------------------------------------------------
 
-router.post("/getCntrInfoForStowage", async (req, res) => {
-
-    console.log(req.body)
-    var result = await db.query(queries.VESSEL.DECK.getCntrInfoForStowage, {
-        voyageId: req.body.voyageId,
-        cntrNo: req.body.cntrNo,
-    });
-    console.log(result)
-    SendResponse(req, res, result, result && result.length > 0);
+router.post("/getCntrInfoForStowage", auth, async (req, res) => {
+    try {
+        //console.log(req.body)
+        var result = await db.query(queries.VESSEL.DECK.getCntrInfoForStowage, {
+            voyageId: req.body.voyageId,
+            cntrNo: req.body.cntrNo,
+        });
+        console.log(result)
+        return SendResponse(req, res, result, result && result.length > 0);
+    } catch (error) {
+        return SendResponse(req, res, 'getCntrInfoForStowage', false, 500);
+    }
 });
 
-router.post("/getStowageInfoForCntrByVoyage", async (req, res) => {
+router.post("/getStowageInfoForCntrByVoyage", auth, async (req, res) => {
 
-    //console.log(req.body)
-    var result = await db.query(queries.VESSEL.DECK.getStowageInfoForCntrByVoyage, {
-        voyageId: req.body.voyageId,
-        cntrNo: req.body.cntrNo,
-    });
-    //console.log(result)
-    SendResponse(req, res, result, result && result.length > 0);
+    try {
+        //console.log(req.body)
+        var result = await db.query(queries.VESSEL.DECK.getStowageInfoForCntrByVoyage, {
+            voyageId: req.body.voyageId,
+            cntrNo: req.body.cntrNo,
+        });
+        //console.log(result)
+        return SendResponse(req, res, result, result && result.length > 0);
+    } catch (error) {
+        return SendResponse(req, res, 'getStowageInfoForCntrByVoyage', false, 500);
+    }
+
 });
 
-router.post("/isOccoupiedBayAddressInVoyage", async (req, res) => {
-
+router.post("/isOccoupiedBayAddressInVoyage", auth, async (req, res) => {
     //console.log(req.body)
     try {
         var result = await db.query(queries.VESSEL.DECK.isOccoupiedBayAddressInVoyage, {
@@ -50,22 +52,19 @@ router.post("/isOccoupiedBayAddressInVoyage", async (req, res) => {
         });
 
         if (result && result.length > 0)
-            SendResponse(req, res, `پر شده ${result[0].CntrNo} توسط کانتینر`, true);
+            return SendResponse(req, res, `پر شده ${result[0].CntrNo} توسط کانتینر`, true);
 
         else
-            SendResponse(req, res, 'معتبر است', false);
+            return SendResponse(req, res, 'معتبر است', false);
     }
     catch (error) {
-        SendResponse(req, res, error, 400);
+        return SendResponse(req, res, 'isOccoupiedBayAddressInVoyage', false, 500);
     }
-
-    //console.log(result)
-    SendResponse(req, res, result, result && result.length > 0);
 });
 
-router.post("/saveStowageAndShiftedup", async (req, res) => {
+router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
 
-    console.log(req.body)
+    //console.log(req.body)
     try {
         var result = await db.query(queries.VESSEL.DECK.saveStowageAndShiftedup, {
             cntrNo: req.body.cntrNo,
@@ -77,19 +76,16 @@ router.post("/saveStowageAndShiftedup", async (req, res) => {
             actType: req.body.actType
         });
 
-        console.log('result saveStowageAndShiftedup', result);
+        //console.log('result saveStowageAndShiftedup', result);
         //result saveStowageAndShiftedup [ { '': false } ]
         let data = result[0][""] !== false ? "عملیات با موفقیت انجام شد" : 'خطا در انجام عملیات';
 
-        SendResponse(req, res, data, result[0][""] !== false);
+        return SendResponse(req, res, data, result[0][""] !== false);
     }
     catch (error) {
-        console.log(error);
-        SendResponse(req, res, error,false, 400);
+        //console.log(error);
+        return SendResponse(req, res, 'saveStowageAndShiftedup', false, 500);
     }
-
-    //console.log(result)
-    SendResponse(req, res, result, result && result.length > 0);
 });
 
 //#endregion -------------------------------------------------------------------------------------
