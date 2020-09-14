@@ -75,7 +75,7 @@ const onSubmit = (values, props) => {
       toast.error(data[0]);
     }
   }).catch(error => {
-    toast.error(error.response.data.data[0]);
+    //toast.error(error.response.data.data[0]);
     if (error.response.status == 401) {
       console.log('props damage locatopn', props);
       return props.history.replace('/login', { from: props.location })

@@ -28,12 +28,19 @@ axios.interceptors.response.use(null, error => {
   if (!expectedError) {
     // status code 500
     toast.error("خطا در برقراری ارتباط با سرور. لطفا با ادمین سایت تماس بگیرید");
-    console.log(error.response,error); // eeno bayad log begirim
+    console.log(error.response, error); // eeno bayad log begirim
     //toastr.error('Server Error','An Unexpected error occured!')
   }
 
   if (expectedError) {
     switch (error.response.status) {
+
+      case 400:
+        toast.error('اطلاعات وارد شده صحیح نمی باشد');
+        break;
+      case 401:
+        toast.error('کاربری با مشخصات وارد شده یافت نشد');
+        break;
       case 403:
         toast.error('دسترسی غیر مجاز');
         break;

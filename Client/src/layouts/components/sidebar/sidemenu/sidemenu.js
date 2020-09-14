@@ -1,5 +1,5 @@
 // import external modules
-import React, { Component, useEffect } from "react";
+import React, { Component} from "react";
 
 import { Home, LogIn, ChevronRight } from "react-feather";
 import { NavLink } from "react-router-dom";
@@ -26,7 +26,7 @@ class SideMenuContent extends Component {
       const user = auth.getCurrentUser();
       const isAdmin = user.userType === "Admin" ? true : false;
       this.setState({ user, isAdmin });
-      const roles = user.permissions.filter(c => c.isGranted == true);
+      const roles = user.permissions.filter(c => c.isGranted === true);
       this.setState({ hasRoles: roles.length > 0 ? true : false });
       //console.log('from side cwm')
     }

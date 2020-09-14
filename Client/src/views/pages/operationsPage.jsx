@@ -13,12 +13,7 @@ class operationsPage extends Component {
   //#region INITIAL AND STATE ----------------------------------------------
 
   state = { group: null };
-
-  constructor(props) {
-    super(props);
-
-    
-  }
+  
   componentWillMount() {
     let a = this.props.operations;
     // console.log("operations", this.props);

@@ -29,7 +29,6 @@ export function logout() {
 
 export function getCurrentUser() {
   try {
-    const token = localStorage.getItem("token");
     const jwt = CryptoJS.AES.decrypt(
       localStorage.getItem("token"),
       tokenHashKey

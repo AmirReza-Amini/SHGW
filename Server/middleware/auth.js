@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 const { SendResponse } = require('../util/utility')
 const CryptoJs = require('crypto-js');
+const Users = require('../models/users.model');
 
 
 module.exports = async (req, res, next) => {
@@ -22,12 +23,16 @@ module.exports = async (req, res, next) => {
                     return SendResponse(req, res, 'دسترسی غیر مجاز', false, 403);
             }
             else {
-                req.user = decoded;
+                console.log('auth decode', decoded);
+                let userInfo = await Users.findOne({ _id: decoded._id });
+                if (!userInfo.isActive)
+                    return SendResponse(req, res, 'اکانت مورد نظر غیر فعال می باشد', false, 200);
+                req.user = userInfo;
                 next();
             }
         })
     }
     catch (ex) {
-        SendResponse(req, res, 'دسترسی مقدور نیست.اطلاعات دستکاری شده است', false, 401)
+        return SendResponse(req, res, 'دسترسی مقدور نیست.اطلاعات دستکاری شده است', false, 401)
     }
 }

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Events = require('../util/EventList')
 const { SendResponse } = require('../util/utility')
 const queries = require('../util/T-SQL/queries')
 const setting = require('../app-setting')
 const sworm = require('sworm');
 const auth = require('../middleware/auth');
+const { DoesUserHavePermission } = require('../util/CheckPermission');
 const db = sworm.db(setting.db.sqlConfig);
 
 router.get('/:count?', auth, async (req, res) => {
@@ -21,17 +21,22 @@ router.get('/:count?', auth, async (req, res) => {
 });
 
 router.post('/getLoadUnloadStatisticsByVoyageId', auth, async (req, res) => {
-  try {
-    let voyageId = req.body.voyageId || 0;
-    // console.log(req.body);
-    var result = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: voyageId });
-    //console.log(result);
-    res.io.emit("get_data", result);
-    SendResponse(req, res, result, (result && result.length > 0))
-  } catch (error) {
-    return SendResponse(req, res, `getLoadUnloadStatisticsByVoyageId(${req.body.voyageId})`, false, 500);
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Statistics');
+  if (check.result) {
+    try {
+      let voyageId = req.body.voyageId || 0;
+      // console.log(req.body);
+      var result = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: voyageId });
+      //console.log(result);
+      res.io.emit("get_data", result);
+      SendResponse(req, res, result, (result && result.length > 0))
+    } catch (error) {
+      return SendResponse(req, res, `getLoadUnloadStatisticsByVoyageId(${req.body.voyageId})`, false, 500);
+    }
   }
-
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
+  }
 })
 
 

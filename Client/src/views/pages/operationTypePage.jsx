@@ -24,7 +24,7 @@ class operationTypePage extends Component {
     if (!config.useAuthentication || userType === "Admin")
       this.setState({ group });
     else {
-      const accessGroup = group.filter(c => permissions.filter(p => _.toUpper(p.name) === _.toUpper(c.enName) && p.isGranted === true).length == 1);
+      const accessGroup = group.filter(c => permissions.filter(p => _.toUpper(p.name) === _.toUpper(c.enName) && p.isGranted === true).length === 1);
       //console.log('access group', accessGroup);
      if (accessGroup.length >= 1) {
         this.setState({ group: accessGroup })

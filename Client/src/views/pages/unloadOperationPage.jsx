@@ -155,7 +155,6 @@ const UnloadOperationPage = (props) => {
 
   //#region SELECTORS AND STATE --------------------------------------------
 
-  const tempstate = useSelector(state => state);
   const VoyageData = useSelector((state) => state.voyage);
   const EquipmentData = useSelector((state) => state.equipment);
   const OperatorData = useSelector((state) => state.operator);

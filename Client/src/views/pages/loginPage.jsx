@@ -88,7 +88,7 @@ const LoginPage = (props) => {
     if (props.location.state && message && message.length > 0) {
       toast.error(message);
     }
-    //console.log('from login effevt', props)
+    console.log('from login effevt', props)
   }, []);
 
   useEffect(() => {

@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Log = require('../../models/log.model');
-const { Events } = require('../../util/EventList')
-const { GetAll, Insert, DeleteById } = require('../../util/GenericMethods');
 const { SendResponse } = require('../../util/utility');
 const queries = require("../../util/T-SQL/queries");
 const setting = require("../../app-setting");
 const sworm = require("sworm");
 const auth = require('../../middleware/auth');
+const { DoesUserHavePermission } = require('../../util/CheckPermission');
 const db = sworm.db(setting.db.sqlConfig);
 
 
@@ -64,27 +62,33 @@ router.post("/isOccoupiedBayAddressInVoyage", auth, async (req, res) => {
 
 router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
 
-    //console.log(req.body)
-    try {
-        var result = await db.query(queries.VESSEL.DECK.saveStowageAndShiftedup, {
-            cntrNo: req.body.cntrNo,
-            voyageId: req.body.voyageId,
-            userId: req.body.userId,
-            equipmentId: req.body.equipmentId,
-            operatorId: req.body.operatorId,
-            bayAddress: req.body.bayAddress,
-            actType: req.body.actType
-        });
+    const check = await DoesUserHavePermission(req.user, 'Vessel', 'Stowage');
+    if (check.result) {
+        //console.log(req.body)
+        try {
+            var result = await db.query(queries.VESSEL.DECK.saveStowageAndShiftedup, {
+                cntrNo: req.body.cntrNo,
+                voyageId: req.body.voyageId,
+                userId: req.body.userId,
+                equipmentId: req.body.equipmentId,
+                operatorId: req.body.operatorId,
+                bayAddress: req.body.bayAddress,
+                actType: req.body.actType
+            });
 
-        //console.log('result saveStowageAndShiftedup', result);
-        //result saveStowageAndShiftedup [ { '': false } ]
-        let data = result[0][""] !== false ? "عملیات با موفقیت انجام شد" : 'خطا در انجام عملیات';
+            //console.log('result saveStowageAndShiftedup', result);
+            //result saveStowageAndShiftedup [ { '': false } ]
+            let data = result[0][""] !== false ? "عملیات با موفقیت انجام شد" : 'خطا در انجام عملیات';
 
-        return SendResponse(req, res, data, result[0][""] !== false);
+            return SendResponse(req, res, data, result[0][""] !== false);
+        }
+        catch (error) {
+            //console.log(error);
+            return SendResponse(req, res, 'saveStowageAndShiftedup', false, 500);
+        }
     }
-    catch (error) {
-        //console.log(error);
-        return SendResponse(req, res, 'saveStowageAndShiftedup', false, 500);
+    else {
+        return SendResponse(req, res, check.message, check.result, check.statusCode);
     }
 });
 

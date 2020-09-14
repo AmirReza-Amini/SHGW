@@ -5,6 +5,7 @@ const redis = r.createClient();
 const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting');
+const Users = require('../models/users.model');
 
 map = (source, dest, excludeList = []) => {
     let propertyList = Object.getOwnPropertyNames(source).filter(m => !excludeList.includes(m));
@@ -19,7 +20,8 @@ sendResponse = (req, res, data, result = true, code = 200) => {
     req.body.to = req.body.from;
     req.body.data = data;
     delete req.body.from;
-    const a = req.user ? generateAuthToken(req.user) : '';
+    const a = req.user ? generateAuthToken(req.user) : null;
+   // console.log('send res',a)
     //console.log('toke is:', a);
     Log({ type: result ? 'info' : 'error', res: req.body })
 
@@ -32,8 +34,9 @@ sendResponse = (req, res, data, result = true, code = 200) => {
 }
 
 generateAuthToken = (user) => {
+    console.log('generateAuthToken',user)
     const token = jwt.sign({
-        id: user._id,
+        _id: user._id,
         lastName: user.lastName,
         firstName: user.firstName,
         permissions: user.permissions,

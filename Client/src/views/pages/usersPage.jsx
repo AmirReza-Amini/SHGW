@@ -147,7 +147,7 @@ class UsersPage extends Component {
 
     handleEditUser = (userData) => {
         //   console.log('userData for edit', userData);
-        const userInfo = { ..._(this.state.ListOfUsers).filter(c => c._id == userData._id).first() };
+        const userInfo = { ..._(this.state.ListOfUsers).filter(c => c._id === userData._id).first() };
         // userInfo.userCode = 123456;
         // const permissions = [..._(this.state.ListOfUsers).filter(c => c._id == userData._id).first().permissions];
         // permissions[0] = { ...permissions[0] };
@@ -168,20 +168,20 @@ class UsersPage extends Component {
         const currentRow = { ...this.state.currentRow };
 
         const permissions = [...currentRow.permissions];
-        const indexOfP = _(permissions).findIndex(c => c.name == permissionName);
+        const indexOfP = _(permissions).findIndex(c => c.name === permissionName);
         permissions[indexOfP] = { ...permissions[indexOfP] };
 
         const permission = { ...permissions[indexOfP] };
         const access = [...permission.access];
 
         access.map((item, index) => {
-            if (checkedValues.length == 0) {
+            if (checkedValues.length === 0) {
                 access[index] = { ...access[index] };
                 access[index].value = false;
             }
 
             else {
-                const existItemInSelectedValues = _(checkedValues).filter(c => c == item.key).first();
+                const existItemInSelectedValues = _(checkedValues).filter(c => c === item.key).first();
 
                 if (existItemInSelectedValues) {
                     //console.log(existItemInSelectedValues)
@@ -204,7 +204,7 @@ class UsersPage extends Component {
     handleUserPermissionGrantedChange = (switchValue, permissionName) => {
         const currentRow = { ...this.state.currentRow };
         const permissions = [...currentRow.permissions];
-        const indexOfP = _(permissions).findIndex(c => c.name == permissionName);
+        const indexOfP = _(permissions).findIndex(c => c.name === permissionName);
         permissions[indexOfP] = { ...permissions[indexOfP] };
         permissions[indexOfP].isGranted = switchValue;
         currentRow.permissions = permissions;
@@ -266,7 +266,7 @@ class UsersPage extends Component {
 
     handleDeleteUser = (userData) => {
         console.log('userData for delete', userData);
-        const userInfo = { ..._(this.state.ListOfUsers).filter(c => c._id == userData._id).first() };
+        const userInfo = { ..._(this.state.ListOfUsers).filter(c => c._id === userData._id).first() };
         this.setState({ currentRow: userInfo })
         this.deleteToggle();
     }
@@ -394,7 +394,7 @@ class UsersPage extends Component {
                                 this.state.currentRow && this.state.currentRow.permissions &&
                                 this.state.currentRow.permissions.map(permission => {
                                     let access = permission.access.map(item => { return { label: item.key.split('-').join(' '), value: item.key } });
-                                    let defaultValue = permission.access.filter(c => c.value == true).map(item => item.key);
+                                    let defaultValue = permission.access.filter(c => c.value === true).map(item => item.key);
                                     //  console.log('access', access);
                                     return (
 

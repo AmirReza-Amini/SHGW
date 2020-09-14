@@ -5,9 +5,10 @@ const queries = require("../../util/T-SQL/queries");
 const setting = require("../../app-setting");
 const sworm = require("sworm");
 const auth = require("../../middleware/auth");
+const { DoesUserHavePermission } = require('../../util/CheckPermission');
 const db = sworm.db(setting.db.sqlConfig);
 
-//#region Unload Services -------------------------------------------------------------------------
+//#region Unload Services -----------------------------------------------------------------------
 
 router.post("/getCntrInfoForUnload", auth, async (req, res) => {
   try {
@@ -22,35 +23,41 @@ router.post("/getCntrInfoForUnload", auth, async (req, res) => {
 });
 
 router.post("/saveUnload", auth, async (req, res) => {
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
+  if (check.result) {
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.saveUnload, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+        berthId: req.body.berthId,
+        userId: req.body.userId,
+        equipmentId: req.body.equipmentId,
+        operatorId: req.body.operatorId,
+        truckNo: req.body.truckNo,
+        isShifting: req.body.isShifting,
+        sE: req.body.sE,
+        oG: req.body.oG,
+      });
+      //[ { '': [ '12329941', 'OK' ] } ]
+      //console.log('result unload save', result);
+      let data = result[0][""][0] !== '0' ? {
+        ActId: result[0][""][0],
+        message: "عملیات با موفقیت انجام شد",
+      } : 'خطا در انجام عملیات';
 
-  try {
-    var result = await db.query(queries.VESSEL.BERTH.saveUnload, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-      berthId: req.body.berthId,
-      userId: req.body.userId,
-      equipmentId: req.body.equipmentId,
-      operatorId: req.body.operatorId,
-      truckNo: req.body.truckNo,
-      isShifting: req.body.isShifting,
-      sE: req.body.sE,
-      oG: req.body.oG,
-    });
-    //[ { '': [ '12329941', 'OK' ] } ]
-    //console.log('result unload save', result);
-    let data = result[0][""][0] !== '0' ? {
-      ActId: result[0][""][0],
-      message: "عملیات با موفقیت انجام شد",
-    } : 'خطا در انجام عملیات';
+      var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+      //console.log(result2);
+      res.io.emit("get_data", result2);
 
-    var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    //console.log(result2);
-    res.io.emit("get_data", result2);
-
-    return SendResponse(req, res, data, result[0][""][0] !== '0');
-  } catch (error) {
-    return SendResponse(req, res, 'saveUnload', false, 500);
+      return SendResponse(req, res, data, result[0][""][0] !== '0');
+    } catch (error) {
+      return SendResponse(req, res, 'saveUnload', false, 500);
+    }
   }
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
+  }
+
   //#region 
   //   db.transaction(() => {
   //     return db.query(queries.VESSEL.BERTH.saveUnload, {
@@ -73,67 +80,84 @@ router.post("/saveUnload", auth, async (req, res) => {
 });
 
 router.post("/saveUnloadIncrement", auth, async (req, res) => {
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
+  if (check.result) {
+    try {
+      // console.log('ezafe takhlie')
+      var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+        berthId: req.body.berthId,
+        userId: req.body.userId,
+        equipmentId: req.body.equipmentId,
+        operatorId: req.body.operatorId,
+        terminalId: req.body.terminalId,
+        truckNo: req.body.truckNo,
+        isShifting: req.body.isShifting,
+        sE: req.body.sE,
+        oG: req.body.oG,
+      });
 
-  try {
-    // console.log('ezafe takhlie')
-    var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-      berthId: req.body.berthId,
-      userId: req.body.userId,
-      equipmentId: req.body.equipmentId,
-      operatorId: req.body.operatorId,
-      terminalId: req.body.terminalId,
-      truckNo: req.body.truckNo,
-      isShifting: req.body.isShifting,
-      sE: req.body.sE,
-      oG: req.body.oG,
-    });
+      let data = result[0][""][0] !== '0' ? {
+        ActId: result[0][""][0],
+        message: "عملیات با موفقیت انجام شد",
+      } : 'خطا در انجام عملیات';
 
-    let data = result[0][""][0] !== '0' ? {
-      ActId: result[0][""][0],
-      message: "عملیات با موفقیت انجام شد",
-    } : 'خطا در انجام عملیات';
+      var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+      //console.log('increment data', result2);
+      res.io.emit("get_data", result2);
 
-    var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    //console.log('increment data', result2);
-    res.io.emit("get_data", result2);
-
-    return SendResponse(req, res, data, result[0][""][0] !== '0');
-  } catch (error) {
-    return SendResponse(req, res, 'saveUnloadIncrement', false, 500);
+      return SendResponse(req, res, data, result[0][""][0] !== '0');
+    } catch (error) {
+      return SendResponse(req, res, 'saveUnloadIncrement', false, 500);
+    }
+  }
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
   }
 });
 
 router.post("/addToShifting", auth, async (req, res) => {
-  try {
-    var result = await db.query(queries.VESSEL.BERTH.addToShifting, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-      staffId: req.body.staffId,
-    });
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
+  if (check.result) {
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.addToShifting, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+        staffId: req.body.staffId,
+      });
 
-    if (result && result.length > 0)
-      return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
-    else return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد", false);
-  } catch (error) {
-    return SendResponse(req, res, 'addToShifting', false, 500);
+      if (result && result.length > 0)
+        return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
+      else return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد", false);
+    } catch (error) {
+      return SendResponse(req, res, 'addToShifting', false, 500);
+    }
+  }
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
   }
 });
 
 router.post("/addToLoadingList", auth, async (req, res) => {
-  try {
-    var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-    });
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
+  if (check.result) {
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.addToLoadingList, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+      });
 
-    if (result && result.length > 0)
-      SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
-    else
-      return SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه نشد", false);
-  } catch (error) {
-    return SendResponse(req, res, 'addToLoadingList', false, 500);
+      if (result && result.length > 0)
+        SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
+      else
+        return SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه نشد", false);
+    } catch (error) {
+      return SendResponse(req, res, 'addToLoadingList', false, 500);
+    }
+  }
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
   }
 });
 
@@ -156,7 +180,9 @@ router.post("/isExistCntrInInstructionLoading", auth, async (req, res) => {
   }
 });
 
-//#endregion -------------------------------------------------------------------------------------
+//#endregion ------------------------------------------------------------------------------------
+
+//#region Load Services -------------------------------------------------------------------------
 
 router.post("/getCntrInfoForLoad", auth, async (req, res) => {
 
@@ -172,39 +198,42 @@ router.post("/getCntrInfoForLoad", auth, async (req, res) => {
 
 });
 
-
 router.post("/saveLoad", auth, async (req, res) => {
 
-  try {
-    var result = await db.query(queries.VESSEL.BERTH.saveLoad, {
-      voyageId: req.body.voyageId,
-      cntrNo: req.body.cntrNo,
-      berthId: req.body.berthId,
-      userId: req.body.userId,
-      equipmentId: req.body.equipmentId,
-      operatorId: req.body.operatorId,
-      truckNo: req.body.truckNo,
-      isShifting: req.body.isShifting,
-      sE: req.body.sE,
-      oG: req.body.oG,
-    });
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Load');
+  if (check.result) {
+    try {
+      var result = await db.query(queries.VESSEL.BERTH.saveLoad, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+        berthId: req.body.berthId,
+        userId: req.body.userId,
+        equipmentId: req.body.equipmentId,
+        operatorId: req.body.operatorId,
+        truckNo: req.body.truckNo,
+        isShifting: req.body.isShifting,
+        sE: req.body.sE,
+        oG: req.body.oG,
+      });
 
-    console.log('load save', result);
-    let data = result[0][""][0] !== '0' ? {
-      ActId: result[0][""][0],
-      message: "عملیات با موفقیت انجام شد",
-    } : 'خطا در انجام عملیات';
+      console.log('load save', result);
+      let data = result[0][""][0] !== '0' ? {
+        ActId: result[0][""][0],
+        message: "عملیات با موفقیت انجام شد",
+      } : 'خطا در انجام عملیات';
 
-    var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
-    //console.log(result2);
-    res.io.emit("get_data", result2);
+      var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+      //console.log(result2);
+      res.io.emit("get_data", result2);
 
-    return SendResponse(req, res, data, result[0][""][0] !== '0');
-  } catch (error) {
-    return SendResponse(req, res, 'saveLoad', false, 500);
+      return SendResponse(req, res, data, result[0][""][0] !== '0');
+    } catch (error) {
+      return SendResponse(req, res, 'saveLoad', false, 500);
+    }
   }
-
-
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
+  }
 
   //#region 
   //   db.transaction(() => {
@@ -226,5 +255,7 @@ router.post("/saveLoad", auth, async (req, res) => {
 
   //#endregion
 });
+
+//#endregion ------------------------------------------------------------------------------------
 
 module.exports = router;

@@ -1,18 +1,19 @@
 // import external modules
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import _ from 'lodash'
 
 import auth from "../../services/authService";
 import config from '../../config.json';
 import MainLayout from "../mainLayout";
+import urls from '../../urls.json';
 
 const MainLayoutRoute = ({ location, path, render, ...rest }) => {
 
    const doesCurrentUserHaveAuthorization = (permissions) => {
 
       //console.log('permissions:', permissions, path);
-      if (permissions == null || permissions.length == 0)
+      if (permissions === null || permissions.length === 0)
          return false;
 
       const items = _(path)
@@ -21,13 +22,13 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          .filter((c) => c !== "")
          .map((c) => _.toUpper(c));
 
-     // console.log('item', items);
+      // console.log('item', items);
       switch (items.length) {
          case 0:
             return true
          case 1:
             let temp = permissions.filter(c => c.isGranted === true);
-          //  console.log('temp ', temp);
+            //  console.log('temp ', temp);
             if (temp.length > 0)
                return true
             return false
@@ -40,7 +41,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          case 3:
          case 4:
             let temp2 = permissions.filter(c => _.toUpper(c.name) === items[1] && c.isGranted === true);
-           // console.log('from main route', temp2)
+            console.log('from main route', temp2)
             if (temp2.length === 1) {
                let temp3 = temp2[0].access.filter(c => _.toUpper(c.key) === items[2] && c.value === true);
                if (temp3.length === 1)
@@ -48,7 +49,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
             }
             return false;
       }
-     // console.log('miresi ya na')
+      // console.log('miresi ya na')
       return false
    }
    //console.log('from mainrout', location)
@@ -58,6 +59,9 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          {...rest}
          path={path}
          render={matchProps => {
+            console.log('asdfadsfasfda')
+            if (path === urls.Logout)
+               return <MainLayout>{render(matchProps)}</MainLayout>
             if (!config.useAuthentication) {
                return <MainLayout>{render(matchProps)}</MainLayout>
             }
@@ -70,6 +74,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
                   return <MainLayout>{render(matchProps)}</MainLayout>
                }
                else {
+                  console.log('main rout', user)
                   auth.logout();
                   return (<Redirect
                      to={{
