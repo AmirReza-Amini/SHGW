@@ -10,6 +10,7 @@ import * as auth from "../../services/authService"
 import FormikControl from "../../components/common/formik/FormikControl";
 
 import { getAreas } from "../../services/area";
+import ReactRevealText from 'react-reveal-text'
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -68,6 +69,7 @@ const LoginPage = (props) => {
   const [state, setState] = useState({
     areaList: []
   });
+  const [show, setShow] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
 
   //#endregion -----------------------------------------------------------
@@ -83,12 +85,17 @@ const LoginPage = (props) => {
         return toast.error(res.data.data[0]);
       }
     }).catch(error => { });
-    
+
     const { message } = props.location.state;
     if (props.location.state && message && message.length > 0) {
       toast.error(message);
     }
     console.log('from login effevt', props)
+
+    setTimeout(() => {
+      setShow(true);
+    }, 1000);
+
   }, []);
 
   useEffect(() => {
@@ -109,8 +116,10 @@ const LoginPage = (props) => {
           <Card className=" text-center width-400 bg-transparency" >
             <CardBody>
               <h2 className="white py-4">
-                شرکت توسعه خدمات دریایی و بندری سینا
-                  </h2>
+                <ReactRevealText show={show}>
+                  شرکت توسعه خدمات دریایی و بندری سینا
+                </ReactRevealText>
+              </h2>
               <div className="pt-2">
 
                 <Formik

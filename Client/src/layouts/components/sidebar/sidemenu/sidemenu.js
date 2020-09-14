@@ -1,5 +1,5 @@
 // import external modules
-import React, { Component} from "react";
+import React, { Component } from "react";
 
 import { Home, LogIn, ChevronRight } from "react-feather";
 import { NavLink } from "react-router-dom";
@@ -11,13 +11,21 @@ import SideMenu from "../sidemenuHelper";
 import * as auth from "../../../../services/authService";
 import config from '../../../../config.json';
 import urls from '../../../../urls.json';
+import ReactRevealText from 'react-reveal-text'
 
 class SideMenuContent extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { user: {}, isAdmin: false, hasRoles: false };
+    this.state = { user: {}, isAdmin: false, hasRoles: false, showUserInfo: false };
   }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ showUserInfo: true });
+    }, 1500);
+  }
+
   componentWillMount() {
     if (!config.useAuthentication) {
       this.setState({ isAdmin: true });
@@ -40,6 +48,10 @@ class SideMenuContent extends Component {
         className="sidebar-content"
         toggleSidebarMenu={this.props.toggleSidebarMenu}
       >
+        <SideMenu.MenuSingleItem badgeColor="danger">
+          <ReactRevealText style={{ color: "White", fontSize: 18 }} className="m-3" show={this.state.showUserInfo} text={'Welcome ' + this.state.user.firstName}>
+          </ReactRevealText>
+        </SideMenu.MenuSingleItem>
         <SideMenu.MenuSingleItem badgeColor="danger">
           <NavLink to={urls.Home} activeclassname="active">
             <i className="menu-icon">
