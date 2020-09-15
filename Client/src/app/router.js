@@ -7,9 +7,8 @@ import { connect } from "react-redux";
 import MainLayoutRoutes from "../layouts/routes/mainRoutes";
 import LoginLayoutRoute from "../layouts/routes/loginRoutes"
 import ErrorLayoutRoute from "../layouts/routes/errorRoutes";
-import * as auth from "../services/authService"
+import LogoutLayoutRoute from "../layouts/routes/logoutRoutes";
 import urls from '../urls.json'
-import usersPage from "../views/pages/usersPage";
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
 const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
@@ -175,7 +174,7 @@ class Router extends Component {
               </Suspense>
             )}
           />
-          <MainLayoutRoutes
+          <LogoutLayoutRoute
             exact
             path={urls.Logout}
             render={(matchprops) => (
