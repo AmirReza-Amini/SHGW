@@ -59,9 +59,9 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          {...rest}
          path={path}
          render={matchProps => {
-            console.log('asdfadsfasfda')
-            if (path === urls.Logout)
-               return <MainLayout>{render(matchProps)}</MainLayout>
+            // console.log('asdfadsfasfda')
+            // if (path === urls.Logout)
+            //    return <MainLayout>{render(matchProps)}</MainLayout>
             if (!config.useAuthentication) {
                return <MainLayout>{render(matchProps)}</MainLayout>
             }
