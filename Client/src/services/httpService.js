@@ -44,6 +44,9 @@ axios.interceptors.response.use(null, error => {
       case 403:
         toast.error('دسترسی غیر مجاز');
         break;
+      case 404:
+        toast.error('سرویس مورد نظر یافت نشد');
+        break;
     }
   }
 

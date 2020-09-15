@@ -98,20 +98,20 @@ const onSubmit = (values, props, staffId) => {
                 if (!res.data.result) {
                   addToLoadingList(paramData)
                     .then((res) => {
-                      console.log(
-                        "res save addToLoadingList",
-                        res.data.data[0]
-                      );
+                      // console.log(
+                      //   "res save addToLoadingList",
+                      //   res.data.data[0]
+                      // );
                       if (res.data.result) toast.success(res.data.data[0]);
                       else return toast.error(res.data.data[0]);
                     })
                     .catch((error) => {
-                      return toast.error(error);
+                      //return toast.error(error);
                     });
                 }
               })
               .catch((error) => {
-                return toast.error(error);
+                //return toast.error(error);
               });
           }
           if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
@@ -119,14 +119,14 @@ const onSubmit = (values, props, staffId) => {
           } else {
             saveUnload(parametersForUnload)
               .then((res) => {
-                console.log("res save unload", res, res.data.data[0]);
+                //console.log("res save unload", res, res.data.data[0]);
                 if (res.data.result) {
                   toast.success(res.data.data[0]['message']);
                   return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
                 } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
-                return toast.error(error);
+                //return toast.error(error);
               });
           }
         } else if (data[0].PortOfDischarge === "IRBND") {
@@ -139,7 +139,7 @@ const onSubmit = (values, props, staffId) => {
               } else return toast.error(res.data.data[0]);
             })
             .catch((error) => {
-              return toast.error(error);
+              //return toast.error(error);
             });
         }
       }
@@ -253,7 +253,7 @@ const UnloadOperationPage = (props) => {
                 }
               })
               .catch((error) => {
-                toast.error(error);
+                //toast.error(error);
               });
           }
         }
@@ -268,7 +268,7 @@ const UnloadOperationPage = (props) => {
       })
       .catch((error) => {
         //console.log("cntrno change error", error);
-        toast.error(error);
+        //toast.error(error);
       });
   };
 
@@ -289,18 +289,18 @@ const UnloadOperationPage = (props) => {
   };
 
   const handleCancelButton = () => {
-    props.history.push(props.location.pathname.replace("/discharge",''))
+    return props.history.push(props.location.pathname.replace("/discharge",''))
   }
 
   const handleDangerButton = () => {
     //console.log(CntrInfo)
     if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
-      props.history.push(urls.DischargeDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
+      return props.history.push(urls.DischargeDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.BayCntrNo });
   }
 
   const handleStatisticsButton = () => {
     //console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
-    props.history.push(urls.DischargeStatistics, { voyageInfo: VoyageData.selectedVoyage });
+    return props.history.push(urls.DischargeStatistics, { voyageInfo: VoyageData.selectedVoyage });
   }
 
   //#endregion -------------------------------------------------------------

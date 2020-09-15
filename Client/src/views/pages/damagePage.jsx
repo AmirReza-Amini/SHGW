@@ -10,7 +10,6 @@ import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
 import { fetchDamageDefinition } from "../../redux/common/damage/damageActions";
 import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damage';
-import { Redirect } from "react-router-dom";
 
 
 toast.configure({ bodyClassName: "customFont rtl" });
@@ -72,12 +71,12 @@ const onSubmit = (values, props) => {
       return props.history.push(props.location.pathname.replace('/damage', ''));
     }
     else {
-      toast.error(data[0]);
+      return toast.error(data[0]);
     }
   }).catch(error => {
     //toast.error(error.response.data.data[0]);
     if (error.response.status == 401) {
-      console.log('props damage locatopn', props);
+      //console.log('props damage locatopn', props);
       return props.history.replace('/login', { from: props.location })
       // return <Redirect
       //   to={{
@@ -86,14 +85,14 @@ const onSubmit = (values, props) => {
       //   }}
       // />;
     }
-    console.log('damage promise all err', error.response);
+    //console.log('damage promise all err', error.response);
   })
 };
 
 //#endregion ---------------------------------------------------------------
 
 const DamagePage = (props) => {
-  console.log('damage props', props);
+  //console.log('damage props', props);
 
   //#region SELECTORS AND STATE --------------------------------------------
 
@@ -155,7 +154,7 @@ const DamagePage = (props) => {
         return toast.error('خطا در بازیابی اطلاعات خسارت کانتینر');
       }
     }).catch(err => {
-      toast.error(err);
+      //return toast.error(err);
     })
 
   }, []);

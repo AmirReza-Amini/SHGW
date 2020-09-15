@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import urls from '../../urls.json';
 
 import CustomNavigation from "../../components/common/customNavigation";
 import FormikControl from "../../components/common/formik/FormikControl";
@@ -48,15 +47,14 @@ const onSubmit = (values, props, staffId) => {
         voyageId: values.selectVoyageNo.value,
     };
 
-    _(values).forEach()
     const data = { loadingBayAddress: `0${values.bayAddress.split(" ").join("")}`, voyageId: values.selectVoyageNo.value };
     isOccoupiedBayAddressInVoyage(data)
         .then(response => {
-            console.log('response', response)
+            //console.log('response', response)
             if (!response.data.result) {
                 getStowageInfoForCntrByVoyage(parameters)
                     .then(response2 => {
-                        console.log('response2', response2)
+                        //console.log('response2', response2)
                         if (response2.data.result) {
                             const paramsForSaving = {
                                 cntrNo: values.containerNo,
@@ -68,7 +66,7 @@ const onSubmit = (values, props, staffId) => {
                                 actType: response2.data.data[0].ACTType
                             }
                             saveStowageAndShiftedup(paramsForSaving).then(response3 => {
-                                console.log('response3', response3)
+                                //console.log('response3', response3)
                                 if (response3.data.result) {
                                     return toast.success(response3.data.data[0]);
                                 }
@@ -76,7 +74,7 @@ const onSubmit = (values, props, staffId) => {
                                     return toast.error(response3.data.data[0]);
                                 }
                             }).catch(error => {
-                                return toast.error(error);
+                                //return toast.error(error);
                             });
                         }
                         else {
@@ -84,9 +82,7 @@ const onSubmit = (values, props, staffId) => {
                         }
                     })
                     .catch(error => {
-                        {
-                            return toast.error(error);
-                        }
+                        //return toast.error(error);
                     })
             }
             else {
@@ -96,7 +92,7 @@ const onSubmit = (values, props, staffId) => {
             }
         })
         .catch(error => {
-            return toast.error(error);
+            //return toast.error(error);
         });
 };
 //#endregion ---------------------------------------------------------------
@@ -197,7 +193,7 @@ const StowagePage = (props) => {
 
                     if (response2.data.data[0].Operation === 'Stowage' || response2.data.data[0].Operation === 'Shifted Up') {
                         let temp = { ...CntrInfo };
-                        console.log('temp', temp);
+                        //console.log('temp', temp);
                         //temp.BayAddress = response2.data.data[0].LoadingBayAddress;
                         //setCntrInfo(temp);
                         return toast.warn('اطلاعات این کانتینر قبلا ثبت شده');
@@ -250,7 +246,7 @@ const StowagePage = (props) => {
     };
 
     const handleCancelButton = () => {
-        props.history.push(props.location.pathname.replace('/stowage',''))
+        return props.history.push(props.location.pathname.replace('/stowage', ''))
     }
 
     //#endregion -----------------------------------------------------------

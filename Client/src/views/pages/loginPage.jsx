@@ -90,7 +90,7 @@ const LoginPage = (props) => {
     if (props.location.state && message && message.length > 0) {
       toast.error(message);
     }
-    console.log('from login effevt', props)
+    //console.log('from login effevt', props)
 
     setTimeout(() => {
       setShow(true);
@@ -117,7 +117,7 @@ const LoginPage = (props) => {
             <CardBody>
               <h2 className="white py-4">
                 <ReactRevealText show={show}>
-                  شرکت توسعه خدمات دریایی و بندری سینا
+                  نرم افزار هندهلد شرکت توسعه خدمات دریایی و بندری سینا
                 </ReactRevealText>
               </h2>
               <div className="pt-2">
@@ -174,7 +174,7 @@ const LoginPage = (props) => {
                             <Col md="12">
                               <FormikControl
                                 control="input"
-                                type="text"
+                                type="password"
                                 id="password"
                                 name="password"
                                 className="rtl"

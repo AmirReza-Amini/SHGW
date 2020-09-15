@@ -104,7 +104,7 @@ const onSubmit = (values, props, staffId) => {
                                         } else return toast.error(res2.data.data[0]);
                                     })
                                     .catch((error) => {
-                                        return toast.error(error);
+                                        //return toast.error(error);
                                     });
                             }
                             else {
@@ -112,7 +112,7 @@ const onSubmit = (values, props, staffId) => {
                             }
                         })
                         .catch((error) => {
-                            return toast.error(error);
+                            //return toast.error(error);
                         });
                 }
                 else {
@@ -125,7 +125,7 @@ const onSubmit = (values, props, staffId) => {
                             } else return toast.error(res.data.data[0]);
                         })
                         .catch((error) => {
-                            return toast.error(error);
+                            //return toast.error(error);
                         });
                 }
             }
@@ -201,7 +201,7 @@ const LoadOperationPage = (props) => {
         getCntrInfoForLoad(data)
             .then((response) => {
                 setDisableSubmitButton(false);
-                console.log("cntrno change res", response);
+                //console.log("cntrno change res", response);
                 if (!response.data.result) {
                     setDisableSubmitButton(true);
                     return toast.error("کانتینر یافت نشد");
@@ -235,7 +235,7 @@ const LoadOperationPage = (props) => {
             })
             .catch((error) => {
                 //console.log("cntrno change error", error);
-                return toast.error(error);
+                //return toast.error(error);
             });
     };
 
@@ -256,13 +256,13 @@ const LoadOperationPage = (props) => {
     };
 
     const handleCancelButton = () => {
-        props.history.push(props.location.pathname.replace('/load',''));
+        return props.history.push(props.location.pathname.replace('/load',''));
     }
 
     const handleDangerButton = () => {
         //console.log(CntrInfo)
         if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
-            props.history.push(urls.LoadDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
+            return props.history.push(urls.LoadDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
     }
 
     //#endregion -----------------------------------------------------------

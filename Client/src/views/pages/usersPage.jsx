@@ -255,7 +255,7 @@ class UsersPage extends Component {
         }).catch(error => {
             this.editToggle();
             this.setState({ currentRow: {} });
-            return toast.error(error.message);
+            //return toast.error(error.message);
 
         })
     }
@@ -299,7 +299,7 @@ class UsersPage extends Component {
         }).catch(error => {
             this.deleteToggle();
             this.setState({ currentRow: {} });
-            return toast.error(error.message);
+            //return toast.error(error.message);
 
         })
     }
