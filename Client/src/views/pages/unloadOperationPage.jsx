@@ -43,11 +43,11 @@ const checkboxListOptions = [
 ];
 
 const validationSchema = Yup.object({
-  selectVoyageNo: Yup.string().required("!شماره سفر را وارد کنید"),
-  selectEquipmentType: Yup.string().required("!شماره دستگاه را وارد کنید"),
-  containerNo: Yup.string().required("!شماره کانتینر را وارد کنید"),
-  operatorCode: Yup.string().required("!کد اپراتور را وارد کنید"),
-  truckNo: Yup.string().required("!شماره کشنده را وارد کنید"),
+  selectVoyageNo: Yup.string().required("Select Voyage No !"),
+  selectEquipmentType: Yup.string().required("Select Equipment No !"),
+  containerNo: Yup.string().required("Enter Container No !"),
+  operatorCode: Yup.string().required("Enter Operator Code !"),
+  truckNo: Yup.string().required("Enter Truck No !"),
 });
 
 //#endregion ---------------------------------------------------------------
@@ -73,7 +73,7 @@ const onSubmit = (values, props, staffId) => {
     if (result) {
       //---------------- Duplicate Act Check---------------------------------
       if (data[0].ActID != null) {
-        return toast.error("اطلاعات این کانتینر قبلاً ثبت شده");
+        return toast.error("The container info has been saved already");
       } else {
         let parametersForUnload = {
           cntrNo: data[0].BayCntrNo,
@@ -115,7 +115,7 @@ const onSubmit = (values, props, staffId) => {
               });
           }
           if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
-            return toast.error("ترمینال تخلیه پلن نشده");
+            return toast.error("Terminal of Discharge has not been planned");
           } else {
             saveUnload(parametersForUnload)
               .then((res) => {
@@ -144,7 +144,7 @@ const onSubmit = (values, props, staffId) => {
         }
       }
     } else {
-      return toast.error("کانتینر یافت نشد");
+      return toast.error("No container has been found");
     }
   });
 };
@@ -166,7 +166,7 @@ const UnloadOperationPage = (props) => {
     truckNo: "",
     checkboxListSelected: []
   });
- // console.log(tempstate);
+  // console.log(tempstate);
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
@@ -218,7 +218,7 @@ const UnloadOperationPage = (props) => {
         //console.log("cntrno change res", response);
         if (!response.data.result) {
           setDisableSubmitButton(true);
-          return toast.error("کانتینر یافت نشد");
+          return toast.error("No container has been found");
         }
 
         let guessedOperation = "";
@@ -226,22 +226,22 @@ const UnloadOperationPage = (props) => {
         if (result.ActID !== null) {
           //setCntrInfo({});
           setDisableSubmitButton(true);
-          toast.error("اطلاعات این کانتینر قبلا ثبت شده");
+          toast.error("The container info has been saved already");
         }
         if (result.ManifestCntrID !== null) {
-          guessedOperation = "تخلیه ی کانتینر (Unload)";
+          guessedOperation = "Unload";
         } else if (result.ShiftingID !== null) {
-          guessedOperation = "شیفتینگ (Shifting)";
+          guessedOperation = "Shifting";
         } else if (
           result.PortOfDischarge !== null &&
           result.PortOfDischarge === "IRBND"
         ) {
-          guessedOperation = "اضافه تخلیه (Additional)";
+          guessedOperation = "Additional";
         } else if (
           result.PortOfDischarge !== null &&
           result.PortOfDischarge !== "IRBND"
         ) {
-          guessedOperation = "دید اپراتور (Visibility)";
+          guessedOperation = "Visibility";
           if (result.ActID == null) {
             addToShifting({ ...data, staffId: 220 })
               .then((response) => {
@@ -289,7 +289,7 @@ const UnloadOperationPage = (props) => {
   };
 
   const handleCancelButton = () => {
-    return props.history.push(props.location.pathname.replace("/discharge",''))
+    return props.history.push(props.location.pathname.replace("/discharge", ''))
   }
 
   const handleDangerButton = () => {
@@ -307,7 +307,7 @@ const UnloadOperationPage = (props) => {
 
   return (
     <Fragment>
-      <Row className="row-eq-height justify-content-md-center customOpacity">
+      <Row className="row-eq-height justify-content-md-center">
         <Col md="6">
           <div>
             <CustomNavigation path={props.match.path} />
@@ -347,10 +347,10 @@ const UnloadOperationPage = (props) => {
                                   onClick={toggle}
                                   style={{
                                     marginBottom: "1rem",
-                                    direction: "rtl",
+                                    direction: "ltr",
                                   }}
                                 >
-                                  اطلاعات اولیه
+                                  Basic Infromation
                                 </Button>
                               </Col>
                             </Row>
@@ -366,10 +366,11 @@ const UnloadOperationPage = (props) => {
                                           VoyageData.selectedVoyage
                                         }
                                         options={VoyageData.voyages}
-                                        placeholder="شماره سفر"
+                                        placeholder="Voyage No"
                                         onSelectedChanged={
                                           handleVoyageSelectedChanged
                                         }
+                                        className="ltr"
                                       />
                                     </Col>
                                   </Row>
@@ -382,10 +383,11 @@ const UnloadOperationPage = (props) => {
                                           EquipmentData.selectedEquipment
                                         }
                                         options={EquipmentData.equipments}
-                                        placeholder="شماره دستگاه"
+                                        placeholder="Equipment No"
                                         onSelectedChanged={
                                           handleEquipmentSelectedChanged
                                         }
+                                        className="ltr"
                                       />
                                     </Col>
                                   </Row>
@@ -396,8 +398,8 @@ const UnloadOperationPage = (props) => {
                                         name="operatorCode"
                                         mask=""
                                         debounceTime={2000}
-                                        placeholder="کد اپراتور"
-                                        className="rtl"
+                                        placeholder="Operator Code"
+                                        className="ltr"
                                         onChange={() =>
                                           handleOperatorCodeChange(
                                             formik.values.operatorCode
@@ -413,7 +415,7 @@ const UnloadOperationPage = (props) => {
                                         control="input"
                                         type="text"
                                         name="operatorCodeInfo"
-                                        className="rtl"
+                                        className="ltr"
                                         disabled={true}
                                         value={OperatorData.operator.name}
                                       />
@@ -429,7 +431,7 @@ const UnloadOperationPage = (props) => {
                                   name="containerNo"
                                   mask="aaaa 9999999"
                                   debounceTime={0}
-                                  placeholder="شماره کانتینر"
+                                  placeholder="Container No"
                                   className="ltr"
                                   onChange={() =>
                                     handleContainerNoChange(
@@ -447,8 +449,8 @@ const UnloadOperationPage = (props) => {
                                   control="input"
                                   type="text"
                                   name="truckNo"
-                                  className="rtl"
-                                  placeholder="شماره کشنده"
+                                  className="ltr"
+                                  placeholder="Truck No"
                                 />
                               </Col>
                               <Col md="6">
@@ -462,87 +464,88 @@ const UnloadOperationPage = (props) => {
                           </div>
                           <div className="form-actions center">
                             <p
-                              className="mb-0 rtl"
+                              className="mb-1 ltr"
                               style={{
                                 textAlign: "center",
                                 fontWeight: "bold",
+                                fontSize: 20
                               }}
                             >
-                              اطلاعات تکمیلی
+                              Complementary Information
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                سایز و نوع کانتینر:
+                                Container Size/Type:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
                               </span>
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                وضعیت پر یا خالی:
+                                Full Empty Status:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.FullEmptyStatus}
                               </span>
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                بندر تخلیه:
+                                Port Of Discharge:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.PortOfDischarge}
                               </span>
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
-                              <span className="labelDescription">ترمینال:</span>{" "}
+                              <span className="labelDescription">Terminal:</span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.TerminalName}
                               </span>
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                محل تخلیه:
+                                Marshaling Location:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.MarshalingLocation}
                               </span>
                             </p>
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                نوع بارنامه:
+                                BL Type:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.ShiftingID != null
-                                  ? "شیفتینگ"
+                                  ? "Shifting"
                                   : CntrInfo.BLType}
                               </span>
                             </p>
 
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                وضعیت خطرناک بودن:
+                                IMDG Status:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.IMDGCode}
@@ -550,11 +553,11 @@ const UnloadOperationPage = (props) => {
                             </p>
 
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                رده ی وزنی:
+                                Plan Weight:
                               </span>{" "}
                               <span className="labelValue">
                                 {CntrInfo.PlanWeight}
@@ -562,11 +565,11 @@ const UnloadOperationPage = (props) => {
                             </p>
 
                             <p
-                              className="mb-0 rtl"
-                              style={{ textAlign: "right" }}
+                              className="mb-0 ltr"
+                              style={{ textAlign: "left" }}
                             >
                               <span className="labelDescription">
-                                نوع عملیات:
+                                Guessed Operation:
                               </span>{" "}
                               <span className="guessedOperation">
                                 {CntrInfo.GuessedOperation}
@@ -574,17 +577,17 @@ const UnloadOperationPage = (props) => {
                             </p>
                           </div>
                           <div className="form-actions center">
-                            <Button color="warning" className="mr-1" onClick={handleCancelButton} type="button">
-                              <X size={16} color="#FFF" /> لغو
-                            </Button>
                             <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
-                              <CheckSquare size={16} color="#FFF" /> ثبت
+                              <CheckSquare size={16} color="#FFF" /> Save
                             </Button>
                             <Button color="danger" type="button" className="mr-1" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
-                              <CheckSquare size={16} color="#FFF" /> خسارت
+                              <CheckSquare size={16} color="#FFF" /> Damage
                             </Button>
-                            <Button color="success" type="button" onClick={handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
-                              <CheckSquare size={16} color="#FFF" /> آمار
+                            <Button color="success" type="button" className="mr-1" onClick={handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
+                              <CheckSquare size={16} color="#FFF" /> Statistics
+                            </Button>
+                            <Button color="warning" onClick={handleCancelButton} type="button">
+                              <X size={16} color="#FFF" /> Cancel
                             </Button>
                           </div>
                         </Form>

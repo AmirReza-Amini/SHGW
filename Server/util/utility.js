@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Log = require('./Logger');
 const r = require('redis')
-const redis = r.createClient();
+//const redis = r.createClient();
 const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting');

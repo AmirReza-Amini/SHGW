@@ -63,8 +63,8 @@ class operationTypePage extends Component {
               <MinimalStatisticsBG
                 cardBgColor={g.class}
                 statistics={g.enName}
-                text={g.fnName}
-                iconSide="right"
+               // text={g.fnName}
+                //iconSide="left"
                 onClick={this.handleOperationType}
                 key={g.enName}
                 textAlign="center"

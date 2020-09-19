@@ -37,27 +37,27 @@ class loadUnloadStatisticsPage extends Component {
         let dataSet = [];
         console.log(data);
         if (data[0]["ActualUnloadCount20"] !== 0) {
-            lables.push("تخلیه شده 20 فوت");
+            lables.push("Unloaded 20\'");
             dataSet.push(data[0]["ActualUnloadCount20"]);
         }
         if (data[0]["ActualUnloadCount40"] !== 0) {
-            lables.push("تخلیه شده 40 فوت");
+            lables.push("Unloaded 40\'");
             dataSet.push(data[0]["ActualUnloadCount40"]);
         }
         if (data[0]["ActualLoadCount20"] !== 0) {
-            lables.push("بارگیری شده 20 فوت");
+            lables.push("Loaded 20\'");
             dataSet.push(data[0]["ActualLoadCount20"]);
         }
         if (data[0]["ActualLoadCount40"] !== 0) {
-            lables.push("بارگیری شده 40 فوت");
+            lables.push("Loaded 40\'");
             dataSet.push(data[0]["ActualLoadCount40"]);
         }
         if (data[0]["ActualShiftingCount20"] !== 0) {
-            lables.push("شیفتینگ 20 فوت");
+            lables.push("Shfting 20\'");
             dataSet.push(data[0]["ActualShiftingCount20"]);
         }
         if (data[0]["ActualShiftingCount40"] !== 0) {
-            lables.push("شیفتینگ 40 فوت");
+            lables.push("Shifting 40\'");
             dataSet.push(data[0]["ActualShiftingCount40"]);
         }
         // if (data[0]["UnloadCount20"] !== 0) {
@@ -208,7 +208,7 @@ class loadUnloadStatisticsPage extends Component {
                             this.state.chartData && this.state.chartData.data &&
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="rtl customFont" style={{ float: "right" }}>آمار تخلیه و بارگیری برای سفر {this.state.label}</CardTitle>
+                                    <CardTitle className="ltr customFont" style={{ float: "left" }}>Load / Unload Statistics For: {this.state.label}</CardTitle>
                                 </CardHeader>
                                 <CardBody>
                                     <Pie height={400} data={this.state.chartData.data} options={this.state.chartData.options} />

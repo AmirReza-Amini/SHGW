@@ -12,7 +12,7 @@ import { fetchDamageDefinition } from "../../redux/common/damage/damageActions";
 import { getDamageInfoByActId, setDamageInfoByActId } from '../../services/damage';
 
 
-toast.configure({ bodyClassName: "customFont rtl" });
+toast.configure({ bodyClassName: "customFont ltr" });
 
 //#region INITIAL VALUES ---------------------------------------------------
 
@@ -36,7 +36,7 @@ const onSubmit = (values, props) => {
   if (values.selectedBottomDamages.length === 0 && values.selectedFrontDamages.length === 0 && values.selectedLeftDamages.length === 0 &&
     values.selectedOtherDamages.length === 0 && values.selectedRearDamages.length === 0 && values.selectedRightDamages.length === 0 &&
     values.selectedTopDamages.length === 0) {
-    toast.error('خسارتی انتخاب نشده است');
+    toast.error("No damages has been seleted");
     return;
   }
 
@@ -151,7 +151,7 @@ const DamagePage = (props) => {
 
       }
       else {
-        return toast.error('خطا در بازیابی اطلاعات خسارت کانتینر');
+        return toast.error("Error in loading container damage info");
       }
     }).catch(err => {
       //return toast.error(err);
@@ -210,9 +210,9 @@ const DamagePage = (props) => {
                       return (
                         <Form>
                           <Row>
-                            <Col md="12" style={{ textAlign: "right" }} className="rtl">
+                            <Col md="12" style={{ textAlign: "left" }} className="ltr">
                               <span className="labelDescription">
-                                شماره کانتینر:
+                                Container No:
                               </span>{" "}
                               <span className="guessedOperation">
                                 {state.cntrNo}
@@ -262,12 +262,13 @@ const DamagePage = (props) => {
                           </Row>
 
                           <div className="form-actions center">
-                            <Button color="warning" className="mr-1" type="button" onClick={handleCancelButton}>
-                              <X size={16} color="#FFF" /> لغو
+                            <Button type="submit" className="mr-1" color="primary" disabled={submitDisabled}>
+                              <CheckSquare size={16} color="#FFF" /> Save
                           </Button>
-                            <Button type="submit" color="primary" disabled={submitDisabled}>
-                              <CheckSquare size={16} color="#FFF" /> ثبت
+                            <Button color="warning"  type="button" onClick={handleCancelButton}>
+                              <X size={16} color="#FFF" /> Cancel
                           </Button>
+
                           </div>
                         </Form>
                       );

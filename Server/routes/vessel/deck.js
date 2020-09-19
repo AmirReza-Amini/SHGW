@@ -78,7 +78,7 @@ router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
 
             //console.log('result saveStowageAndShiftedup', result);
             //result saveStowageAndShiftedup [ { '': false } ]
-            let data = result[0][""] !== false ? "عملیات با موفقیت انجام شد" : 'خطا در انجام عملیات';
+            let data = result[0][""] !== false ? "The operation has been done successfully" : "Operation failed";
 
             return SendResponse(req, res, data, result[0][""] !== false);
         }

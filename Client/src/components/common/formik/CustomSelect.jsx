@@ -4,7 +4,7 @@ import { FormGroup, Label } from "reactstrap";
 import Select from "react-select";
 
 const CustomSelect = (props) => {
-  const { label, name, options, selectedValue, placeholder, isMulti, ...rest } = props;
+  const { className, label, name, options, selectedValue, placeholder, isMulti, ...rest } = props;
   return (
     <FormGroup>
       {label !== null && label !== "" && <Label for={name}>{label}</Label>}
@@ -16,7 +16,7 @@ const CustomSelect = (props) => {
             <div>
               <Select
                 isMulti={isMulti ? true : false}
-                className={isMulti ? "basic-single rtl" : "basic-multi-select rtl"}
+                className={isMulti ? `basic-single ${className}` : `basic-multi-select ${className}`}
                 classNamePrefix="select"
                 defaultValue={selectedValue}
                 name={name}

@@ -2,13 +2,23 @@
 const setting = require('../app-setting');
 const sql = require('mssql');
 
-const pool = new sql.ConnectionPool(setting.db.sqlConfig.config);
+let sqlConfig = {};
+sqlConfig = {
+    options: {
+        enableArithAbort: true
+    }
+};
+sqlConfig = { ...sqlConfig, ...setting.db.sqlConfig.config };
+//console.log(sqlConfig)
+const pool = new sql.ConnectionPool(sqlConfig);
 pool.connect(error => {
-    console.log('error sql connection damage', error);
+    if (error)
+        console.log('Can not connect to sql server with mssql library', error);
 });
 
 pool.on('error', err => {
-    console.log('error sql on damage', err);
+    if (err)
+        console.log('Can not listen to msssql pool connection', err);
 })
 
 sql.pool = pool;

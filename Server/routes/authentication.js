@@ -14,14 +14,14 @@ router.post('/', async (req, res) => {
   //console.log('from server ', md5(req.body.password))
   if (user) {
     if (!user.isActive)
-      return SendResponse(req, res, 'اکانت مورد نظر غیر فعال می باشد', false, 200);
+      return SendResponse(req, res, "The user account is inactive", false, 200);
     else {
       const token = GenerateAuthToken(user);
       //console.log('token',token); 
       return SendResponse(req, res, { token: token });
     }
   } else
-  return SendResponse(req, res, 'کاربری با مشخصات وارد شده یافت نشد', false, 401);
+  return SendResponse(req, res, "User not found", false, 401);
 });
 
 module.exports = router;

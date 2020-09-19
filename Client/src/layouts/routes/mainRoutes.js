@@ -41,7 +41,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          case 3:
          case 4:
             let temp2 = permissions.filter(c => _.toUpper(c.name) === items[1] && c.isGranted === true);
-            console.log('from main route', temp2)
+            //console.log('from main route', temp2)
             if (temp2.length === 1) {
                let temp3 = temp2[0].access.filter(c => _.toUpper(c.key) === items[2] && c.value === true);
                if (temp3.length === 1)
@@ -74,12 +74,12 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
                   return <MainLayout>{render(matchProps)}</MainLayout>
                }
                else {
-                  console.log('main rout', user)
+                  //console.log('main rout', user)
                   auth.logout();
                   return (<Redirect
                      to={{
                         pathname: "/login",
-                        state: { message: 'دسترسی غیر مجاز' }
+                        state: { message: "Access to the part has been forbidden" }
                      }}
                   />)
                }

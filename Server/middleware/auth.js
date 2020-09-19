@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
     if (!requiresAuth) return next();
     const encryptedToken = req.headers['x-auth-token'];
     //console.log('from server:' ,encryptedToken);
-    if (!encryptedToken) return SendResponse(req, res, 'دسترسی مقدور نیست.اطلاعات دستکاری شده است', false, 401);
+    if (!encryptedToken) return SendResponse(req, res, "Access denied, corrupted data", false, 403);
     try {
         let token = AES.decrypt(encryptedToken, tokenHashKey).toString(CryptoJs.enc.Utf8)
 
@@ -20,7 +20,7 @@ module.exports = async (req, res, next) => {
                 if (error.name == 'TokenExpiredError')
                     return SendResponse(req, res, 'مدت زمان زیادی از لحظه ی ورود شما به سیستم گذشته است. دوباره وارد شوید', false, 401);
                 else
-                    return SendResponse(req, res, 'دسترسی غیر مجاز', false, 403);
+                    return SendResponse(req, res, "Access to the part has been forbidden", false, 403);
             }
             else {
                 console.log('auth decode', decoded);
@@ -33,6 +33,6 @@ module.exports = async (req, res, next) => {
         })
     }
     catch (ex) {
-        return SendResponse(req, res, 'دسترسی مقدور نیست.اطلاعات دستکاری شده است', false, 401)
+        return SendResponse(req, res, "Access denied, corrupted data", false, 403)
     }
 }

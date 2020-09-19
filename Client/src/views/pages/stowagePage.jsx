@@ -29,11 +29,11 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object({
-    selectVoyageNo: Yup.string().required("!شماره سفر را وارد کنید"),
-    selectEquipmentType: Yup.string().required("!شماره دستگاه را وارد کنید"),
-    containerNo: Yup.string().required("!شماره کانتینر را وارد کنید"),
-    operatorCode: Yup.string().required("!کد اپراتور را وارد کنید"),
-    bayAddress: Yup.string().required("را وارد کنید Bay آدرس")
+    selectVoyageNo: Yup.string().required("Select Voyage No !"),
+    selectEquipmentType: Yup.string().required("Select Equipment No !"),
+    containerNo: Yup.string().required("Enter Container No !"),
+    operatorCode: Yup.string().required("Enter Operator Code !"),
+    bayAddress: Yup.string().required("Enter Bay Address !")
 });
 
 //#endregion ---------------------------------------------------------------
@@ -41,7 +41,7 @@ const validationSchema = Yup.object({
 //#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
-    console.log("Form Submit Data", values);
+    //console.log("Form Submit Data", values);
     let parameters = {
         cntrNo: values.containerNo,
         voyageId: values.selectVoyageNo.value,
@@ -78,7 +78,7 @@ const onSubmit = (values, props, staffId) => {
                             });
                         }
                         else {
-                            return toast.error("خطا در انجام عملیات");
+                            return toast.error("Operation failed");
                         }
                     })
                     .catch(error => {
@@ -163,16 +163,16 @@ const StowagePage = (props) => {
                 //console.log("cntrno change res", response);
                 if (!response.data.result) {
                     setDisableSubmitButton(true);
-                    return toast.error("کانتینر یافت نشد");
+                    return toast.error("No container has been found");
                 }
 
                 let guessedOperation = "";
                 const result = response.data.data[0];
                 if (result.OperationType === 'Loading') {
-                    guessedOperation = "بارگیری"
+                    guessedOperation = 'Loading'
                 }
                 else if (result.OperationType === 'Shifting') {
-                    guessedOperation = "شیفتینگ";
+                    guessedOperation = 'Shifting';
                 }
                 setCntrInfo(
                     guessedOperation !== ""
@@ -184,11 +184,11 @@ const StowagePage = (props) => {
                 );
                 getStowageInfoForCntrByVoyage(data).then(response2 => {
                     if (!response2.data.result) {
-                        return toast.error('اطلاعات Bay وجود ندارد');
+                        return toast.error("There is no such Bay Address");
                     }
 
                     if (response2.data.result.length > 1) {
-                        return toast.error('وجود اطلاعات متناقض');
+                        return toast.error("Contradictory info has been found");
                     }
 
                     if (response2.data.data[0].Operation === 'Stowage' || response2.data.data[0].Operation === 'Shifted Up') {
@@ -196,7 +196,7 @@ const StowagePage = (props) => {
                         //console.log('temp', temp);
                         //temp.BayAddress = response2.data.data[0].LoadingBayAddress;
                         //setCntrInfo(temp);
-                        return toast.warn('اطلاعات این کانتینر قبلا ثبت شده');
+                        return toast.warn("The container info has been saved already");
                     }
 
                 })
@@ -253,7 +253,7 @@ const StowagePage = (props) => {
 
     return (
         <Fragment>
-            <Row className="row-eq-height justify-content-md-center customOpacity">
+            <Row className="row-eq-height justify-content-md-center">
                 <Col md="6">
                     <div>
                         <CustomNavigation path={props.match.path} />
@@ -293,11 +293,10 @@ const StowagePage = (props) => {
                                                                     onClick={toggle}
                                                                     style={{
                                                                         marginBottom: "1rem",
-                                                                        direction: "rtl",
-                                                                    }}
-                                                                >
-                                                                    اطلاعات اولیه
-                                </Button>
+                                                                        direction: "ltr",
+                                                                    }}>
+                                                                    Basic Information
+                                                                </Button>
                                                             </Col>
                                                         </Row>
                                                         <Row>
@@ -312,10 +311,11 @@ const StowagePage = (props) => {
                                                                                     VoyageData.selectedVoyage
                                                                                 }
                                                                                 options={VoyageData.voyages}
-                                                                                placeholder="شماره سفر"
+                                                                                placeholder="Voyage No"
                                                                                 onSelectedChanged={
                                                                                     handleVoyageSelectedChanged
                                                                                 }
+                                                                                className="ltr"
                                                                             />
                                                                         </Col>
                                                                     </Row>
@@ -328,10 +328,11 @@ const StowagePage = (props) => {
                                                                                     EquipmentData.selectedEquipment
                                                                                 }
                                                                                 options={EquipmentData.equipments}
-                                                                                placeholder="شماره دستگاه"
+                                                                                placeholder="Equipment No"
                                                                                 onSelectedChanged={
                                                                                     handleEquipmentSelectedChanged
                                                                                 }
+                                                                                className="ltr"
                                                                             />
                                                                         </Col>
                                                                     </Row>
@@ -346,8 +347,8 @@ const StowagePage = (props) => {
                                                                     name="operatorCode"
                                                                     mask=""
                                                                     debounceTime={2000}
-                                                                    placeholder="کد اپراتور"
-                                                                    className="rtl"
+                                                                    placeholder="Operator Code"
+                                                                    className="ltr"
                                                                     onChange={() =>
                                                                         handleOperatorCodeChange(
                                                                             formik.values.operatorCode
@@ -363,7 +364,7 @@ const StowagePage = (props) => {
                                                                     control="input"
                                                                     type="text"
                                                                     name="operatorCodeInfo"
-                                                                    className="rtl"
+                                                                    className="ltr"
                                                                     disabled={true}
                                                                     value={OperatorData.operator.name}
                                                                 />
@@ -377,7 +378,7 @@ const StowagePage = (props) => {
                                                                     id="containerNo"
                                                                     mask="aaaa 9999999"
                                                                     debounceTime={0}
-                                                                    placeholder="شماره کانتینر"
+                                                                    placeholder="Container No"
                                                                     className="ltr"
                                                                     onChange={() =>
                                                                         handleContainerNoChange(
@@ -397,7 +398,7 @@ const StowagePage = (props) => {
                                                                     id="bayAddress"
                                                                     mask="99 99 99"
                                                                     debounceTime={0}
-                                                                    placeholder="Bay آدرس"
+                                                                    placeholder="Bay Address"
                                                                     className="ltr"
                                                                     onChange={() =>
                                                                         handleBayAddressChange(
@@ -413,21 +414,22 @@ const StowagePage = (props) => {
                                                     </div>
                                                     <div className="form-actions center">
                                                         <p
-                                                            className="mb-0 rtl"
+                                                            className="mb-1 ltr"
                                                             style={{
                                                                 textAlign: "center",
                                                                 fontWeight: "bold",
+                                                                fontSize: 20
                                                             }}
                                                         >
-                                                            اطلاعات تکمیلی
+                                                            Complementary Information
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
 
                                                             <span className="labelDescription">
-                                                                آدرس بِی:
+                                                                BayAddress:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.LoadingBayAddress}
@@ -437,53 +439,53 @@ const StowagePage = (props) => {
 
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                سایز و نوع کانتینر:
+                                                                Container Size/Type:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
                                                             </span>
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
-                                                        >
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}>
+
                                                             <span className="labelDescription">
-                                                                وضعیت پر یا خالی:
+                                                                Full Empty Status:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.FullEmptyStatus}
                                                             </span>
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
-                                                            <span className="labelDescription">وزن ناخالص:</span>{" "}
+                                                            <span className="labelDescription">GrossWeight:</span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.GrossWeight}
                                                             </span>
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                بندر تخلیه:
+                                                                Port Of Discharge:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.PortOfDischarge}
                                                             </span>
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                وضعیت خطرناک بودن:
+                                                                IMDG Status:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.IMDGCode}
@@ -491,22 +493,22 @@ const StowagePage = (props) => {
                                                         </p>
 
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                رده ی وزنی:
+                                                                Grade:
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.Grade}
                                                             </span>
                                                         </p>
                                                         <p
-                                                            className="mb-0 rtl"
-                                                            style={{ textAlign: "right" }}
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                نوع عملیات:
+                                                                Guessed Operation:
                                                             </span>{" "}
                                                             <span className="guessedOperation">
                                                                 {CntrInfo.GuessedOperation}
@@ -514,12 +516,13 @@ const StowagePage = (props) => {
                                                         </p>
                                                     </div>
                                                     <div className="form-actions center">
-                                                        <Button color="warning" className="mr-1" onClick={handleCancelButton} type="button">
-                                                            <X size={16} color="#FFF" /> لغو
-                            </Button>
-                                                        <Button color="primary" type="submit" disabled={disableSubmitButton}>
-                                                            <CheckSquare size={16} color="#FFF" /> ثبت
-                            </Button>
+                                                        <Button color="primary" className="mr-1" type="submit" disabled={disableSubmitButton}>
+                                                            <CheckSquare size={16} color="#FFF" /> Save
+                                                        </Button>
+                                                        <Button color="warning" onClick={handleCancelButton} type="button">
+                                                            <X size={16} color="#FFF" /> Cancel
+                                                        </Button>
+
                                                     </div>
                                                 </Form>
                                             </React.Fragment>

@@ -23,7 +23,7 @@ router.get('/getDamageDefinition', auth, async (req, res) => {
 
 router.post('/getDamageInfoByActId', auth, async (req, res) => {
     if (!req.body.actId)
-        return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);
+        return SendResponse(req, res, "Input data is not valid", false, 400);
     try {
         let actId = req.body.actId || 0;
         var result = await db.query(queries.DAMAGE.getDamageInfoByActId, { actId: actId });
@@ -36,7 +36,7 @@ router.post('/getDamageInfoByActId', auth, async (req, res) => {
 router.post('/setDamageInfoByActId', auth, async (req, res) => {
 
     if (!req.body.data)
-        return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);
+        return SendResponse(req, res, "Input data is not valid", false, 400);
 
         const check = await DoesUserHavePermission(req.user, 'Vessel', 'Damage')
         if (check.result) {

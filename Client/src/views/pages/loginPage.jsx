@@ -24,9 +24,9 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object({
-  username: Yup.string().required("!نام کاربری را وارد کنید"),
-  password: Yup.string().required("!رمز عبور را وارد کنید"),
-  selectedArea: Yup.string().required("!محوطه عملیات را انتخاب کنید")
+  username: Yup.string().required("Enter Username !"),
+  password: Yup.string().required("Enter Password !"),
+  selectedArea: Yup.string().required("Select Operation Area !")
 });
 
 //#endregion ---------------------------------------------------------------
@@ -86,10 +86,13 @@ const LoginPage = (props) => {
       }
     }).catch(error => { });
 
-    const { message } = props.location.state;
-    if (props.location.state && message && message.length > 0) {
-      toast.error(message);
+    if (props.location.state) {
+      const { message } = props.location.state;
+      if (props.location.state && message && message.length > 0) {
+        toast.error(message);
+      }
     }
+
     //console.log('from login effevt', props)
 
     setTimeout(() => {
@@ -117,7 +120,7 @@ const LoginPage = (props) => {
             <CardBody>
               <h2 className="white py-4">
                 <ReactRevealText show={show}>
-                  نرم افزار هندهلد شرکت توسعه خدمات دریایی و بندری سینا
+                  Sina Port and Marine Services Handheld Gateway
                 </ReactRevealText>
               </h2>
               <div className="pt-2">
@@ -148,7 +151,7 @@ const LoginPage = (props) => {
                                   state.selectedArea
                                 }
                                 options={state.areaList}
-                                placeholder="انتخاب محوطه"
+                                placeholder="Operation Area"
 
                                 onSelectedChanged={(selectedValue) =>
                                   formik.setFieldValue('selectedArea', selectedValue.value)
@@ -165,8 +168,8 @@ const LoginPage = (props) => {
                                 type="text"
                                 name="username"
                                 id="username"
-                                className="rtl"
-                                placeholder="نام کاربری"
+                                className="ltr"
+                                placeholder="Username"
                               />
                             </Col>
                           </Row>
@@ -177,15 +180,15 @@ const LoginPage = (props) => {
                                 type="password"
                                 id="password"
                                 name="password"
-                                className="rtl"
-                                placeholder="کلمه عبور"
+                                className="ltr"
+                                placeholder="Password"
                               />
                             </Col>
                           </Row>
                           <div className="form-actions center">
 
                             <Button color="primary" type="submit" className="mr-1" disabled={!formik.isValid}>
-                              <LogIn size={16} color="#FFF" /> ورود
+                              <LogIn size={16} color="#FFF" /> Enter
                             </Button>
 
                           </div>

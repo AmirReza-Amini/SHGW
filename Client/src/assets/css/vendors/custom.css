@@ -42,6 +42,10 @@
       direction: rtl;
   }
 
+  .ltr{
+    direction: ltr;
+}
+
   h6{
     font-family: 'sans';
 }
@@ -57,7 +61,7 @@
 
 .error{
   color: rgb(228, 35, 35);
-  text-align: right;
+  text-align: left;
 }
 
 .success{

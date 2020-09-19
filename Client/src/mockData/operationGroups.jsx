@@ -16,7 +16,8 @@ const OperationGroups = [
     operations: [
       { fnName: "تخلیه", enName: "Discharge", icon: "1", pName: "Discharge", class: "bg-success btn" },
       { fnName: "بارگیری", enName: "Load", icon: "2", pName: "Load", class: "bg-success btn" },
-      { fnName: "جایگیری در کشتی", enName: "Stowage", icon: "4", pName: "Stowage", class: "bg-success btn" }],
+      { fnName: "جایگیری در کشتی", enName: "Stowage", icon: "4", pName: "Stowage", class: "bg-success btn" },
+      { fnName: "درب انبار", enName: "Hatch", icon: "4", pName: "Hatch", class: "bg-success btn" }],
     class: "bg-success btn"
   },
   {

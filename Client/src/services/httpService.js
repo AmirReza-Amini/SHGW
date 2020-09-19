@@ -36,13 +36,13 @@ axios.interceptors.response.use(null, error => {
     switch (error.response.status) {
 
       case 400:
-        toast.error('اطلاعات وارد شده صحیح نمی باشد');
+        toast.error("Input data is not valid");
         break;
       case 401:
-        toast.error('کاربری با مشخصات وارد شده یافت نشد');
+        toast.error("User not found");
         break;
       case 403:
-        toast.error('دسترسی غیر مجاز');
+        toast.error("Access to the part has been forbidden");
         break;
       case 404:
         toast.error('سرویس مورد نظر یافت نشد');

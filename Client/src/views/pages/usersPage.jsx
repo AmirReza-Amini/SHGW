@@ -213,14 +213,14 @@ class UsersPage extends Component {
     }
 
     handleUserTypeChange = ({ value }) => {
-        console.log('handleUserTypeChange', value);
+        //console.log('handleUserTypeChange', value);
         const currentRow = { ...this.state.currentRow };
         currentRow.userType = value;
         this.setState({ currentRow })
     }
 
     handleUserStatusChange = ({ value }) => {
-        console.log('handleUserStatusChange', value);
+        //console.log('handleUserStatusChange', value);
         const currentRow = { ...this.state.currentRow };
         currentRow.isActive = value === "Active" ? true : false;
         this.setState({ currentRow })
@@ -265,7 +265,7 @@ class UsersPage extends Component {
     //#region DELETE USER INFO EVENTS ---------------------------------------
 
     handleDeleteUser = (userData) => {
-        console.log('userData for delete', userData);
+        //console.log('userData for delete', userData);
         const userInfo = { ..._(this.state.ListOfUsers).filter(c => c._id === userData._id).first() };
         this.setState({ currentRow: userInfo })
         this.deleteToggle();
@@ -308,7 +308,7 @@ class UsersPage extends Component {
     //#region GRID SELECTION EVENT ------------------------------------------
 
     onSelectChange = selectedRowKeys => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        //console.log('selectedRowKeys changed: ', selectedRowKeys);
         this.setState({ selectedRowKeys });
     };
 
@@ -321,8 +321,7 @@ class UsersPage extends Component {
             selectedRowKeys,
             onChange: this.onSelectChange,
             selections: [
-                Table.SELECTION_ALL,
-
+                Table.SELECTION_ALL
             ],
         };
         return (
@@ -367,13 +366,14 @@ class UsersPage extends Component {
 
                                     </div>
 
-                                    <div className="form-actions text-right">
-                                        <Button color="warning" className="mr-1">
-                                            <X size={20} color="#FFF" /> Cancel
-                              </Button>
-                                        <Button color="success">
+                                    <div className="form-actions text-left">
+                                        <Button color="success" className="mr-1">
                                             <Check size={20} color="#FFF" /> Save
-                              </Button>
+                                        </Button>
+                                        <Button color="warning" >
+                                            <X size={20} color="#FFF" /> Cancel
+                                        </Button>
+                                        
                                     </div>
                                 </Form>
                             </CardBody>
@@ -451,10 +451,10 @@ class UsersPage extends Component {
                     <ModalFooter>
                         <Button color="primary" onClick={this.handleSubmitEditUserInfo}>
                             Save
-                  </Button>{" "}
+                        </Button>{" "}
                         <Button color="secondary" onClick={this.handleCancelEditUserInfo}>
                             Cancel
-                  </Button>
+                        </Button>
                     </ModalFooter>
                 </Modal>
 
@@ -471,10 +471,10 @@ class UsersPage extends Component {
                     <ModalFooter>
                         <Button color="primary" onClick={this.handleSubmitDeleteUserInfo}>
                             Save
-                  </Button>{" "}
+                        </Button>{" "}
                         <Button color="secondary" onClick={this.handleCancelDeleteUserInfo}>
                             Cancel
-                  </Button>
+                        </Button>
                     </ModalFooter>
                 </Modal>
             </React.Fragment>

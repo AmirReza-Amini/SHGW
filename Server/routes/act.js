@@ -12,7 +12,7 @@ const db = sworm.db(setting.db.sqlConfig);
 router.post('/isPossibleSaveAct', auth, async (req, res) => {
 
     if (!req.body.cntrNo || !req.body.nextActType)
-        return SendResponse(req, res, 'اطلاعات وارد شده صحیح نمی باشد', false, 400);
+        return SendResponse(req, res, "Input data is not valid", false, 400);
     const { cntrNo, nextActType } = req.body;
     try {
         var result = await db.query(queries.ACT.isPossibleSaveAct, { cntrNo: cntrNo, nextActType: nextActType });

@@ -43,7 +43,7 @@ router.post("/saveUnload", auth, async (req, res) => {
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
         message: "عملیات با موفقیت انجام شد",
-      } : 'خطا در انجام عملیات';
+      } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log(result2);
@@ -101,7 +101,7 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
         message: "عملیات با موفقیت انجام شد",
-      } : 'خطا در انجام عملیات';
+      } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log('increment data', result2);
@@ -220,7 +220,7 @@ router.post("/saveLoad", auth, async (req, res) => {
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
         message: "عملیات با موفقیت انجام شد",
-      } : 'خطا در انجام عملیات';
+      } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log(result2);
