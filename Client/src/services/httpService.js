@@ -27,7 +27,7 @@ axios.interceptors.response.use(null, error => {
   //console.log("error", error);
   if (!expectedError) {
     // status code 500
-    toast.error("خطا در برقراری ارتباط با سرور. لطفا با ادمین سایت تماس بگیرید");
+    toast.error("Error in connecting to the server, Call to the Administrator");
     console.log(error.response, error); // eeno bayad log begirim
     //toastr.error('Server Error','An Unexpected error occured!')
   }
@@ -42,10 +42,10 @@ axios.interceptors.response.use(null, error => {
         toast.error("User not found");
         break;
       case 403:
-        toast.error("Access to the part has been forbidden");
+        toast.error("Access to this section is forbidden");
         break;
       case 404:
-        toast.error('سرویس مورد نظر یافت نشد');
+        toast.error("The required services has not been found");
         break;
     }
   }

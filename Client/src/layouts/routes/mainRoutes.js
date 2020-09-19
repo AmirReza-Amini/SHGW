@@ -79,7 +79,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
                   return (<Redirect
                      to={{
                         pathname: "/login",
-                        state: { message: "Access to the part has been forbidden" }
+                        state: { message: "Access to this section is forbidden" }
                      }}
                   />)
                }

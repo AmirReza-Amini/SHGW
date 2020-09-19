@@ -16,7 +16,7 @@ router.post('/isPossibleSaveAct', auth, async (req, res) => {
     const { cntrNo, nextActType } = req.body;
     try {
         var result = await db.query(queries.ACT.isPossibleSaveAct, { cntrNo: cntrNo, nextActType: nextActType });
-        let message = result[0]["Result"] == '1' ? "توالی عملیات رعایت شده" : "توالی عملیات رعایت نشده";
+        let message = result[0]["Result"] == '1' ? "The sequence of operation is right" : "The sequence of operation is not right"
         SendResponse(req, res, message, result[0]["Result"] == '1');
     } catch (error) {
         return SendResponse(req, res, `isPossibleSaveAct(${cntrNo},${nextActType})`, false, 500);

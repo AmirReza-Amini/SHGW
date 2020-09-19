@@ -72,11 +72,11 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
                     let success = result.filter(c => c["Result"] == '1');
                     let fail = result.filter(c => c["Result"] == '0');
                     if (success && success.length == req.body.data.length) {
-                        message = "خسارت کانتینر ثبت شد"
+                        message = "The container damage has been saved successfully"
                         return SendResponse(req, res, message, true);
                     }
                     else if (fail && fail.length == req.body.data.length) {
-                        message = "خسارت کانتینر ثبت نشد"
+                        message = "The container damage has not been saved"
                         return SendResponse(req, res, message, false);
                     }
                     else if (success && success.length > 0 || fail && fail.length > 0) {
@@ -85,7 +85,7 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
                     }
                 }
                 else {
-                    message = "خسارت کانتینر ثبت نشد"
+                    message = "The container damage has not been saved"
                     return SendResponse(req, res, message, false);
                 }
             }

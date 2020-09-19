@@ -14,7 +14,7 @@ doesUserHavePermission = async (userInfo, permission, access) => {
             if (userInfo.userType === "Admin")
                 return { message: '', result: true, statusCode: '' };
             if (!userInfo.isActive)
-                return { message: 'اکانت مورد نظر غیر فعال می باشد', result: false, statusCode: 200 };
+                return { message: "The user account is inactive", result: false, statusCode: 200 };
 
             if (access === "Damage" || access === "Statistics") {
                 const userPermission = userInfo.permissions.filter(c => (c.name === "Vessel" || c.name === "Gate" || c.name === "CY") && c.isGranted === true);

@@ -42,7 +42,7 @@ router.post("/saveUnload", auth, async (req, res) => {
       //console.log('result unload save', result);
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
-        message: "عملیات با موفقیت انجام شد",
+        message: "The operation has been done successfully",
       } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
@@ -100,7 +100,7 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
 
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
-        message: "عملیات با موفقیت انجام شد",
+        message: "The operation has been done successfully",
       } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
@@ -128,8 +128,8 @@ router.post("/addToShifting", auth, async (req, res) => {
       });
 
       if (result && result.length > 0)
-        return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه شد");
-      else return SendResponse(req, res, "کانتینر به لیست شیفتینگ اضافه نشد", false);
+        return SendResponse(req, res, "The container has been added to shifting list");
+      else return SendResponse(req, res, "The container has not been added to shifting list", false);
     } catch (error) {
       return SendResponse(req, res, 'addToShifting', false, 500);
     }
@@ -149,9 +149,9 @@ router.post("/addToLoadingList", auth, async (req, res) => {
       });
 
       if (result && result.length > 0)
-        SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه شد");
+        SendResponse(req, res, "The container has been added to loading instruction list");
       else
-        return SendResponse(req, res, "کانتینر به لیست دستورالعمل بارگیری اضافه نشد", false);
+        return SendResponse(req, res, "The container has not been added to loading instruction list", false);
     } catch (error) {
       return SendResponse(req, res, 'addToLoadingList', false, 500);
     }
@@ -174,7 +174,7 @@ router.post("/isExistCntrInInstructionLoading", auth, async (req, res) => {
     if (result && result.length > 0)
       return SendResponse(req, res, result, result && result.length > 0);
     else
-      return SendResponse(req, res, "کانتینر در لیست دستورالعمل بارگیری وجود ندارد", false);
+      return SendResponse(req, res, "The related container is not listed in loading instruction list", false);
   } catch (error) {
     return SendResponse(req, res, 'isExistCntrInInstructionLoading', false, 500);
   }
@@ -219,7 +219,7 @@ router.post("/saveLoad", auth, async (req, res) => {
       console.log('load save', result);
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
-        message: "عملیات با موفقیت انجام شد",
+        message: "The operation has been done successfully",
       } : "Operation failed";
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });

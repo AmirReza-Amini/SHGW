@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
             if (error) {
                 console.log('from Auth middleWare', error)
                 if (error.name == 'TokenExpiredError')
-                    return SendResponse(req, res, 'مدت زمان زیادی از لحظه ی ورود شما به سیستم گذشته است. دوباره وارد شوید', false, 401);
+                    return SendResponse(req, res, "Your credential is expired, Please login again", false, 401);
                 else
                     return SendResponse(req, res, "Access to the part has been forbidden", false, 403);
             }
@@ -26,7 +26,7 @@ module.exports = async (req, res, next) => {
                 console.log('auth decode', decoded);
                 let userInfo = await Users.findOne({ _id: decoded._id });
                 if (!userInfo.isActive)
-                    return SendResponse(req, res, 'اکانت مورد نظر غیر فعال می باشد', false, 200);
+                    return SendResponse(req, res, "The user account is inactive", false, 200);
                 req.user = userInfo;
                 next();
             }

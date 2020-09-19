@@ -50,10 +50,9 @@ router.post("/isOccoupiedBayAddressInVoyage", auth, async (req, res) => {
         });
 
         if (result && result.length > 0)
-            return SendResponse(req, res, `پر شده ${result[0].CntrNo} توسط کانتینر`, true);
-
+            return SendResponse(req, res, `This Bay Address has been occupied by ${result[0].CntrNo} before`, true);
         else
-            return SendResponse(req, res, 'معتبر است', false);
+            return SendResponse(req, res, "This Bay Address is valid", false);
     }
     catch (error) {
         return SendResponse(req, res, 'isOccoupiedBayAddressInVoyage', false, 500);

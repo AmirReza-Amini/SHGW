@@ -36,7 +36,7 @@ export function getCurrentUser() {
     const decToken = jwtDecode(jwt);
     // console.log('decode toke', decToken);
     if (decToken.exp < Date.now() / 1000) {
-      toast.error('مدت زمان زیادی از لحظه ورود شما به سیستم گذشته است. دوباره وارد شوید');
+      toast.error("Your credential is expired, Please login again");
       logout();
       return null;
     }
