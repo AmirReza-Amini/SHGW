@@ -6,14 +6,14 @@ import operationGroups from "../../mockData/operationGroups";
 import CustomNavigation from "../../components/common/customNavigation";
 import _ from "lodash";
 import * as auth from '../../services/authService'
-import * as config  from  '../../config.json'
+import * as config from '../../config.json'
 
 class operationsPage extends Component {
 
   //#region INITIAL AND STATE ----------------------------------------------
 
   state = { group: null };
-  
+
   componentWillMount() {
     let a = this.props.operations;
     // console.log("operations", this.props);
@@ -25,15 +25,15 @@ class operationsPage extends Component {
     //this.state.group = group;
 
     const { userType, permissions } = auth.getCurrentUser();
-   // console.log(userType, permissions, group)
+    // console.log(userType, permissions, group)
     if (!config.useAuthentication || userType === "Admin")
-      this.setState({ group : group.operations });
+      this.setState({ group: group.operations });
     else {
       const permission = permissions.filter(c => _.toUpper(c.name) === _.toUpper(a));
       const accessGroup = group.operations.filter(c => permission[0].access.filter(ac => _.toUpper(ac.key) === _.toUpper(c.pName) && ac.value === true).length == 1);
 
-     // console.log('access group', accessGroup);
-     if (accessGroup.length >= 1) {
+      // console.log('access group', accessGroup);
+      if (accessGroup.length >= 1) {
         this.setState({ group: accessGroup })
       }
     }
@@ -46,21 +46,20 @@ class operationsPage extends Component {
   //#region EVENT HANDLRES -------------------------------------------------
 
   handleOperation = (operationType) => {
-    //console.log(operationType);
     switch (operationType) {
       case "Discharge":
-        //console.log("operations", this.props.match.path);
         return this.props.history.push(urls.Discharge);
       case "Load":
-        //console.log("operations", this.props.match.path);
         return this.props.history.push(urls.Load);
       case "Stowage":
         return this.props.history.push(urls.Stowage);
+      case "Hatch":
+        return this.props.history.push(urls.Hatch);
     }
   };
 
   //#endregion -------------------------------------------------------------
-  
+
   render() {
     if (!this.state.group) return null;
     return (
@@ -76,7 +75,7 @@ class operationsPage extends Component {
               <MinimalStatisticsBG
                 cardBgColor={op.class}
                 statistics={op.enName}
-               // text={op.fnName}
+                // text={op.fnName}
                 //iconSide="left"
                 onClick={this.handleOperation}
                 key={op.enName}

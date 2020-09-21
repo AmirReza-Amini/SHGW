@@ -28,7 +28,10 @@ module.exports = {
             getCntrInfoForStowage: LoadText(__dirname + '/vessel/deck/get-cntr-info-for-stowage.sql'),
             getStowageInfoForCntrByVoyage: LoadText(__dirname + '/vessel/deck/get-stowage-info-for-cntr-by-voyage.sql'),
             isOccoupiedBayAddressInVoyage: LoadText(__dirname + '/vessel/deck/is-occoupied-bay-address-in-voyage.sql'),
-            saveStowageAndShiftedup: LoadText(__dirname + '/vessel/deck/save-stowage-and-shiftedup.sql')
+            saveStowageAndShiftedup: LoadText(__dirname + '/vessel/deck/save-stowage-and-shiftedup.sql'),
+            getHatchOperationTypes: LoadText(__dirname + '/vessel/deck/get-hatch-operation-types.sql'),
+            getHatchDirection: LoadText(__dirname + '/vessel/deck/get-hatch-directions.sql'),
+            saveVesselHatchInfo: LoadText(__dirname + '/vessel/deck/save-vessel-hatch-info.sql'),
         }
     },
     DAMAGE: {

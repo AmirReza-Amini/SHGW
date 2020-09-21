@@ -17,6 +17,7 @@ const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
 const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnloadStatisticsPage"));
 const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
+const LazyHatchPage = lazy(() => import("../views/pages/hatchPage"));
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
 const LazyLogout = lazy(() => import("../views/pages/logoutPage"));
 const LazyMaintainance = lazy(() => import("../views/pages/maintainance"));
@@ -45,7 +46,7 @@ class Router extends Component {
             path={urls.Home}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
-                <LazyHome {...matchprops} />
+                <LazyOperationTypePage {...matchprops} />
               </Suspense>)}
           />
           <MainLayoutRoutes
@@ -144,6 +145,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyStowagePage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path={urls.Hatch}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyHatchPage {...matchprops} />
               </Suspense>
             )}
           />

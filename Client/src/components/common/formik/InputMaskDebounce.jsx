@@ -8,7 +8,7 @@ class InputMaskDebounce extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mask: this.props.mask,
+      mask: this.props.mask ? this.props.mask : '',
       value: ''
     };
   }
@@ -19,6 +19,7 @@ class InputMaskDebounce extends Component {
     // console.log('props',this.props);
     event.persist();
     const { debounceTime, name, toUppercase } = this.props;
+    const defaultDebounceTime = debounceTime && debounceTime != 0 ? debounceTime : 0;
     if (!this.debouncedFn) {
       this.debouncedFn = _.debounce(() => {
         if (event.target) {
@@ -29,25 +30,28 @@ class InputMaskDebounce extends Component {
             if (_(event.target.value).replace("_", "").length === this.state.mask.length) {
               // console.log(event.target.value);
               form.setFieldValue(name, toUppercase ? _(temp.value).toUpper() : temp.value);
-              this.props.onChange();
+              if (this.props.onChange)
+                this.props.onChange();
             }
             else {
               //form.setFieldValue(name, temp.value);
             }
           } else {
             form.setFieldValue(name, toUppercase ? _(temp.value).toUpper() : temp.value);
-            this.props.onChange();
+            if (this.props.onChange)
+              this.props.onChange();
           }
 
           //console.log(searchString)
         }
-      }, debounceTime);
+      }, defaultDebounceTime);
     }
     this.debouncedFn();
   };
   render() {
-    const { label, name, className, placeholder, defaultValue } = this.props;
+    const { type, label, name, className, placeholder, defaultValue } = this.props;
     const classN = "form-control " + className;
+    const defalutType = this.props.mask ? 'text' : type ? type : 'text'
     return (
       <FormGroup>
         {label !== null && label !== "" && <Label for={name}>{label}</Label>}
@@ -61,6 +65,7 @@ class InputMaskDebounce extends Component {
                 <ReactInputMask
                   mask={this.state.mask}
                   id={name}
+                  type={defalutType}
                   onBlur={() => form.setFieldTouched(name, true)}
                   onChange={(event) => this.onChange(event, form)}
                   placeholder={placeholder}

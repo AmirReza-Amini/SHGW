@@ -33,6 +33,7 @@ axios.interceptors.response.use(null, error => {
   }
 
   if (expectedError) {
+    console.log(error.response)
     switch (error.response.status) {
 
       case 400:

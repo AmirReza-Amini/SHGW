@@ -34,7 +34,7 @@ sendResponse = (req, res, data, result = true, code = 200) => {
 }
 
 generateAuthToken = (user) => {
-    console.log('generateAuthToken',user)
+    //console.log('generateAuthToken',user)
     const token = jwt.sign({
         _id: user._id,
         lastName: user.lastName,

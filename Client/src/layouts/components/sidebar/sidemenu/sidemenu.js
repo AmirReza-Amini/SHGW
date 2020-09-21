@@ -60,14 +60,6 @@ class SideMenuContent extends Component {
             <span className="menu-item-text">Home</span>
           </NavLink>
         </SideMenu.MenuSingleItem>
-        <SideMenu.MenuSingleItem badgeColor="danger">
-          <NavLink to={urls.Logout} activeclassname="active">
-            <i className="menu-icon">
-              <LogIn size={18} />
-            </i>
-            <span className="menu-item-text">Logout</span>
-          </NavLink>
-        </SideMenu.MenuSingleItem>
         <SideMenu.MenuSingleItem hidden={!this.state.hasRoles}>
           <NavLink to={urls.OperationType} activeClassName="active" >
             <i className="menu-icon">
@@ -90,6 +82,14 @@ class SideMenuContent extends Component {
             <span className="menu-item-text">Users</span>
           </NavLink>
         </SideMenu.MenuMultiItems>
+        <SideMenu.MenuSingleItem badgeColor="danger">
+          <NavLink to={urls.Logout} activeclassname="active">
+            <i className="menu-icon">
+              <LogIn size={18} />
+            </i>
+            <span className="menu-item-text">Logout</span>
+          </NavLink>
+        </SideMenu.MenuSingleItem>
       </SideMenu>
     );
   }

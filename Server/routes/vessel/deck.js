@@ -93,4 +93,64 @@ router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
 
 //#endregion -------------------------------------------------------------------------------------
 
+
+//#region Hatch Services -------------------------------------------------------------------------
+
+router.get("/getHatchOperationTypes", auth, async (req, res) => {
+    try {
+        var result = await db.query(queries.VESSEL.DECK.getHatchOperationTypes);
+        SendResponse(req, res, result, (result && result.length > 0))
+    }
+    catch (error) {
+        //console.log(error);
+        return SendResponse(req, res, 'getHatchOperationTypes', false, 500);
+    }
+});
+
+router.get("/getHatchDirections", auth, async (req, res) => {
+    try {
+        var result = await db.query(queries.VESSEL.DECK.getHatchDirection);
+        SendResponse(req, res, result, (result && result.length > 0))
+    }
+    catch (error) {
+        //console.log(error);
+        return SendResponse(req, res, 'getHatchDirections', false, 500);
+    }
+});
+
+
+router.post("/saveVesselHatchInfo", auth, async (req, res) => {
+
+    const check = await DoesUserHavePermission(req.user, 'Vessel', 'Hatch');
+    if (check.result) {
+        console.log(req.body)
+        try {
+            var query = await db.query(queries.VESSEL.DECK.saveVesselHatchInfo, {
+                voyageId: req.body.voyageId,
+                equipmentId: req.body.equipmentId,
+                operatorId: req.body.operatorId,
+                clerkId: req.body.clerkId,
+                hatchNo: req.body.hatchNo,
+                isLoaded: req.body.isLoaded,
+                hatchOperationType: req.body.hatchOperationType
+            });
+
+            console.log('query', query)
+            const temp = query && query.length > 0 && query[0].RESULT == true ? true : false;
+            const message = temp ? 'Inserting vessel hatch has been done successfully' : 'failure in inserting hatch info';
+            return SendResponse(req, res, message, temp, 200)
+        }
+        catch (error) {
+            console.log(error);
+            return SendResponse(req, res, 'saveVesselHatchInfo', false, 500);
+        }
+    }
+    else {
+        return SendResponse(req, res, check.message, check.result, check.statusCode);
+    }
+});
+
+
+//#endregion -------------------------------------------------------------------------------------
+
 module.exports = router;
