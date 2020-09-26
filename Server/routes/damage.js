@@ -58,7 +58,7 @@ router.post('/setDamageInfoByActId', auth, async (req, res) => {
                 tvp.columns.add('Side', sql.SmallInt);
                 tvp.columns.add('StaffID', sql.BigInt);
 
-                req.body.data.map(item => tvp.rows.add(item.ActID, item.Letters, item.Side, item.StaffID));
+                req.body.data.map(item => tvp.rows.add(item.ActID, item.Letters, item.Side, req.user.userId));
                 const request = new sql.Request(pool);
                 request.input('DamageList', tvp);
                 request.output('OutputResult', sql.NVarChar(2048));

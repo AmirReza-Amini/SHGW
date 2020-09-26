@@ -13,8 +13,11 @@ import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/commo
 import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
-import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup, saveVesselHatchInfo } from "../../services/vessel/deck";
+import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup, saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../services/vessel/deck";
 import { fetchHatchOperationTypes, fetchHatchDirections, hatchOperationTypeSelectedChanged, hatchDirectionSelectedChanged } from "../../redux/common/hatch/hatchActions";
+import { Table, Tag, Space, Checkbox, Switch, Radio } from 'antd';
+import antdClass from 'antd/dist/antd.css';
+import antdClass2 from "../../assets/css/vendors/customAntdTable.css";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -27,7 +30,9 @@ const initialValues = {
     operatorCode: "",
     bayAddress: "",
     selectHatchOperationType: '',
-    selectHatchDirection: ''
+    selectHatchDirection: '',
+    selectDay: null,
+    selectDay2: null
 };
 
 const validationSchema = Yup.object({
@@ -42,8 +47,57 @@ const validationSchema = Yup.object({
 //#endregion ---------------------------------------------------------------
 
 
-
 const HatchPage = (props) => {
+
+    const Columns = [
+        {
+            title: 'Hatch No',
+            dataIndex: 'HatchNo',
+            key: 'HatchNo',
+            sorter: {
+                compare: (a, b) => a.HatchNo.localeCompare(b.HatchNo),
+                multiple: 4
+            },
+            sortDirections: ['ascend', 'descend'],
+            defaultSortOrder: 'ascend',
+        },
+        {
+            title: 'Hatch Date',
+            dataIndex: 'HatchDatePersian',
+            key: 'HatchDatePersian',
+            sorter: {
+                compare: (a, b) => a.HatchDatePersian.localeCompare(b.HatchDatePersian),
+                multiple: 3
+            },
+            sortDirections: ['ascend', 'descend']
+        },
+        {
+            title: 'Equipment',
+            dataIndex: 'EquipmentName',
+            key: 'EquipmentName'
+        },
+        {
+            title: 'Operator',
+            dataIndex: 'OperatorName',
+            key: 'OperatorName'
+        },
+        {
+            title: 'Clerk',
+            dataIndex: 'ClerkName',
+            key: 'ClerkName'
+        },
+        {
+            title: 'Hatch Direction',
+            dataIndex: 'HatchDirection',
+            key: 'HatchDirection',
+        },
+        {
+            title: 'Hatch Operation Type',
+            dataIndex: 'HatchOperationTypeName',
+            key: 'HatchOperationTypeName',
+        }
+    ];
+
 
     //#region SUBMIT FORMIK ----------------------------------------------------
 
@@ -82,13 +136,15 @@ const HatchPage = (props) => {
         bayAddress: "",
         operatorCode: OperatorData.operator.staffCode,
         selectHatchOperationType: HatchData.selectedHatchOperationType,
-        selectHatchDirection: HatchData.selectedHatchDirection
+        selectHatchDirection: HatchData.selectedHatchDirection,
+        vesselHatchInfoList: [],
+        selectDay: null,
+        selectDay2: null
     });
     const [CntrInfo, setCntrInfo] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
     const [validBayAddress, setValidBayAddress] = useState({ message: '', result: false });
-    const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch();
 
     //#endregion -----------------------------------------------------------
@@ -136,59 +192,6 @@ const HatchPage = (props) => {
 
     //#region EVENT HANDLRES -----------------------------------------------
 
-    const handleContainerNoChange = (value) => {
-        const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
-        //console.log("voyage and cntr", data);
-        getCntrInfoForStowage(data)
-            .then((response) => {
-                setDisableSubmitButton(false);
-                //console.log("cntrno change res", response);
-                if (!response.data.result) {
-                    setDisableSubmitButton(true);
-                    return toast.error("No container has been found");
-                }
-
-                let guessedOperation = "";
-                const result = response.data.data[0];
-                if (result.OperationType === 'Loading') {
-                    guessedOperation = 'Loading'
-                }
-                else if (result.OperationType === 'Shifting') {
-                    guessedOperation = 'Shifting';
-                }
-                setCntrInfo(
-                    guessedOperation !== ""
-                        ? {
-                            ...response.data.data[0],
-                            GuessedOperation: guessedOperation,
-                        }
-                        : response.data.data[0]
-                );
-                getStowageInfoForCntrByVoyage(data).then(response2 => {
-                    if (!response2.data.result) {
-                        return toast.error("There is no such Bay Address");
-                    }
-
-                    if (response2.data.result.length > 1) {
-                        return toast.error("Contradictory info has been found");
-                    }
-
-                    if (response2.data.data[0].Operation === 'Stowage' || response2.data.data[0].Operation === 'Shifted Up') {
-                        let temp = { ...CntrInfo };
-                        //console.log('temp', temp);
-                        //temp.BayAddress = response2.data.data[0].LoadingBayAddress;
-                        //setCntrInfo(temp);
-                        return toast.warn("The container info has been saved already");
-                    }
-
-                })
-
-            })
-            .catch((error) => {
-                //console.log("cntrno change error", error);
-                toast.error(error);
-            });
-    };
 
     const handleOperatorCodeChange = (value) => {
         if (value !== "") dispatch(fetchOperatorInfoBasedOnCode(value));
@@ -196,6 +199,16 @@ const HatchPage = (props) => {
 
     const handleVoyageSelectedChanged = (value) => {
         dispatch(voyageSelectedChanged(value));
+        getVesselHatchInfoByVoyage(value.value).then(response => {
+            if (response.data.result) {
+                console.log('asdfafd', response.data)
+                const temp = response.data.data.map(item => { return { ...item, key: item.HatchOperationID } })
+                setState(prevState => ({ ...prevState, vesselHatchInfoList: temp }))
+            }
+            else {
+                return toast.error(response.data.data[0]);
+            }
+        }).catch(error => { });
     };
 
     const handleEquipmentSelectedChanged = (value) => {
@@ -212,6 +225,14 @@ const HatchPage = (props) => {
 
     const handleCancelButton = () => {
         return props.history.push(props.location.pathname.replace('/hatch', ''))
+    }
+    const dtChange1 = (value) => {
+
+        console.log('dtChange1', value)
+    }
+    const dtChange2 = (value) => {
+
+        console.log('dtChange2', value)
     }
 
     //#endregion -----------------------------------------------------------
@@ -238,7 +259,7 @@ const HatchPage = (props) => {
                                     enableReinitialize
                                 >
                                     {(formik) => {
-                                        // console.log("Formik props values", formik);
+                                         console.log("Formik props values", formik.values);
                                         return (
                                             <React.Fragment>
                                                 <Form>
@@ -349,6 +370,23 @@ const HatchPage = (props) => {
                                                                 />
                                                             </Col>
                                                         </Row>
+                                                        <Row>
+                                                            <Col md="6">
+                                                                <FormikControl control='customDateTimePicker'
+                                                                    name="selectDay"
+                                                                    placeholder="Select Enter Date"
+                                                                    //defaultValue={{ day: 14, month: 7, year: 1399 }}
+                                                                    onSelectedChanged={dtChange1} />
+                                                            </Col>
+                                                            <Col md="6">
+                                                                <FormikControl control='customDateTimePicker'
+                                                                    name="selectDay2"
+                                                                    placeholder="Select Enter Date"
+                                                                    //defaultValue={{ day: 10, month: 6, year: 1399 }}
+                                                                    onSelectedChanged={dtChange2} />
+
+                                                            </Col>
+                                                        </Row>
                                                     </div>
                                                     <div className="form-actions center">
                                                         <p
@@ -361,97 +399,17 @@ const HatchPage = (props) => {
                                                         >
                                                             Complementary Information
                                                         </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-
-                                                            <span className="labelDescription">
-                                                                BayAddress:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.LoadingBayAddress}
-                                                            </span>
-
-
-
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                Container Size/Type:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.CntrSize} / {CntrInfo.CntrType}{" "}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}>
-
-                                                            <span className="labelDescription">
-                                                                Full Empty Status:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.FullEmptyStatus}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">GrossWeight:</span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.GrossWeight}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                Port Of Discharge:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.PortOfDischarge}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                IMDG Status:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.IMDGCode}
-                                                            </span>
-                                                        </p>
-
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                Grade:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.Grade}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-                                                            <span className="labelDescription">
-                                                                Guessed Operation:
-                                                            </span>{" "}
-                                                            <span className="guessedOperation">
-                                                                {CntrInfo.GuessedOperation}
-                                                            </span>
-                                                        </p>
+                                                        <Row>
+                                                            <Col md="12">
+                                                                <Table
+                                                                    className={antdClass + antdClass2}
+                                                                    columns={Columns}
+                                                                    dataSource={state.vesselHatchInfoList}
+                                                                    pagination={{ position: ["bottomCenter"] }}
+                                                                    scroll={{ x: 500, y: 150 }}
+                                                                />
+                                                            </Col>
+                                                        </Row>
                                                     </div>
                                                     <div className="form-actions center">
                                                         <Button color="primary" className="mr-1" type="submit" disabled={disableSubmitButton}>

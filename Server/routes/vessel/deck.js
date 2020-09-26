@@ -68,7 +68,7 @@ router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
             var result = await db.query(queries.VESSEL.DECK.saveStowageAndShiftedup, {
                 cntrNo: req.body.cntrNo,
                 voyageId: req.body.voyageId,
-                userId: req.body.userId,
+                userId: req.user.userId,
                 equipmentId: req.body.equipmentId,
                 operatorId: req.body.operatorId,
                 bayAddress: req.body.bayAddress,
@@ -129,7 +129,7 @@ router.post("/saveVesselHatchInfo", auth, async (req, res) => {
                 voyageId: req.body.voyageId,
                 equipmentId: req.body.equipmentId,
                 operatorId: req.body.operatorId,
-                clerkId: req.body.clerkId,
+                clerkId: req.user.userId,
                 hatchNo: req.body.hatchNo,
                 isLoaded: req.body.isLoaded,
                 hatchOperationType: req.body.hatchOperationType
@@ -148,6 +148,18 @@ router.post("/saveVesselHatchInfo", auth, async (req, res) => {
     else {
         return SendResponse(req, res, check.message, check.result, check.statusCode);
     }
+});
+
+router.get('/getVesselHatchInfoByVoyage/:voyageId?', auth, async (req, res) => {
+    try {
+        let voyageId = req.params.voyageId || 0;
+        //console.log('from voyage', req.params, count);
+        var result = await db.query(queries.VESSEL.DECK.getVesselHatchInfoByVoyage, { voyageId: voyageId });
+        SendResponse(req, res, result, (result && result.length > 0))
+    } catch (error) {
+        return SendResponse(req, res, `getVesselHatchInfoByVoyage(${req.params.voyageId})`, false, 500);
+    }
+
 });
 
 

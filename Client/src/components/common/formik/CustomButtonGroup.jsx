@@ -44,7 +44,7 @@ class CustomButtonGroup extends Component {
                     <Col md="12" >
                         {label !== null && label !== "" && <Label for={name}>{label} : {JSON.stringify(this.state.cSelected)}</Label>}
                     </Col>
-                    {/* <Col md="12"> */}
+                    <Col md="12"> 
                     <Field>
                         {
                             (fieldProps) => {
@@ -85,7 +85,7 @@ class CustomButtonGroup extends Component {
                             }
                         }
                     </Field>
-                    {/* </Col> */}
+                    </Col>
                 </Row>
             </FormGroup>
         );

@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
             if (error) {
                 console.log('from Auth middleWare', error)
                 if (error.name == 'TokenExpiredError')
-                    return SendResponse(req, res, "Your credential is expired, Please login again", false, 401);
+                    return SendResponse(req, res, "Your credential is expired, Please login again", false, 403);
                 else
                     return SendResponse(req, res, "Access to the part has been forbidden", false, 403);
             }

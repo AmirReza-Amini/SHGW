@@ -1,0 +1,1 @@
+	EXEC dbo.SP_H_GetVesselHatchInfoList @VoyageId = @voyageId -- bigint

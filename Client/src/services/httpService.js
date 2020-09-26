@@ -33,20 +33,21 @@ axios.interceptors.response.use(null, error => {
   }
 
   if (expectedError) {
-    console.log(error.response)
+    console.log(error.response);
+    const message = error.response.data.data && error.response.data.data.length > 0 ? error.response.data.data[0] : null;
     switch (error.response.status) {
 
       case 400:
-        toast.error("Input data is not valid");
+        message !== null ? toast.error(message) : toast.error("Input data is not valid");
         break;
       case 401:
-        toast.error("User not found");
+        message !== null ? toast.error(message) : toast.error("User not found");
         break;
       case 403:
-        toast.error("Access to this section is forbidden");
+        message !== null ? toast.error(message) : toast.error("Access to this section is forbidden");
         break;
       case 404:
-        toast.error("The required services has not been found");
+        message !== null ? toast.error(message) : toast.error("The required services has not been found");
         break;
     }
   }

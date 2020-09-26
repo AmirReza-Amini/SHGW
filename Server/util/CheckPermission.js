@@ -21,7 +21,7 @@ doesUserHavePermission = async (userInfo, permission, access) => {
                 if (userPermission && userPermission.length >= 1) {
                     return { message: '', result: true, statusCode: '' };
                 }
-                return { message: "Access to the part has been forbidden", result: false, statusCode: 403 };
+                return { message: "Access to this section has been forbidden", result: false, statusCode: 403 };
             }
             else {
                 const userPermission = userInfo.permissions.filter(c => c.name === permission && c.isGranted === true);
@@ -32,7 +32,7 @@ doesUserHavePermission = async (userInfo, permission, access) => {
                         return { message: '', result: true, statusCode: '' };
                     }
                 }
-                return { message: "Access to the part has been forbidden", result: false, statusCode: 403 };
+                return { message: "Access to this section has been forbidden", result: false, statusCode: 403 };
             }
         }
         else {

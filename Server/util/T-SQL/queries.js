@@ -32,6 +32,7 @@ module.exports = {
             getHatchOperationTypes: LoadText(__dirname + '/vessel/deck/get-hatch-operation-types.sql'),
             getHatchDirection: LoadText(__dirname + '/vessel/deck/get-hatch-directions.sql'),
             saveVesselHatchInfo: LoadText(__dirname + '/vessel/deck/save-vessel-hatch-info.sql'),
+            getVesselHatchInfoByVoyage: LoadText(__dirname + '/vessel/deck/get-vessel-hatch-info-by-voyage.sql')
         }
     },
     DAMAGE: {

@@ -38,4 +38,8 @@ export const saveVesselHatchInfo = (data) => {
   return http.post(apiEndpoint + "/saveVesselHatchInfo", data);
 };
 
+export const getVesselHatchInfoByVoyage = (voyageId) => {
+  return http.get(apiEndpoint + `/getVesselHatchInfoByVoyage/${voyageId}`);
+}
+
 //#endregion ----------------------------------------------------------------

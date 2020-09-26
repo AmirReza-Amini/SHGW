@@ -37,6 +37,7 @@
       "react-feather": "^1.1.1",
       "react-horizontal-timeline": "^1.5.3",
       "react-input-mask": "^2.0.4",
+      "react-modern-calendar-datepicker": "^3.1.6",
       "react-perfect-scrollbar": "^1.1.1",
       "react-prism": "^4.3.2",
       "react-redux": "^7.2.0",
