@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
+import { Card, CardBody, Row, Col, Button } from "reactstrap";
 import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -13,9 +13,9 @@ import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/commo
 import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
 
-import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup, saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../services/vessel/deck";
+import { saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../services/vessel/deck";
 import { fetchHatchOperationTypes, fetchHatchDirections, hatchOperationTypeSelectedChanged, hatchDirectionSelectedChanged } from "../../redux/common/hatch/hatchActions";
-import { Table, Tag, Space, Checkbox, Switch, Radio } from 'antd';
+import { Table } from 'antd';
 import antdClass from 'antd/dist/antd.css';
 import antdClass2 from "../../assets/css/vendors/customAntdTable.css";
 
@@ -141,10 +141,7 @@ const HatchPage = (props) => {
         selectDay: null,
         selectDay2: null
     });
-    const [CntrInfo, setCntrInfo] = useState({});
-    const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
-    const [validBayAddress, setValidBayAddress] = useState({ message: '', result: false });
     const dispatch = useDispatch();
 
     //#endregion -----------------------------------------------------------
@@ -226,14 +223,6 @@ const HatchPage = (props) => {
     const handleCancelButton = () => {
         return props.history.push(props.location.pathname.replace('/hatch', ''))
     }
-    const dtChange1 = (value) => {
-
-        console.log('dtChange1', value)
-    }
-    const dtChange2 = (value) => {
-
-        console.log('dtChange2', value)
-    }
 
     //#endregion -----------------------------------------------------------
 
@@ -246,10 +235,7 @@ const HatchPage = (props) => {
                     </div>
                     <Card >
                         <CardBody>
-                            {/* <CardTitle>Event Registration</CardTitle> */}
-                            {/* <p className="mb-2" style={{ textAlign: "center" }}>
-                ثبت عملیات تخلیه
-              </p> */}
+                        
                             <div className="px-3">
                                 <Formik
                                     initialValues={state || initialValues}
@@ -368,23 +354,6 @@ const HatchPage = (props) => {
                                                                     }
                                                                     className="ltr"
                                                                 />
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col md="6">
-                                                                <FormikControl control='customDateTimePicker'
-                                                                    name="selectDay"
-                                                                    placeholder="Select Enter Date"
-                                                                    //defaultValue={{ day: 14, month: 7, year: 1399 }}
-                                                                    onSelectedChanged={dtChange1} />
-                                                            </Col>
-                                                            <Col md="6">
-                                                                <FormikControl control='customDateTimePicker'
-                                                                    name="selectDay2"
-                                                                    placeholder="Select Enter Date"
-                                                                    //defaultValue={{ day: 10, month: 6, year: 1399 }}
-                                                                    onSelectedChanged={dtChange2} />
-
                                                             </Col>
                                                         </Row>
                                                     </div>
