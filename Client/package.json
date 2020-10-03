@@ -17,6 +17,7 @@
       "formik": "^2.1.4",
       "google-map-react": "^1.0.9",
       "history": "^4.7.2",
+      "jalali-moment": "^3.3.8",
       "jwt-decode": "^2.2.0",
       "lodash": "^4.17.10",
       "match-sorter": "^2.2.3",

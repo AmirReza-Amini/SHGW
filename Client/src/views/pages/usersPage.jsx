@@ -164,7 +164,7 @@ class UsersPage extends Component {
     }
 
     handleUserPermissionsChange(checkedValues, permissionName) {
-        // console.log('checked = ', checkedValues, permissionName, this.state.currentRow.permissions);
+        console.log('checked = ', checkedValues);
         const currentRow = { ...this.state.currentRow };
 
         const permissions = [...currentRow.permissions];

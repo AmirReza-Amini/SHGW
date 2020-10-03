@@ -5,65 +5,96 @@ import _ from "lodash";
 import DatePicker, { utils } from "react-modern-calendar-datepicker";
 import InputMaskDebounce from "./InputMaskDebounce";
 import { TimePicker } from "antd";
+import moment from "jalali-moment";
 
 class CustomDateTimePicker extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedDay: props.defaultValue ? props.defaultValue : null,
-    };
-  }
 
-  handleSelectedDateChanged = (value, form) => {
-    this.setState({ selectedDay: value });
-    //console.log('handleSelectedDateChanged', this.props, this.state, value)
-    if (this.props.onSelectedChanged) this.props.onSelectedChanged(value);
-    form.setFieldValue(this.props.name, value);
+    const { selectedValue } = this.props;
+    this.state = {
+      selectedDate: null,
+      selectedTime: null
+    };
+    if (selectedValue != null) {
+      const date = this.convertDateTo(selectedValue, "fa"); // 1392/6/31 23:59:59);
+      var formatedDate = {
+        year: parseInt(date[0]),
+        month: parseInt(date[1]),
+        day: parseInt(date[2]),
+      };
+      const time = moment(selectedValue, "YYYY-M-D HH:mm:ss")
+        .locale("fa")
+        .format("HH:mm:ss"); //23:59:59
+      this.state = {
+        selectedDate: formatedDate,
+        selectedTime: time,
+      };
+    }
+  }
+  convertDateTo = (date, locale) => {
+    switch (locale) {
+      case "fa":
+        let result = moment(date, "YYYY-M-D HH:mm:ss")
+          .locale(locale)
+          .format("YYYY/M/D")
+          .split("/"); // 1392/6/31);
+        return result;
+      case "en":
+        let result1 = moment.from(date, "fa", "YYYY/M/D").format("YYYY-M-D"); // 2013-8-25 16:40:00
+        return result1;
+      default:
+        break;
+    }
   };
 
-  componentWillReceiveProps(nextProps) {
-    // console.log('nextProps', nextProps);
-    if (
-      !_.isEqual(
-        _.sortBy(this.props.defaultValue),
-        _.sortBy(nextProps.defaultValue)
-      )
-    )
-      this.setState({ selectedDay: nextProps.defaultValue });
-  }
+  getMiladiDate = (value) => {
+    const formatedDate = `${value.year}/${value.month}/${value.day}`;
+    const miladiDate = this.convertDateTo(formatedDate, "en");
+    return miladiDate;
+  };
+  handleSelectedDateChanged = (value, form) => {
+    console.log("from handledate", value);
 
-  // renderCustomInput = ({ ref }) => (
-  //     <input
-  //         ref={ref} // necessary
-  //         placeholder={this.props.placeholder}
-  //         value={this.state.selectedDay ? this.state.selectedDay.year + '/' + this.state.selectedDay.month + '/' + this.state.selectedDay.day : ''}
-  //         className="form-control" // a styling class
-  //     />
-  // )
+    const miladiDate = this.getMiladiDate(value);
+    this.setState({
+      selectedDate: value,
+      selectedTime: this.state.selectedTime,
+    });
+    console.log("handleSelectedDateChanged", value);
+    if (this.props.onSelectedChanged)
+      this.props.onSelectedChanged(miladiDate + " " + this.state.selectedTime);
+
+    form.setFieldValue(
+      this.props.name,
+      miladiDate + " " + this.state.selectedTime
+    );
+  };
+
+  handleSelectedTimeChanged = (TimeString, form) => {
+    this.setState({ ...this.state, selectedTime: TimeString });
+
+    const miladiDate = this.getMiladiDate(this.state.selectedDate);
+    if (this.props.onSelectedChanged)
+      this.props.onSelectedChanged(miladiDate + " " + TimeString);
+
+    form.setFieldValue(this.props.name, miladiDate + " " + TimeString);
+  };
 
   render() {
-    //console.log(this.props)
-    const { label, name, className, placeholder } = this.props;
-    const classN =
-      "form-control " + (className !== "" ? className : "") + " customSize";
-    console.log("from render datepicker ");
+    const { label, name, placeholder } = this.props;
     return (
       <FormGroup>
         {label !== null && label !== "" && <Label for={name}>{label}</Label>}
         <Field>
           {(fieldProps) => {
             const { form } = fieldProps;
-            var letterStyle = {
-              paddingleft: 10,
-              marginleft: 0,
-              display: "inline-block",
-            };
             return (
               <Row>
-                <Col md="6"  style = {{paddingRight:'1px'}}>
+                <Col md="6" sm="6" style={{ paddingRight: "1px" }}>
                   <DatePicker
                     wrapperClassName="form-control"
-                    value={this.state.selectedDay}
+                    value={this.state.selectedDate}
                     onChange={(value) =>
                       this.handleSelectedDateChanged(value, form)
                     }
@@ -76,8 +107,15 @@ class CustomDateTimePicker extends Component {
                     shouldHighlightWeekends
                   />
                 </Col>
-                <Col md="6" style = {{padding:'1px 20px 1px 1px'}}>
-                  <TimePicker className="form-control" />
+                <Col md="6" sm="6" style={{ padding: "1px 15px 1px 1px" }}>
+                  <TimePicker
+                    value={this.state.selectedTime?moment(this.state.selectedTime, "HH:mm:ss"):null}
+                    className="form-control"
+                    size="large"
+                    onChange={(time, TimeString) =>
+                      this.handleSelectedTimeChanged(TimeString, form)
+                    }
+                  />
                 </Col>
               </Row>
             );

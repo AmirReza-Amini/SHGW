@@ -38,8 +38,8 @@ const initialValues = {
 };
 
 const checkboxListOptions = [
-  { key: "SE", value: "SE" },
-  { key: "OG", value: "OG" },
+  { value: "SE",  label: 'Special Equipment' },
+  { value: "OG",  label: 'Out of Gate' },
 ];
 
 const validationSchema = Yup.object({
@@ -47,7 +47,7 @@ const validationSchema = Yup.object({
   selectEquipmentType: Yup.string().required("Select Equipment No !"),
   containerNo: Yup.string().required("Enter Container No !"),
   operatorCode: Yup.string().required("Enter Operator Code !"),
-  truckNo: Yup.string().required("Enter Truck No !"),
+  truckNo: Yup.string().required("Enter Truck No !")
 });
 
 //#endregion ---------------------------------------------------------------
@@ -329,7 +329,7 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                    // console.log("Formik props values", formik);
+                     console.log("Formik props values", formik);
                     // console.log(
                     //   "in formik",
                     //   VoyageData,
@@ -453,9 +453,14 @@ const UnloadOperationPage = (props) => {
                                   placeholder="Truck No"
                                 />
                               </Col>
-                              <Col md="6">
-                                <FormikControl
+                              <Col md="6" className="ml-1">
+                                {/* <FormikControl
                                   control="checkbox"
+                                  name="checkboxListSelected"
+                                  options={checkboxListOptions}
+                                /> */}
+                                <FormikControl
+                                  control="customCheckboxGroup"
                                   name="checkboxListSelected"
                                   options={checkboxListOptions}
                                 />

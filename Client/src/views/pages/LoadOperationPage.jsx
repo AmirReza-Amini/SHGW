@@ -265,6 +265,11 @@ const LoadOperationPage = (props) => {
             return props.history.push(urls.LoadDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
     }
 
+    const handleStatisticsButton = () => {
+        //console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
+        return props.history.push(urls.LoadStatistics, { voyageInfo: VoyageData.selectedVoyage });
+      }
+
     //#endregion -----------------------------------------------------------
 
     return (
@@ -430,7 +435,7 @@ const LoadOperationPage = (props) => {
                                                             style={{
                                                                 textAlign: "center",
                                                                 fontWeight: "bold",
-                                                                fontSize:20
+                                                                fontSize: 20
                                                             }}>
                                                             Complementary Information
                                                         </p>
@@ -529,6 +534,9 @@ const LoadOperationPage = (props) => {
                                                         </Button>
                                                         <Button color="danger" type="button" className="mr-1" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
                                                             <CheckSquare size={16} color="#FFF" /> Damage
+                                                        </Button>
+                                                        <Button color="success" type="button" className="mr-1" onClick={handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
+                                                            <CheckSquare size={16} color="#FFF" /> Statistics
                                                         </Button>
                                                         <Button color="warning" onClick={handleCancelButton} type="button">
                                                             <X size={16} color="#FFF" /> Cancel

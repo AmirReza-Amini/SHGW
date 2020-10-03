@@ -39,7 +39,7 @@ router.post("/saveUnload", auth, async (req, res) => {
         oG: req.body.oG,
       });
       //[ { '': [ '12329941', 'OK' ] } ]
-      //console.log('result unload save', result);
+      console.log('result unload save', result);
       let data = result[0][""][0] !== '0' ? {
         ActId: result[0][""][0],
         message: "The operation has been done successfully",
