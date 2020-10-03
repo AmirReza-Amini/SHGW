@@ -454,11 +454,6 @@ const UnloadOperationPage = (props) => {
                                 />
                               </Col>
                               <Col md="6" className="ml-1">
-                                {/* <FormikControl
-                                  control="checkbox"
-                                  name="checkboxListSelected"
-                                  options={checkboxListOptions}
-                                /> */}
                                 <FormikControl
                                   control="customCheckboxGroup"
                                   name="checkboxListSelected"
