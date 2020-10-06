@@ -1,19 +1,22 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { Card, CardBody, Row, Col, Button, Collapse } from "reactstrap";
 import { X, CheckSquare } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import urls from '../../../urls.json'
 
-import CustomNavigation from "../../components/common/customNavigation";
-import FormikControl from "../../components/common/formik/FormikControl";
-import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
-import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
+import CustomNavigation from "../../../components/common/customNavigation";
+import FormikControl from "../../../components/common/formik/FormikControl";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
+import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
-import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup } from "../../services/vessel/deck";
+import { getCntrInfoForLoad, saveLoad } from "../../../services/vessel/berth";
+import { isPossibleSaveAct } from "../../../services/act";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -25,15 +28,21 @@ const initialValues = {
     selectEquipmentType: "",
     containerNo: "",
     operatorCode: "",
-    bayAddress: ""
+    truckNo: "",
+    checkboxListSelected: [],
 };
+
+const checkboxListOptions = [
+    { value: "SE", label: 'Special Equipment' },
+    { value: "OG", label: 'Out of Gate' },
+];
 
 const validationSchema = Yup.object({
     selectVoyageNo: Yup.string().required("Select Voyage No !"),
     selectEquipmentType: Yup.string().required("Select Equipment No !"),
     containerNo: Yup.string().required("Enter Container No !"),
     operatorCode: Yup.string().required("Enter Operator Code !"),
-    bayAddress: Yup.string().required("Enter Bay Address !")
+    truckNo: Yup.string().required("Enter Truck No !"),
 });
 
 //#endregion ---------------------------------------------------------------
@@ -46,58 +55,89 @@ const onSubmit = (values, props, staffId) => {
         cntrNo: values.containerNo,
         voyageId: values.selectVoyageNo.value,
     };
+    // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
 
-    const data = { loadingBayAddress: `0${values.bayAddress.split(" ").join("")}`, voyageId: values.selectVoyageNo.value };
-    isOccoupiedBayAddressInVoyage(data)
-        .then(response => {
-            //console.log('response', response)
-            if (!response.data.result) {
-                getStowageInfoForCntrByVoyage(parameters)
-                    .then(response2 => {
-                        //console.log('response2', response2)
-                        if (response2.data.result) {
-                            const paramsForSaving = {
-                                cntrNo: values.containerNo,
-                                voyageId: values.selectVoyageNo.value,
-                                userId: 220,
-                                equipmentId: values.selectEquipmentType.value,
-                                operatorId: staffId,
-                                bayAddress: data.loadingBayAddress,
-                                actType: response2.data.data[0].ACTType
-                            }
-                            saveStowageAndShiftedup(paramsForSaving).then(response3 => {
-                                //console.log('response3', response3)
-                                if (response3.data.result) {
-                                    return toast.success(response3.data.data[0]);
-                                }
-                                else {
-                                    return toast.error(response3.data.data[0]);
-                                }
-                            }).catch(error => {
-                                //return toast.error(error);
-                            });
-                        }
-                        else {
-                            return toast.error("Operation failed");
-                        }
-                    })
-                    .catch(error => {
-                        //return toast.error(error);
-                    })
+    let se = _(values.checkboxListSelected)
+        .filter((c) => c === "SE")
+        .first();
+    let og = _(values.checkboxListSelected)
+        .filter((c) => c === "OG")
+        .first();
+
+    getCntrInfoForLoad(parameters).then((response) => {
+        //console.log("response", response);
+        let { data, result } = response.data;
+        if (result) {
+            //---------------- Duplicate Act Check---------------------------------
+            if (data[0].ActID != null) {
+                return toast.error("The container info has been saved already");
             }
             else {
-                return toast.error(response.data.data[0]);
-                // setValidBayAddress({ message: response.data.data[0], result: false });
-                // setDisableSubmitButton(true);
+                let parametersForLoad = {
+                    cntrNo: data[0].CntrNo,
+                    voyageId: data[0].VoyageID,
+                    berthId: data[0].BerthID,
+                    userId: 220,
+                    equipmentId: values.selectEquipmentType.value,
+                    operatorId: staffId,
+                    truckNo: values.truckNo,
+                    isShifting: data[0].ShiftingID !== null ? 1 : 0,
+                    sE: se ? 1 : 0,
+                    oG: og ? 1 : 0,
+                };
+                //console.log('response', response)
+                if (data[0].ShiftingID != null) {
+                    let paramData = {
+                        nextActType: 16,
+                        cntrNo: parametersForLoad.cntrNo,
+                    };
+
+                    isPossibleSaveAct(paramData)
+                        .then((res1) => {
+                            if (res1.data.result) {
+                                saveLoad(parametersForLoad)
+                                    .then((res2) => {
+                                        //console.log("res save load", res2, res2.data.data[0]);
+                                        if (res2.data.result) {
+                                            toast.success(res2.data.data[0]['message']);
+                                            return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                        } else return toast.error(res2.data.data[0]);
+                                    })
+                                    .catch((error) => {
+                                        //return toast.error(error);
+                                    });
+                            }
+                            else {
+                                return toast.error(res1.data.data[0]);
+                            }
+                        })
+                        .catch((error) => {
+                            //return toast.error(error);
+                        });
+                }
+                else {
+                    saveLoad(parametersForLoad)
+                        .then((res) => {
+                            //console.log("res save load", res, res.data.data[0]);
+                            if (res.data.result) {
+                                toast.success(res.data.data[0]['message']);
+                                return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                            } else return toast.error(res.data.data[0]);
+                        })
+                        .catch((error) => {
+                            //return toast.error(error);
+                        });
+                }
             }
-        })
-        .catch(error => {
-            //return toast.error(error);
-        });
+        }
+        else {
+            return toast.error("No container has been found");
+        }
+    });
 };
 //#endregion ---------------------------------------------------------------
 
-const StowagePage = (props) => {
+const LoadOperationPage = (props) => {
 
     //#region SELECTORS AND STATE ------------------------------------------
 
@@ -109,18 +149,18 @@ const StowagePage = (props) => {
         selectEquipmentType: EquipmentData.selectedEquipment,
         containerNo: "",
         operatorCode: OperatorData.operator.staffCode,
-        bayAddress: ""
+        truckNo: "",
+        checkboxListSelected: []
     });
     const [CntrInfo, setCntrInfo] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
-    const [validBayAddress, setValidBayAddress] = useState({ message: '', result: false });
     const toggle = () => setIsOpen(!isOpen);
     const dispatch = useDispatch();
 
     //#endregion -----------------------------------------------------------
 
-    //#region INITIAL FUNCTIONS --------------------------------------------
+    //#region INITAL FUNCTIONS ---------------------------------------------
 
     useEffect(() => {
         if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
@@ -132,6 +172,7 @@ const StowagePage = (props) => {
         ) {
             dispatch(fetchEquipmentsForLoadUnload());
         }
+        //console.log("salam");
     }, []);
 
     useEffect(() => {
@@ -156,8 +197,8 @@ const StowagePage = (props) => {
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
-        //console.log("voyage and cntr", data);
-        getCntrInfoForStowage(data)
+        // console.log("voyage and cntr", data);
+        getCntrInfoForLoad(data)
             .then((response) => {
                 setDisableSubmitButton(false);
                 //console.log("cntrno change res", response);
@@ -168,11 +209,20 @@ const StowagePage = (props) => {
 
                 let guessedOperation = "";
                 const result = response.data.data[0];
-                if (result.OperationType === 'Loading') {
-                    guessedOperation = 'Loading'
+                if (result.ActID !== null) {
+                    //setCntrInfo({});
+                    setDisableSubmitButton(true);
+                    toast.error("The container info has been saved already");
                 }
-                else if (result.OperationType === 'Shifting') {
-                    guessedOperation = 'Shifting';
+                if (result.ShiftingID !== null) {
+                    if (result.ShiftingTallyManID != null) {
+                        guessedOperation = "Visibility";
+                    }
+                    else {
+                        guessedOperation = "Shifting";
+                    }
+                } else {
+                    guessedOperation = "Load";
                 }
                 setCntrInfo(
                     guessedOperation !== ""
@@ -182,51 +232,12 @@ const StowagePage = (props) => {
                         }
                         : response.data.data[0]
                 );
-                getStowageInfoForCntrByVoyage(data).then(response2 => {
-                    if (!response2.data.result) {
-                        return toast.error("There is no such Bay Address");
-                    }
-
-                    if (response2.data.result.length > 1) {
-                        return toast.error("Contradictory info has been found");
-                    }
-
-                    if (response2.data.data[0].Operation === 'Stowage' || response2.data.data[0].Operation === 'Shifted Up') {
-                        let temp = { ...CntrInfo };
-                        //console.log('temp', temp);
-                        //temp.BayAddress = response2.data.data[0].LoadingBayAddress;
-                        //setCntrInfo(temp);
-                        return toast.warn("The container info has been saved already");
-                    }
-
-                })
-
             })
             .catch((error) => {
                 //console.log("cntrno change error", error);
-                toast.error(error);
+                //return toast.error(error);
             });
     };
-
-    const handleBayAddressChange = (value) => {
-        setValidBayAddress(false);
-        setDisableSubmitButton(false);
-        //console.log('bay address changed', value);
-        const data = { loadingBayAddress: `0${value.split(" ").join("")}`, voyageId: VoyageData.selectedVoyage.value };
-        //console.log('bay address changed', value, data);
-        isOccoupiedBayAddressInVoyage(data).then(response => {
-            //console.log('bay occ', response);
-            if (response.data.result) {
-                //return toast.error(response.data.data[0]);
-                setValidBayAddress({ message: response.data.data[0], result: false });
-                setDisableSubmitButton(true);
-            }
-            else {
-                //return toast.success(response.data.data[0]);
-                setValidBayAddress({ message: response.data.data[0], result: true });
-            }
-        })
-    }
 
     const handleOperatorCodeChange = (value) => {
         //console.log("operator code", value);
@@ -236,7 +247,6 @@ const StowagePage = (props) => {
 
     const handleVoyageSelectedChanged = (value) => {
         //console.log("handleVoyageSelectedChanged", value);
-        setValidBayAddress(null);
         dispatch(voyageSelectedChanged(value));
     };
 
@@ -246,7 +256,18 @@ const StowagePage = (props) => {
     };
 
     const handleCancelButton = () => {
-        return props.history.push(props.location.pathname.replace('/stowage', ''))
+        return props.history.push(props.location.pathname.replace('/load', ''));
+    }
+
+    const handleDangerButton = () => {
+        //console.log(CntrInfo)
+        if (CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)
+            return props.history.push(urls.LoadDamage, { actId: CntrInfo.ActID, cntrNo: CntrInfo.CntrNo });
+    }
+
+    const handleStatisticsButton = () => {
+        //console.log('VoyageData.selectedVoyage', VoyageData.selectedVoyage)
+        return props.history.push(urls.LoadStatistics, { voyageInfo: VoyageData.selectedVoyage });
     }
 
     //#endregion -----------------------------------------------------------
@@ -275,12 +296,12 @@ const StowagePage = (props) => {
                                     enableReinitialize
                                 >
                                     {(formik) => {
-                                        // console.log("Formik props values", formik);
+                                        // console.log("Formik props values", formik.values);
                                         // console.log(
-                                        //   "in formik",
-                                        //   VoyageData,
-                                        //   OperatorData,
-                                        //   EquipmentData
+                                        //     "in formik",
+                                        //     VoyageData,
+                                        //     OperatorData,
+                                        //     EquipmentData
                                         // );
                                         return (
                                             <React.Fragment>
@@ -294,8 +315,9 @@ const StowagePage = (props) => {
                                                                     style={{
                                                                         marginBottom: "1rem",
                                                                         direction: "ltr",
-                                                                    }}>
-                                                                    Basic Information
+                                                                    }}
+                                                                >
+                                                                    Basic Infromation
                                                                 </Button>
                                                             </Col>
                                                         </Row>
@@ -336,38 +358,37 @@ const StowagePage = (props) => {
                                                                             />
                                                                         </Col>
                                                                     </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormikControl
+                                                                                control="inputMaskDebounce"
+                                                                                name="operatorCode"
+                                                                                mask=""
+                                                                                debounceTime={2000}
+                                                                                placeholder="Operator Code"
+                                                                                className="ltr"
+                                                                                onChange={() =>
+                                                                                    handleOperatorCodeChange(
+                                                                                        formik.values.operatorCode
+                                                                                    )
+                                                                                }
+                                                                                defaultValue={
+                                                                                    OperatorData.operator.staffCode
+                                                                                }
+                                                                            />
+                                                                        </Col>
+                                                                        <Col md="6">
+                                                                            <FormikControl
+                                                                                control="input"
+                                                                                type="text"
+                                                                                name="operatorCodeInfo"
+                                                                                className="ltr"
+                                                                                disabled={true}
+                                                                                value={OperatorData.operator.name}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
                                                                 </Collapse>
-                                                            </Col>
-                                                        </Row>
-
-                                                        <Row>
-                                                            <Col md="6">
-                                                                <FormikControl
-                                                                    control="inputMaskDebounce"
-                                                                    name="operatorCode"
-                                                                    mask=""
-                                                                    debounceTime={2000}
-                                                                    placeholder="Operator Code"
-                                                                    className="ltr"
-                                                                    onChange={() =>
-                                                                        handleOperatorCodeChange(
-                                                                            formik.values.operatorCode
-                                                                        )
-                                                                    }
-                                                                    defaultValue={
-                                                                        OperatorData.operator.staffCode
-                                                                    }
-                                                                />
-                                                            </Col>
-                                                            <Col md="6">
-                                                                <FormikControl
-                                                                    control="input"
-                                                                    type="text"
-                                                                    name="operatorCodeInfo"
-                                                                    className="ltr"
-                                                                    disabled={true}
-                                                                    value={OperatorData.operator.name}
-                                                                />
                                                             </Col>
                                                         </Row>
                                                         <Row>
@@ -375,7 +396,6 @@ const StowagePage = (props) => {
                                                                 <FormikControl
                                                                     control="inputMaskDebounce"
                                                                     name="containerNo"
-                                                                    id="containerNo"
                                                                     mask="aaaa 9999999"
                                                                     debounceTime={0}
                                                                     placeholder="Container No"
@@ -391,24 +411,21 @@ const StowagePage = (props) => {
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col md="12">
+                                                            <Col md="6">
                                                                 <FormikControl
-                                                                    control="inputMaskDebounce"
-                                                                    name="bayAddress"
-                                                                    id="bayAddress"
-                                                                    mask="99 99 99"
-                                                                    debounceTime={0}
-                                                                    placeholder="Bay Address"
+                                                                    control="input"
+                                                                    type="text"
+                                                                    name="truckNo"
                                                                     className="ltr"
-                                                                    onChange={() =>
-                                                                        handleBayAddressChange(
-                                                                            formik.values.bayAddress
-                                                                        )
-                                                                    }
-                                                                // defaultValue={CntrInfo.LoadingBayAddress}
+                                                                    placeholder="Truck No"
                                                                 />
-                                                                {validBayAddress && validBayAddress.result && <div className="success">{validBayAddress.message}</div>}
-                                                                {validBayAddress && !validBayAddress.result && <div className="error">{validBayAddress.message}</div>}
+                                                            </Col>
+                                                            <Col md="6">
+                                                                <FormikControl
+                                                                    control="customCheckboxGroup"
+                                                                    name="checkboxListSelected"
+                                                                    options={checkboxListOptions}
+                                                                />
                                                             </Col>
                                                         </Row>
                                                     </div>
@@ -419,24 +436,8 @@ const StowagePage = (props) => {
                                                                 textAlign: "center",
                                                                 fontWeight: "bold",
                                                                 fontSize: 20
-                                                            }}
-                                                        >
+                                                            }}>
                                                             Complementary Information
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}
-                                                        >
-
-                                                            <span className="labelDescription">
-                                                                BayAddress:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.LoadingBayAddress}
-                                                            </span>
-
-
-
                                                         </p>
                                                         <p
                                                             className="mb-0 ltr"
@@ -451,22 +452,13 @@ const StowagePage = (props) => {
                                                         </p>
                                                         <p
                                                             className="mb-0 ltr"
-                                                            style={{ textAlign: "left" }}>
-
-                                                            <span className="labelDescription">
-                                                                Full Empty Status:
-                                                            </span>{" "}
-                                                            <span className="labelValue">
-                                                                {CntrInfo.FullEmptyStatus}
-                                                            </span>
-                                                        </p>
-                                                        <p
-                                                            className="mb-0 ltr"
                                                             style={{ textAlign: "left" }}
                                                         >
-                                                            <span className="labelDescription">GrossWeight:</span>{" "}
+                                                            <span className="labelDescription">
+                                                                Full Empty Status:
+                                                             </span>{" "}
                                                             <span className="labelValue">
-                                                                {CntrInfo.GrossWeight}
+                                                                {CntrInfo.FullEmptyStatus}
                                                             </span>
                                                         </p>
                                                         <p
@@ -478,6 +470,26 @@ const StowagePage = (props) => {
                                                             </span>{" "}
                                                             <span className="labelValue">
                                                                 {CntrInfo.PortOfDischarge}
+                                                            </span>
+                                                        </p>
+                                                        <p
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
+                                                        >
+                                                            <span className="labelDescription">Terminal:</span>{" "}
+                                                            <span className="labelValue">
+                                                                {CntrInfo.TerminalName}
+                                                            </span>
+                                                        </p>
+                                                        <p
+                                                            className="mb-0 ltr"
+                                                            style={{ textAlign: "left" }}
+                                                        >
+                                                            <span className="labelDescription">
+                                                                Load Planning Location:
+                                                            </span>{" "}
+                                                            <span className="labelValue">
+                                                                {CntrInfo.LoadPlanningLocation}
                                                             </span>
                                                         </p>
                                                         <p
@@ -497,12 +509,13 @@ const StowagePage = (props) => {
                                                             style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                Grade:
+                                                                Load Planning Weight:
                                                             </span>{" "}
                                                             <span className="labelValue">
-                                                                {CntrInfo.Grade}
+                                                                {CntrInfo.LoadPlanningWeight}
                                                             </span>
                                                         </p>
+
                                                         <p
                                                             className="mb-0 ltr"
                                                             style={{ textAlign: "left" }}
@@ -516,8 +529,14 @@ const StowagePage = (props) => {
                                                         </p>
                                                     </div>
                                                     <div className="form-actions center">
-                                                        <Button color="primary" className="mr-1" type="submit" disabled={disableSubmitButton}>
+                                                        <Button color="primary" type="submit" className="mr-1" disabled={disableSubmitButton}>
                                                             <CheckSquare size={16} color="#FFF" /> Save
+                                                        </Button>
+                                                        <Button color="danger" type="button" className="mr-1" onClick={handleDangerButton} disabled={!(CntrInfo && CntrInfo.ActID && CntrInfo.ActID != null)}>
+                                                            <CheckSquare size={16} color="#FFF" /> Damage
+                                                        </Button>
+                                                        <Button color="success" type="button" className="mr-1" onClick={handleStatisticsButton} disabled={!formik.values.selectVoyageNo || formik.values.selectVoyageNo === null} >
+                                                            <CheckSquare size={16} color="#FFF" /> Statistics
                                                         </Button>
                                                         <Button color="warning" onClick={handleCancelButton} type="button">
                                                             <X size={16} color="#FFF" /> Cancel
@@ -538,4 +557,4 @@ const StowagePage = (props) => {
     );
 };
 
-export default StowagePage;
+export default LoadOperationPage;

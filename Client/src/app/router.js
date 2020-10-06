@@ -11,13 +11,13 @@ import LogoutLayoutRoute from "../layouts/routes/logoutRoutes";
 import urls from '../urls.json'
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
-const LazyUnloadOperationPage = lazy(() => import("../views/pages/unloadOperationPage"));
-const LazyLoadOperationsPage = lazy(() => import("../views/pages/loadOperationPage"));
+const LazyUnloadOperationPage = lazy(() => import("../views/pages/vessel/unloadOperationPage"));
+const LazyLoadOperationsPage = lazy(() => import("../views/pages/vessel/loadOperationPage"));
 const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
 const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnloadStatisticsPage"));
-const LazyStowagePage = lazy(() => import("../views/pages/stowagePage"));
-const LazyHatchPage = lazy(() => import("../views/pages/hatchPage"));
+const LazyStowagePage = lazy(() => import("../views/pages/vessel/stowagePage"));
+const LazyHatchPage = lazy(() => import("../views/pages/vessel/hatchPage"));
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
 const LazyLogout = lazy(() => import("../views/pages/logoutPage"));
 const LazyMaintainance = lazy(() => import("../views/pages/maintainance"));

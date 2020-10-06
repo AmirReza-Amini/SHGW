@@ -1,19 +1,15 @@
-import React, { Component, Fragment, useState } from "react";
-import { Card, CardBody, Row, Col, Button, FormGroup, Input, Toast } from "reactstrap";
+import React, { Component, Fragment} from "react";
+import { Card, CardBody, Row, Col, Button} from "reactstrap";
 import { X, CheckSquare } from "react-feather";
-import CustomNavigation from "../../components/common/customNavigation";
+import CustomNavigation from "../../../components/common/customNavigation";
 import { Formik, Form } from "formik";
-import FormikControl from "../../components/common/formik/FormikControl";
+import FormikControl from "../../../components/common/formik/FormikControl";
 import * as Yup from "yup";
 import { connect } from "react-redux";
-import {
-  fetchVoyagesTopTenOpen,
-  voyageSelectedChanged,
-} from "../../redux/common/voyage/voyageActions";
-import { toast,ToastContainer} from "react-toastify";
-import { toastr } from 'react-redux-toastr';
-import { fetchEquipmentsForUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
-import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
+import { toast } from "react-toastify";
+import { fetchEquipmentsForUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
 const initialValues = {
   selectVoyageNo: "",
@@ -37,8 +33,8 @@ const onSubmit = (values) => console.log("Form Data", values);
 
 class UnloadOperationPage extends Component {
 
-  state={
-    operatorCode:""
+  state = {
+    operatorCode: ""
   }
 
   constructor(props) {
@@ -48,11 +44,11 @@ class UnloadOperationPage extends Component {
 
   componentDidMount() {
 
-    console.log('component did mount',this.props);
-     if (!this.props.voyageData.voyages || this.props.voyageData.voyages.length ===0)
-    this.props.fetch();
-    if (this.props.equipmentData.equipments.length ===0)
-    this.props.fetchEquipment();
+    console.log('component did mount', this.props);
+    if (!this.props.voyageData.voyages || this.props.voyageData.voyages.length === 0)
+      this.props.fetch();
+    if (this.props.equipmentData.equipments.length === 0)
+      this.props.fetchEquipment();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -61,7 +57,7 @@ class UnloadOperationPage extends Component {
       toast.error(' asdfadsfasfd')
   }
 
-  
+
 
   handleOperatorCodeChange = (value) => {
     this.props.fetchOperator(value);
@@ -80,9 +76,9 @@ class UnloadOperationPage extends Component {
   };
 
   render() {
- 
+
     console.log("voyage", this.props);
-    const {operator}=this.props.operator;
+    const { operator } = this.props.operator;
 
     return (
       <Fragment>
@@ -130,26 +126,26 @@ class UnloadOperationPage extends Component {
                                   selectedValue={this.props.equipmentData.selectedEquipment}
                                   options={this.props.equipmentData.equipments}
                                   placeholder="شماره دستگاه"
-                                onSelectedChanged={this.handleEquipmentSelectedChanged}
+                                  onSelectedChanged={this.handleEquipmentSelectedChanged}
                                 />
                               </Col>
                             </Row>
                             <Row>
                               <Col md="6">
-                              <FormikControl
-                                control="inputMaskDebounce"
-                                name="operatorCode"
-                                mask=""
-                                debounceTime={2000}
-                                placeholder="کد اپراتور"
-                                className="rtl"
-                                onChange={() =>
-                                  this.handleOperatorCodeChange(
-                                    formik.values.operatorCode
-                                  )
-                                }
-                                defaultValue={operator.staffCode}
-                              />
+                                <FormikControl
+                                  control="inputMaskDebounce"
+                                  name="operatorCode"
+                                  mask=""
+                                  debounceTime={2000}
+                                  placeholder="کد اپراتور"
+                                  className="rtl"
+                                  onChange={() =>
+                                    this.handleOperatorCodeChange(
+                                      formik.values.operatorCode
+                                    )
+                                  }
+                                  defaultValue={operator.staffCode}
+                                />
                               </Col>
                               <Col md="6">
                                 <FormikControl
@@ -251,9 +247,9 @@ class UnloadOperationPage extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    voyageData:state.voyage,
-    equipmentData:state.equipment,
-    operator:state.operator
+    voyageData: state.voyage,
+    equipmentData: state.equipment,
+    operator: state.operator
   }
 }
 
@@ -261,10 +257,10 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: () => dispatch(fetchVoyagesTopTenOpen()),
     selectVoyage: (value) => dispatch(voyageSelectedChanged(value)),
-    fetchEquipment:()=>dispatch(fetchEquipmentsForUnload()),
-    selectEquipment:(value)=>dispatch(equipmentSelectedChanged(value)),
-    fetchOperator:(value)=>dispatch(fetchOperatorInfoBasedOnCode(value))
+    fetchEquipment: () => dispatch(fetchEquipmentsForUnload()),
+    selectEquipment: (value) => dispatch(equipmentSelectedChanged(value)),
+    fetchOperator: (value) => dispatch(fetchOperatorInfoBasedOnCode(value))
   };
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(UnloadOperationPage);
+export default connect(mapStateToProps, mapDispatchToProps)(UnloadOperationPage);

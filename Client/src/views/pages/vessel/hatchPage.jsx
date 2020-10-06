@@ -7,17 +7,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
-import CustomNavigation from "../../components/common/customNavigation";
-import FormikControl from "../../components/common/formik/FormikControl";
-import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
-import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
+import CustomNavigation from "../../../components/common/customNavigation";
+import FormikControl from "../../../components/common/formik/FormikControl";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
+import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
-import { saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../services/vessel/deck";
-import { fetchHatchOperationTypes, fetchHatchDirections, hatchOperationTypeSelectedChanged, hatchDirectionSelectedChanged } from "../../redux/common/hatch/hatchActions";
+import { saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../../services/vessel/deck";
+import { fetchHatchOperationTypes, fetchHatchDirections, hatchOperationTypeSelectedChanged, hatchDirectionSelectedChanged } from "../../../redux/common/hatch/hatchActions";
 import { Table } from 'antd';
 import antdClass from 'antd/dist/antd.css';
-import antdClass2 from "../../assets/css/vendors/customAntdTable.css";
+import antdClass2 from "../../../assets/css/vendors/customAntdTable.css";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -137,9 +137,7 @@ const HatchPage = (props) => {
         operatorCode: OperatorData.operator.staffCode,
         selectHatchOperationType: HatchData.selectedHatchOperationType,
         selectHatchDirection: HatchData.selectedHatchDirection,
-        vesselHatchInfoList: [],
-        selectDay: null,
-        selectDay2: null
+        vesselHatchInfoList: []
     });
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
     const dispatch = useDispatch();

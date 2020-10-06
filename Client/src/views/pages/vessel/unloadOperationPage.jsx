@@ -6,13 +6,13 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import urls from '../../urls.json'
+import urls from '../../../urls.json'
 
-import CustomNavigation from "../../components/common/customNavigation";
-import FormikControl from "../../components/common/formik/FormikControl";
-import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../redux/common/equipment/equipmentActions";
-import { fetchOperatorInfoBasedOnCode } from "../../redux/common/operator/operatorActions";
+import CustomNavigation from "../../../components/common/customNavigation";
+import FormikControl from "../../../components/common/formik/FormikControl";
+import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
+import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
 import {
   getCntrInfoForUnload,
@@ -21,7 +21,7 @@ import {
   addToLoadingList,
   isExistCntrInInstructionLoading,
   saveUnloadIncrement,
-} from "../../services/vessel/berth";
+} from "../../../services/vessel/berth";
 
 
 toast.configure({ bodyClassName: "customFont" });

@@ -2,28 +2,23 @@ const mapper = require('./utility')
 const md5 = require('md5')
 const { SendResponse } = require('./utility')
 
-insert = async (entity, req, res) => {
+exports.Insert = async (entity, req, res) => {
 
     let obj = new entity(req.body);
     await obj.save();
     SendResponse(req, res, obj);
 }
 
-insertMany = async (entity, req, res) => {
+exports.InsertMany = async (entity, req, res) => {
     let obj = await entity.insertMany(req.body);
     SendResponse(req, res, obj);
 }
 
-update = async (entity, req, res) => {
+exports.Update = async (entity, req, res) => {
     FindAndUpdate(entity, req, res, { _id: req.body._id }, req.body);
 };
 
-
-softDelete = async (entity, req, res) => {
-    FindAndUpdate(entity, req, res, { _id: req.params.id }, { isDeleted: true });
-}
-
-hardDelete = async (entity, req, res) => {
+exports.HardDelete = async (entity, req, res) => {
     console.log(req.body)
     let doc = await entity.findByIdAndRemove(req.body._id);
     if (doc)
@@ -32,7 +27,7 @@ hardDelete = async (entity, req, res) => {
         SendResponse(req, res, { error: 'nothing found!' }, false, 404);
 }
 
-getAll = async (entity, req, res, opt = {}, sendResponse = true) => {
+exports.GetAll = async (entity, req, res, opt = {}, sendResponse = true) => {
 
     sortTerm = opt.sort ? opt.sort : '_id';
 
@@ -55,7 +50,7 @@ getAll = async (entity, req, res, opt = {}, sendResponse = true) => {
     SendResponse(req, res, doc, doc != null)
 }
 
-getOne = async (entity, req, res, opt = {}, sendResponse = true) => {
+exports.GetOne = async (entity, req, res, opt = {}, sendResponse = true) => {
     condition = opt.condition ? opt.condition : {}
     //condition.isDeleted = false;
     populate = opt.populate ? opt.populate : '';
@@ -86,14 +81,4 @@ FindAndUpdate = async (entity, req, res, condition, update) => {
     }
     else
         SendResponse(res, res, { error: 'nothing found!' }, false, 404);
-}
-
-module.exports = {
-    Insert: insert,
-    InsertMany: insertMany,
-    Update: update,
-    Delete: softDelete,
-    GetAll: getAll,
-    GetOne: getOne,
-    HardDelete: hardDelete
 }
