@@ -60,9 +60,11 @@ const onSubmit = (values, props, staffId) => {
     cntrNo: values.containerNo,
     voyageId: values.selectVoyageNo.value,
   };
+
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
     .first();
+    
   let og = _(values.checkboxListSelected)
     .filter((c) => c === "OG")
     .first();

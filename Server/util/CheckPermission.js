@@ -39,7 +39,7 @@ doesUserHavePermission = async (userInfo, permission, access) => {
             return { message: "User not found", result: false, statusCode: 401 };
         }
     } catch (error) {
-        return { message: `check permission(${user.id},${permission},${access}`, result: false, statusCode: 500 };
+        return { message: `check permission(${userInfo.id},${permission},${access}`, result: false, statusCode: 500 };
     }
 }
 
