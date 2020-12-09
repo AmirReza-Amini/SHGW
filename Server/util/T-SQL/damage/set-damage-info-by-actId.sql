@@ -5,5 +5,5 @@
 
 
 DECLARE @OutputResult NVARCHAR(MAX);
-EXEC SP_SetDamgeBasedOnDamageList @DamageList = @damagelist, 
+EXEC SP_H_SetDamgeBasedOnDamageList @DamageList = @damagelist, 
     @OutputResult = @OutputResult OUTPUT 

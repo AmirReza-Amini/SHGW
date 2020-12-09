@@ -1,1 +1,1 @@
-EXEC dbo.sp_GetDamageLetters @ActID = @actId
+EXEC dbo.SP_H_GetDamageLetters @ActID = @actId
