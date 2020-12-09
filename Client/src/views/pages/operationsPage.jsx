@@ -24,10 +24,13 @@ class operationsPage extends Component {
     );
     //this.state.group = group;
 
+    if (!config.useAuthentication)
+      return this.setState({ group: group.operations });
+
     const { userType, permissions } = auth.getCurrentUser();
-    // console.log(userType, permissions, group)
-    if (!config.useAuthentication || userType === "Admin")
-      this.setState({ group: group.operations });
+
+    if (userType === "Admin")
+      return this.setState({ group: group.operations });
     else {
       const permission = permissions.filter(c => _.toUpper(c.name) === _.toUpper(a));
       const accessGroup = group.operations.filter(c => permission[0].access.filter(ac => _.toUpper(ac.key) === _.toUpper(c.pName) && ac.value === true).length == 1);

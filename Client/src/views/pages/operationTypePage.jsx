@@ -19,10 +19,14 @@ class operationTypePage extends Component {
 
   componentWillMount() {
     const group = _(operationGroups).value();
+
+    if (!config.useAuthentication)
+      return this.setState({ group });
+
     const { userType, permissions } = auth.getCurrentUser();
     //console.log(userType, permissions, group)
-    if (!config.useAuthentication || userType === "Admin")
-      this.setState({ group });
+    if (userType === "Admin")
+      return this.setState({ group });
     else {
       const accessGroup = group.filter(c => permissions.filter(p => _.toUpper(p.name) === _.toUpper(c.enName) && p.isGranted === true).length === 1);
       //console.log('access group', accessGroup);
