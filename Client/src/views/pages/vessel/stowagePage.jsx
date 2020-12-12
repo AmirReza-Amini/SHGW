@@ -59,7 +59,6 @@ const onSubmit = (values, props, staffId) => {
                             const paramsForSaving = {
                                 cntrNo: values.containerNo,
                                 voyageId: values.selectVoyageNo.value,
-                                userId: 220,
                                 equipmentId: values.selectEquipmentType.value,
                                 operatorId: staffId,
                                 bayAddress: data.loadingBayAddress,

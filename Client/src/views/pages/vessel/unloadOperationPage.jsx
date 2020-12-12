@@ -81,7 +81,6 @@ const onSubmit = (values, props, staffId) => {
           cntrNo: data[0].BayCntrNo,
           voyageId: data[0].VoyageID,
           berthId: data[0].BerthID,
-          userId: 220,
           equipmentId: values.selectEquipmentType.value,
           operatorId: staffId,
           truckNo: values.truckNo,
@@ -212,7 +211,8 @@ const UnloadOperationPage = (props) => {
   //#region EVENT HANDLRES -------------------------------------------------
 
   const handleContainerNoChange = (value) => {
-    const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
+    const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value};
+
     // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
       .then((response) => {
@@ -245,7 +245,7 @@ const UnloadOperationPage = (props) => {
         ) {
           guessedOperation = "Visibility";
           if (result.ActID == null) {
-            addToShifting({ ...data, staffId: 220 })
+            addToShifting({ ...data})
               .then((response) => {
                 //console.log(response);
                 if (response.data.result) {

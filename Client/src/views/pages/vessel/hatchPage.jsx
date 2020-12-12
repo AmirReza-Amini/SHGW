@@ -107,7 +107,6 @@ const HatchPage = (props) => {
             voyageId: values.selectVoyageNo.value,
             operatorId: OperatorData.operator.staffId,
             equipmentId: values.selectEquipmentType.value,
-            clerkId: 220,
             hatchNo: values.bayAddress,
             hatchOperationType: values.selectHatchOperationType.value,
             isLoaded: values.selectHatchDirection.value === 1 ? false : true

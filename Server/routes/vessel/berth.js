@@ -83,7 +83,7 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
   const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
   if (check.result) {
     try {
-      // console.log('ezafe takhlie')
+       console.log('ezafe takhlie',req.user,req.body)
       var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
         voyageId: req.body.voyageId,
         cntrNo: req.body.cntrNo,
@@ -93,7 +93,6 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
         operatorId: req.body.operatorId,
         terminalId: req.body.terminalId,
         truckNo: req.body.truckNo,
-        isShifting: req.body.isShifting,
         sE: req.body.sE,
         oG: req.body.oG,
       });
@@ -103,12 +102,14 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
         message: "The operation has been done successfully",
       } : "Operation failed";
 
+      console.log(result);
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log('increment data', result2);
       res.io.emit("get_data", result2);
 
       return SendResponse(req, res, data, result[0][""][0] !== '0');
     } catch (error) {
+      console.log(error)
       return SendResponse(req, res, 'saveUnloadIncrement', false, 500);
     }
   }
@@ -124,7 +125,7 @@ router.post("/addToShifting", auth, async (req, res) => {
       var result = await db.query(queries.VESSEL.BERTH.addToShifting, {
         voyageId: req.body.voyageId,
         cntrNo: req.body.cntrNo,
-        staffId: req.body.staffId,
+        staffId: req.user.userId,
       });
 
       if (result && result.length > 0)

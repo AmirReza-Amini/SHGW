@@ -77,7 +77,6 @@ const onSubmit = (values, props, staffId) => {
                     cntrNo: data[0].CntrNo,
                     voyageId: data[0].VoyageID,
                     berthId: data[0].BerthID,
-                    userId: 220,
                     equipmentId: values.selectEquipmentType.value,
                     operatorId: staffId,
                     truckNo: values.truckNo,
