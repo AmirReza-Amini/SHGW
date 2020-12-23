@@ -15,7 +15,7 @@ class InputMaskDebounce extends Component {
 
 
   onChange = (event, form) => {
-    //console.log('event',event)
+    //console.log('event', event)
     // console.log('props',this.props);
     event.persist();
     const { debounceTime, name, toUppercase } = this.props;
@@ -51,7 +51,8 @@ class InputMaskDebounce extends Component {
   render() {
     const { type, label, name, className, placeholder, defaultValue } = this.props;
     const classN = "form-control " + className;
-    const defalutType = this.props.mask ? 'text' : type ? type : 'text'
+    const defalutType = this.props.mask ? 'text' : type ? type : 'text';
+  
     return (
       <FormGroup>
         {label !== null && label !== "" && <Label for={name}>{label}</Label>}

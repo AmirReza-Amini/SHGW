@@ -4,7 +4,7 @@ import {
   FETCH_EQUIPMENTS_SUCCESS,
   EQUIPMENT_SELECTED_CHANGED,
 } from "./equipmentTypes";
-import {getEquipmentsForLoadUnload} from '../../../services/equipmentService';
+import { getEquipments } from '../../../services/equipmentService';
 
 
 export const fetchEquipmentsRequest = () => {
@@ -16,7 +16,7 @@ export const fetchEquipmentsRequest = () => {
 export const fetchEquipmentsSuccess = (equipments) => {
   return {
     type: FETCH_EQUIPMENTS_SUCCESS,
-    payload: equipments,
+    payload: equipments
   };
 };
 
@@ -27,27 +27,29 @@ export const fetchEquipmentsFailure = (error) => {
   };
 };
 
-export const equipmentSelectedChanged = (equipment) => {
-    return {
-      type: EQUIPMENT_SELECTED_CHANGED,
-      payload: equipment,
-    };
+export const equipmentSelectedChanged = (equipment, equipmentType) => {
+  return {
+    type: EQUIPMENT_SELECTED_CHANGED,
+    payload: equipment,
+    equipmentType: equipmentType
   };
+};
 
-  export const fetchEquipmentsForLoadUnload = () => {
-    return async (dispatch) => {
-      dispatch(fetchEquipmentsRequest());
-      getEquipmentsForLoadUnload()
-        .then((response) => {
-          const data = response.data.data.map((c) => {
-            return { value: c.EquipmentID, label: c.EquipmentName };
-          });
-          dispatch(fetchEquipmentsSuccess(data));
-        })
-        .catch((error) => {
-          const errorMsg = error.message;
-          dispatch(fetchEquipmentsFailure(errorMsg));
+export const fetchEquipments = () => {
+  return async (dispatch) => {
+    dispatch(fetchEquipmentsRequest());
+    getEquipments()
+      .then((response) => {
+        console.log(response);
+        const data = response.data.data.map((c) => {
+          return { value: c.EquipmentID, label: c.EquipmentName, type: c.EquipmentType };
         });
-    };
+        dispatch(fetchEquipmentsSuccess(data));
+      })
+      .catch((error) => {
+        const errorMsg = error.message;
+        dispatch(fetchEquipmentsFailure(errorMsg));
+      });
   };
-  
+};
+

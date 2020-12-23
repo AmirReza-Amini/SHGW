@@ -8,14 +8,13 @@ const sworm = require('sworm');
 const db = sworm.db(setting.db.sqlConfig);
 const auth = require('../middleware/auth');
 
-router.get('/getEquipmentsForLoadUnload', auth, async (req, res) => {
+router.get('/getEquipments', async (req, res) => {
     try {
-        var result = await db.query(queries.EQUIPMENT.getEquipmentsForLoadUnload);
+        var result = await db.query(queries.EQUIPMENT.getEquipments);
         // res.socket.emit(Events.LAST_VOYAGES_LOADED, result);
         SendResponse(req, res, result, (result && result.length > 0))
     } catch (error) {
-        return SendResponse(req, res, 'getEquipmentsForLoadUnload', false, 500);
+        return SendResponse(req, res, 'getEquipments', false, 500);
     }
-
-})
+});
 module.exports = router;

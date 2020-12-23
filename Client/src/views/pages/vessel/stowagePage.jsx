@@ -10,7 +10,7 @@ import _ from "lodash";
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
 import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchEquipments, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
 import { getCntrInfoForStowage, getStowageInfoForCntrByVoyage, isOccoupiedBayAddressInVoyage, saveStowageAndShiftedup } from "../../../services/vessel/deck";
@@ -105,7 +105,7 @@ const StowagePage = (props) => {
     const OperatorData = useSelector((state) => state.operator);
     const [state, setState] = useState({
         selectVoyageNo: VoyageData.selectedVoyage,
-        selectEquipmentType: EquipmentData.selectedEquipment,
+        selectEquipmentType: EquipmentData.selectedEquipment['stowage'],
         containerNo: "",
         operatorCode: OperatorData.operator.staffCode,
         bayAddress: ""
@@ -129,7 +129,7 @@ const StowagePage = (props) => {
             EquipmentData.equipments === null ||
             EquipmentData.equipments.length === 0
         ) {
-            dispatch(fetchEquipmentsForLoadUnload());
+            dispatch(fetchEquipments());
         }
     }, []);
 
@@ -241,7 +241,7 @@ const StowagePage = (props) => {
 
     const handleEquipmentSelectedChanged = (value) => {
         //console.log("handleEquipmentSelectedChanged", value);
-        dispatch(equipmentSelectedChanged(value));
+        dispatch(equipmentSelectedChanged(value,'stowage'));
     };
 
     const handleCancelButton = () => {
@@ -324,9 +324,16 @@ const StowagePage = (props) => {
                                                                                 control="customSelect"
                                                                                 name="selectEquipmentType"
                                                                                 selectedValue={
-                                                                                    EquipmentData.selectedEquipment
+                                                                                    EquipmentData.selectedEquipment['stowage']
                                                                                 }
-                                                                                options={EquipmentData.equipments}
+                                                                                options={EquipmentData.equipments
+                                                                                    .filter(c => c.type == 5 || c.type == 11)
+                                                                                    .map(item => {
+                                                                                        return {
+                                                                                            value: item.value,
+                                                                                            label: item.label
+                                                                                        }
+                                                                                    })}
                                                                                 placeholder="Equipment No"
                                                                                 onSelectedChanged={
                                                                                     handleEquipmentSelectedChanged

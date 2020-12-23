@@ -120,7 +120,7 @@ const LoginPage = (props) => {
             <CardBody>
               <h2 className="white py-4">
                 <ReactRevealText show={show}>
-                  Sina Port and Marine Services Handheld Gateway
+                  India Port Global Chabahar Freezone
                 </ReactRevealText>
               </h2>
               <div className="pt-2">

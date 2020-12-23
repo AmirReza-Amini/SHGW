@@ -1,6 +1,7 @@
 const errorLoger = require('../middleware/error-loger')
 module.exports = app => {
   require('./vessel')(app);
+  require('./cy')(app);
   app.use('/', require('./home'));
   app.use('/app/log', require('./log'));
   app.use('/api/userType', require('./userType'));

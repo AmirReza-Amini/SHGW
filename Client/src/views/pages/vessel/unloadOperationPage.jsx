@@ -11,7 +11,7 @@ import urls from '../../../urls.json'
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
 import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchEquipments, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
 import {
@@ -38,8 +38,8 @@ const initialValues = {
 };
 
 const checkboxListOptions = [
-  { value: "SE",  label: 'Special Equipment' },
-  { value: "OG",  label: 'Out of Gate' },
+  { value: "SE", label: 'Special Equipment' },
+  { value: "OG", label: 'Out of Gate' },
 ];
 
 const validationSchema = Yup.object({
@@ -64,7 +64,7 @@ const onSubmit = (values, props, staffId) => {
   let se = _(values.checkboxListSelected)
     .filter((c) => c === "SE")
     .first();
-    
+
   let og = _(values.checkboxListSelected)
     .filter((c) => c === "OG")
     .first();
@@ -161,7 +161,7 @@ const UnloadOperationPage = (props) => {
   const OperatorData = useSelector((state) => state.operator);
   const [state, setState] = useState({
     selectVoyageNo: VoyageData.selectedVoyage,
-    selectEquipmentType: EquipmentData.selectedEquipment,
+    selectEquipmentType: EquipmentData.selectedEquipment['discharge'],
     containerNo: "",
     operatorCode: OperatorData.operator.staffCode,
     truckNo: "",
@@ -186,7 +186,7 @@ const UnloadOperationPage = (props) => {
       EquipmentData.equipments === null ||
       EquipmentData.equipments.length === 0
     ) {
-      dispatch(fetchEquipmentsForLoadUnload());
+      dispatch(fetchEquipments());
     }
   }, []);
 
@@ -211,7 +211,7 @@ const UnloadOperationPage = (props) => {
   //#region EVENT HANDLRES -------------------------------------------------
 
   const handleContainerNoChange = (value) => {
-    const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value};
+    const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
 
     // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
@@ -245,7 +245,7 @@ const UnloadOperationPage = (props) => {
         ) {
           guessedOperation = "Visibility";
           if (result.ActID == null) {
-            addToShifting({ ...data})
+            addToShifting({ ...data })
               .then((response) => {
                 //console.log(response);
                 if (response.data.result) {
@@ -287,7 +287,7 @@ const UnloadOperationPage = (props) => {
 
   const handleEquipmentSelectedChanged = (value) => {
     //console.log("handleEquipmentSelectedChanged", value);
-    dispatch(equipmentSelectedChanged(value));
+    dispatch(equipmentSelectedChanged(value, 'discharge'));
   };
 
   const handleCancelButton = () => {
@@ -331,7 +331,7 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                     console.log("Formik props values", formik);
+                    console.log("Formik props values", formik);
                     // console.log(
                     //   "in formik",
                     //   VoyageData,
@@ -382,9 +382,16 @@ const UnloadOperationPage = (props) => {
                                         control="customSelect"
                                         name="selectEquipmentType"
                                         selectedValue={
-                                          EquipmentData.selectedEquipment
+                                          EquipmentData.selectedEquipment['discharge']
                                         }
-                                        options={EquipmentData.equipments}
+                                        options={EquipmentData.equipments
+                                          .filter(c => c.type == 5 || c.type == 11)
+                                          .map(item => {
+                                            return {
+                                              value: item.value,
+                                              label: item.label
+                                            }
+                                          })}
                                         placeholder="Equipment No"
                                         onSelectedChanged={
                                           handleEquipmentSelectedChanged

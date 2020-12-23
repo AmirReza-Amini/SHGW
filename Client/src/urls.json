@@ -15,6 +15,7 @@
     "EmptyGateOut": "/operationType/gate/emptyGateOut",
 
     "YardOperation": "/operationType/cy/yardOperation",
+    "YardOperationDamage": "/operationType/cy/yardOperation/damage",
     "Movement": "/operationType/cy/movement",
     "Send": "/operationType/cy/send",
     "Receive": "/operationType/cy/receive",

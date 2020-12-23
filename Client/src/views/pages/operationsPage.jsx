@@ -58,6 +58,8 @@ class operationsPage extends Component {
         return this.props.history.push(urls.Stowage);
       case "Hatch":
         return this.props.history.push(urls.Hatch);
+      case "Yard":
+        return this.props.history.push(urls.YardOperation);
     }
   };
 

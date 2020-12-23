@@ -10,7 +10,7 @@ import _ from "lodash";
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
 import { fetchVoyagesTopTenOpen, voyageSelectedChanged } from "../../../redux/common/voyage/voyageActions";
-import { fetchEquipmentsForLoadUnload, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
+import { fetchEquipments, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
 
 import { saveVesselHatchInfo, getVesselHatchInfoByVoyage } from "../../../services/vessel/deck";
@@ -131,7 +131,7 @@ const HatchPage = (props) => {
     const HatchData = useSelector((state) => state.hatch);
     const [state, setState] = useState({
         selectVoyageNo: VoyageData.selectedVoyage,
-        selectEquipmentType: EquipmentData.selectedEquipment,
+        selectEquipmentType: EquipmentData.selectedEquipment['hatch'],
         bayAddress: "",
         operatorCode: OperatorData.operator.staffCode,
         selectHatchOperationType: HatchData.selectedHatchOperationType,
@@ -154,7 +154,7 @@ const HatchPage = (props) => {
             EquipmentData.equipments === null ||
             EquipmentData.equipments.length === 0
         ) {
-            dispatch(fetchEquipmentsForLoadUnload());
+            dispatch(fetchEquipments());
         }
         if (HatchData.hatchOperationTypes === null ||
             HatchData.hatchOperationTypes.length === 0) {
@@ -206,7 +206,7 @@ const HatchPage = (props) => {
     };
 
     const handleEquipmentSelectedChanged = (value) => {
-        dispatch(equipmentSelectedChanged(value));
+        dispatch(equipmentSelectedChanged(value,'hatch'));
     };
 
     const handleHatchOperationTypeSelectedChanged = (value) => {
@@ -270,9 +270,16 @@ const HatchPage = (props) => {
                                                                     control="customSelect"
                                                                     name="selectEquipmentType"
                                                                     selectedValue={
-                                                                        EquipmentData.selectedEquipment
+                                                                        EquipmentData.selectedEquipment['hatch']
                                                                     }
-                                                                    options={EquipmentData.equipments}
+                                                                    options={EquipmentData.equipments
+                                                                        .filter(c => c.type == 5 || c.type == 11)
+                                                                        .map(item => {
+                                                                            return {
+                                                                                value: item.value,
+                                                                                label: item.label
+                                                                            }
+                                                                        })}
                                                                     placeholder="Equipment No"
                                                                     onSelectedChanged={
                                                                         handleEquipmentSelectedChanged
