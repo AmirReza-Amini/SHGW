@@ -40,8 +40,8 @@ router.post("/saveUnload", auth, async (req, res) => {
       });
       //[ { '': [ '12329941', 'OK' ] } ]
       console.log('result unload save', result);
-      let data = result[0][""][0] !== '0' ? {
-        ActId: result[0][""][0],
+      let data = result[0]['OutVal'] !== false ? {
+        ActId: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
 
@@ -49,7 +49,7 @@ router.post("/saveUnload", auth, async (req, res) => {
       //console.log(result2);
       res.io.emit("get_data", result2);
 
-      return SendResponse(req, res, data, result[0][""][0] !== '0');
+      return SendResponse(req, res, data, result[0]['OutVal']);
     } catch (error) {
       return SendResponse(req, res, 'saveUnload', false, 500);
     }
@@ -83,7 +83,7 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
   const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
   if (check.result) {
     try {
-       console.log('ezafe takhlie',req.user,req.body)
+      console.log('ezafe takhlie', req.user, req.body)
       var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrement, {
         voyageId: req.body.voyageId,
         cntrNo: req.body.cntrNo,
