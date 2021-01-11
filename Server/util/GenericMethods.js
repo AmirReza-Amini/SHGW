@@ -72,6 +72,7 @@ FindAndUpdate = async (entity, req, res, condition, update) => {
 
         mapper.Map(update, doc);
         try {
+            delete doc['__v'];
             await doc.save();
             SendResponse(req, res, doc);
         } catch (error) {

@@ -57,14 +57,14 @@ const FormikContainer = () => {
     const onSubmit = values => console.log('Form Data', values);
 
     const [formValues, setFormValues] = useState(null);
-    console.log('formvalues',formValues);
+    //console.log('formvalues',formValues);
     return (
         <Formik initialValues={formValues || initialValues} validationSchema={validationSchema} onSubmit={onSubmit  }
             //validateOnChange={true}
         validateOnBlur={true}>
             {
                 formik => {
-                    console.log('Formik props value', formik.values);
+                    //console.log('Formik props value', formik.values);
                     return (
                         <Form>
                             <FormikControl control='input' type='email' label='Email' name='email' />

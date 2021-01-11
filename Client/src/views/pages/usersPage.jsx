@@ -164,7 +164,7 @@ class UsersPage extends Component {
     }
 
     handleUserPermissionsChange(checkedValues, permissionName) {
-        console.log('checked = ', checkedValues);
+        //console.log('checked = ', checkedValues);
         const currentRow = { ...this.state.currentRow };
 
         const permissions = [...currentRow.permissions];
@@ -232,10 +232,10 @@ class UsersPage extends Component {
     }
 
     handleSubmitEditUserInfo = () => {
-        console.log('submit edit user info', this.state.currentRow);
+        //console.log('submit edit user info', this.state.currentRow);
         const userData = { ...this.state.currentRow };
         delete userData.password;
-        console.log('delete password from user data edit', userData);
+        //console.log('delete password from user data edit', userData);
         editUserInfo(userData).then(response => {
             if (response.data.result) {
                 toast.success('User info has been updated successfully');

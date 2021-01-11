@@ -44,7 +44,7 @@ class UnloadOperationPage extends Component {
 
   componentDidMount() {
 
-    console.log('component did mount', this.props);
+    //console.log('component did mount', this.props);
     if (!this.props.voyageData.voyages || this.props.voyageData.voyages.length === 0)
       this.props.fetch();
     if (this.props.equipmentData.equipments.length === 0)
@@ -52,7 +52,7 @@ class UnloadOperationPage extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('component did update');
+    //console.log('component did update');
     if (this.props.voyageData.error)
       toast.error(' asdfadsfasfd')
   }
@@ -64,20 +64,20 @@ class UnloadOperationPage extends Component {
   };
 
   handleVoyageSelectedChanged = (value) => {
-    console.log("handleVoyageSelectedChanged", value);
+    //console.log("handleVoyageSelectedChanged", value);
     //const dispatch = useDispatch();
     this.props.selectVoyage(value);
   };
 
   handleEquipmentSelectedChanged = (value) => {
-    console.log("handleEquipmentSelectedChanged", value);
+    //console.log("handleEquipmentSelectedChanged", value);
     //const dispatch = useDispatch();
     this.props.selectEquipment(value);
   };
 
   render() {
 
-    console.log("voyage", this.props);
+    //console.log("voyage", this.props);
     const { operator } = this.props.operator;
 
     return (
@@ -102,7 +102,7 @@ class UnloadOperationPage extends Component {
                     validateOnBlur={true}
                   >
                     {(formik) => {
-                      console.log("Formik props values", formik.values);
+                      //console.log("Formik props values", formik.values);
                       return (
                         <Form>
                           <div className="form-body">

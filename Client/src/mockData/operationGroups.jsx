@@ -1,16 +1,5 @@
 const OperationGroups = [
   {
-    fnName: "گیت",
-    enName: "Gate",
-    operations: [
-      { fnName: "پذیرش", enName: "Accept", icon: "1", pName: "Accept-From-Icd", class: "bg-danger btn" },
-      { fnName: "تحویل", enName: "Deliver", icon: "2", pName: "Deliver-To-Icd", class: "bg-danger btn" },
-      { fnName: "ورود پر", enName: "Full-in", icon: "3", pName: "Full-Gate-In", class: "bg-danger btn" },
-      { fnName: "ورود خالی", enName: "Empty-In", icon: "4", pName: "Empty-Gate-In", class: "bg-danger btn" },
-      { fnName: "خروج خالی", enName: "Empty-Out", icon: "5", pName: "Empty-Gate-Out", class: "bg-danger btn" }],
-    class: "bg-danger btn"
-  },
-  {
     fnName: "کشتی",
     enName: "Vessel",
     operations: [
@@ -32,6 +21,17 @@ const OperationGroups = [
       { fnName: "پلاگ", enName: "Plug-In", icon: "4", pName: "Plug-In", class: "bg-warning btn" },
       { fnName: "آنپلاگ", enName: "Plug-Out", icon: "4", pName: "Plug-Out", class: "bg-warning btn" }],
     class: "bg-warning btn"
+  },
+  {
+    fnName: "گیت",
+    enName: "Gate",
+    operations: [
+      { fnName: "پذیرش", enName: "Accept", icon: "1", pName: "Accept-From-Icd", class: "bg-danger btn" },
+      { fnName: "تحویل", enName: "Deliver", icon: "2", pName: "Deliver-To-Icd", class: "bg-danger btn" },
+      { fnName: "ورود پر", enName: "Full-in", icon: "3", pName: "Full-Gate-In", class: "bg-danger btn" },
+      { fnName: "ورود خالی", enName: "Empty-In", icon: "4", pName: "Empty-Gate-In", class: "bg-danger btn" },
+      { fnName: "خروج خالی", enName: "Empty-Out", icon: "5", pName: "Empty-Gate-Out", class: "bg-danger btn" }],
+    class: "bg-danger btn"
   }
 ];
 

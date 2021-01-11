@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import urls from '../../../urls.json'
+import urls from '../../../urls.json';
+import config from '../../../config.json';
 
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
@@ -165,10 +166,11 @@ const LoadOperationPage = (props) => {
         if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
             dispatch(fetchVoyagesTopTenOpen());
         }
+       // console.log('eqqqqqqqq',EquipmentData)
         if (
-            EquipmentData.equipments === null ||
-            EquipmentData.equipments.length === 0
+            EquipmentData.equipments === null || EquipmentData.equipments.length === 0
         ) {
+           // console.log('qweqw',EquipmentData.equipments.length)
             dispatch(fetchEquipments);
         }
         //console.log("salam");

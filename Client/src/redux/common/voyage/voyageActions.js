@@ -38,7 +38,7 @@ export const fetchVoyagesTopTenOpen = () => {
     dispatch(fetchVoyagesRequest());
     getVoyageTopTenOpen()
       .then((response) => {
-        console.log('res',response)
+        //console.log('res',response)
         const data = response.data.data.map((c) => {
           return {
             value: c.VoyageID,

@@ -9,7 +9,7 @@ import { getEquipments } from '../../../services/equipmentService';
 
 export const fetchEquipmentsRequest = () => {
   return {
-    type: FETCH_EQUIPMENTS_REQUEST,
+    type: FETCH_EQUIPMENTS_REQUEST
   };
 };
 
@@ -36,11 +36,12 @@ export const equipmentSelectedChanged = (equipment, equipmentType) => {
 };
 
 export const fetchEquipments = () => {
+  console.log('fetchEquipments')
   return async (dispatch) => {
     dispatch(fetchEquipmentsRequest());
     getEquipments()
       .then((response) => {
-        console.log(response);
+        console.log('fetchEquipments response',response);
         const data = response.data.data.map((c) => {
           return { value: c.EquipmentID, label: c.EquipmentName, type: c.EquipmentType };
         });
@@ -48,6 +49,7 @@ export const fetchEquipments = () => {
       })
       .catch((error) => {
         const errorMsg = error.message;
+        console.log('fetchEquipmentserror')
         dispatch(fetchEquipmentsFailure(errorMsg));
       });
   };

@@ -28,12 +28,12 @@ axios.interceptors.response.use(null, error => {
   if (!expectedError) {
     // status code 500
     toast.error("Error in connecting to the server, Call to the Administrator");
-    console.log(error.response, error); // eeno bayad log begirim
+    //console.log(error.response, error); // eeno bayad log begirim
     //toastr.error('Server Error','An Unexpected error occured!')
   }
 
   if (expectedError) {
-    console.log(error.response);
+    //console.log(error.response);
     const message = error.response.data.data && error.response.data.data.length > 0 ? error.response.data.data[0] : null;
     switch (error.response.status) {
 

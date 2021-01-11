@@ -67,9 +67,9 @@ class ThemeNavbar extends Component {
                      onClick={this.handleClick.bind(this)}
                      data-toggle="collapse"
                   />
-                  <Form className="navbar-form mt-1 float-left" role="search">
+                  {/* <Form className="navbar-form mt-1 float-left" role="search">
                      <NavbarSearch />
-                  </Form>
+                  </Form> */}
                   {/* <Moon size={20} color="#333" className="m-2 cursor-pointer"/> */}
                   <MoreVertical
                      className="mt-1 navbar-toggler black no-border float-right"
@@ -82,11 +82,11 @@ class ThemeNavbar extends Component {
                   <Collapse isOpen={this.state.isOpen} navbar>
                      <Nav className="ml-auto float-right" navbar>
                         <UncontrolledDropdown nav inNavbar className="pr-1">
-                           <DropdownToggle nav>
+                           {/* <DropdownToggle nav>
                               <ReactCountryFlag code="us" svg /> EN
-                           </DropdownToggle>
+                           </DropdownToggle> */}
                            <DropdownMenu right>
-                              <DropdownItem>
+                              {/* <DropdownItem>
                                  <ReactCountryFlag code="us" svg /> English
                               </DropdownItem>
                               <DropdownItem>
@@ -97,15 +97,15 @@ class ThemeNavbar extends Component {
                               </DropdownItem>
                               <DropdownItem>
                                  <ReactCountryFlag code="cn" svg /> Chinese
-                              </DropdownItem>
+                              </DropdownItem> */}
                            </DropdownMenu>
                         </UncontrolledDropdown>
-                        <NavItem className="pr-1">
+                        {/* <NavItem className="pr-1">
                            <Link to="/email/" className="nav-link">
                               <Mail size={20} color="#333" />
                            </Link>
-                        </NavItem>
-                        <UncontrolledDropdown nav inNavbar className="pr-1">
+                        </NavItem> */}
+                        {/* <UncontrolledDropdown nav inNavbar className="pr-1">
                            <DropdownToggle nav>
                               <span className="notification-bell-blink" />
                               <Bell size={21} className="text-dark notification-danger animate-shake" />
@@ -231,52 +231,52 @@ class ThemeNavbar extends Component {
                                  <Link to="/">View All</Link>
                               </div>
                            </DropdownMenu>
-                        </UncontrolledDropdown>
+                        </UncontrolledDropdown> */}
 
                         <UncontrolledDropdown nav inNavbar className="pr-1">
-                           <DropdownToggle nav>
+                           {/* <DropdownToggle nav>
                               <img src={userImage} alt="logged-in-user" className="rounded-circle width-35" />
-                           </DropdownToggle>
-                           <DropdownMenu right>
-                              <DropdownItem>
+                           </DropdownToggle> */}
+                           {/* <DropdownMenu right> */}
+                              {/* <DropdownItem>
                                  <span className="font-small-3">
                                     John Doe <span className="text-muted">(Guest)</span>
                                  </span>
-                              </DropdownItem>
-                              <DropdownItem divider />
+                              </DropdownItem> */}
+                              {/* <DropdownItem divider /> */}
 
-                              <Link to="/pages/user-profile" className="p-0">
+                              {/* <Link to="/pages/user-profile" className="p-0">
                                  <DropdownItem>
                                     <User size={16} className="mr-1" /> My Profile
                                  </DropdownItem>
-                              </Link>
-                              <Link to="/email" className="p-0">
+                              </Link> */}
+                              {/* <Link to="/email" className="p-0">
                                  <DropdownItem>
                                     <Inbox size={16} className="mr-1" /> Email
                                  </DropdownItem>
-                              </Link>
-                              <Link to="/contacts" className="p-0">
+                              </Link> */}
+                              {/* <Link to="/contacts" className="p-0">
                                  <DropdownItem>
                                     <Phone size={16} className="mr-1" /> Contacts
                                  </DropdownItem>
-                              </Link>
-                              <Link to="/calendar" className="p-0">
+                              </Link> */}
+                              {/* <Link to="/calendar" className="p-0">
                                  <DropdownItem>
                                     <Calendar size={16} className="mr-1" /> Calendar
                                  </DropdownItem>
-                              </Link>
-                              <DropdownItem divider />
+                              </Link> */}
+                              {/* <DropdownItem divider />
                               <Link to="/pages/lockscreen" className="p-0">
                                  <DropdownItem>
                                     <Lock size={16} className="mr-1" /> Lock Screen
                                  </DropdownItem>
-                              </Link>
-                              <Link to="/pages/login" className="p-0">
+                              </Link> */}
+                              {/* <Link to="/pages/login" className="p-0">
                                  <DropdownItem>
                                     <LogOut size={16} className="mr-1" /> Logout
                                  </DropdownItem>
-                              </Link>
-                           </DropdownMenu>
+                              </Link> */}
+                           {/* </DropdownMenu> */}
                         </UncontrolledDropdown>
                      </Nav>
                   </Collapse>

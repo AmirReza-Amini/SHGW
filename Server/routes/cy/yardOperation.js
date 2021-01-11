@@ -38,7 +38,7 @@ router.post("/saveYardOperation", auth, async (req, res) => {
             });
 
             let data = result[0]['OutVal'] !== false ? {
-                ActId: result[0]['ActID'],
+                ActID: result[0]['ActID'],
                 message: "The operation has been done successfully",
             } : "Operation failed";
 

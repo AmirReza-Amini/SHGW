@@ -10,7 +10,8 @@ import * as auth from "../../services/authService"
 import FormikControl from "../../components/common/formik/FormikControl";
 
 import { getAreas } from "../../services/area";
-import ReactRevealText from 'react-reveal-text'
+import ReactRevealText from 'react-reveal-text';
+import config from '../../config.json';
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -120,7 +121,7 @@ const LoginPage = (props) => {
             <CardBody>
               <h2 className="white py-4">
                 <ReactRevealText show={show}>
-                  India Port Global Chabahar Freezone
+                  {config.appName}
                 </ReactRevealText>
               </h2>
               <div className="pt-2">

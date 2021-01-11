@@ -16,7 +16,7 @@ const templateConfig = {
       backgroundColor: "man-of-steel",
       // Gradient Options: 'pomegranate', 'king-yna', 'ibiza-sunset', 'flickr', 'purple-bliss', 'man-of-steel', 'purple-love'
       // Solid Options: 'black', 'white', 'blue', 'purple', 'red', 'orange', 'navy-blue'
-      backgroundImage: true, // Options: true, false | Set true to show background image
+      backgroundImage: false, // Options: true, false | Set true to show background image
       backgroundImageURL: sidebarBGImage // Change image from sidebarBGImage import
    },
    buyNow: false, // Options: true, false - To show floating buy now button.

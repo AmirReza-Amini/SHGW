@@ -54,14 +54,14 @@ class CustomDateTimePicker extends Component {
     return miladiDate;
   };
   handleSelectedDateChanged = (value, form) => {
-    console.log("from handledate", value);
+    //console.log("from handledate", value);
 
     const miladiDate = this.getMiladiDate(value);
     this.setState({
       selectedDate: value,
       selectedTime: this.state.selectedTime,
     });
-    console.log("handleSelectedDateChanged", value);
+    //console.log("handleSelectedDateChanged", value);
     if (this.props.onSelectedChanged)
       this.props.onSelectedChanged(miladiDate + " " + this.state.selectedTime);
 

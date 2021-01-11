@@ -35,7 +35,7 @@ class loadUnloadStatisticsPage extends Component {
     generateChartData = (data) => {
         let lables = [];
         let dataSet = [];
-        console.log(data);
+        //console.log(data);
         if (data[0]["ActualUnloadCount20"] !== 0) {
             lables.push("Unloaded 20\'");
             dataSet.push(data[0]["ActualUnloadCount20"]);
@@ -172,25 +172,6 @@ class loadUnloadStatisticsPage extends Component {
     }
     componentWillUnmount() {
         socket.off("get_data");
-    }
-
-    handleOperationType = (operationType) => {
-        //console.log(this.props);
-        switch (operationType) {
-            case "Gate":
-                return this.props.history.push("/operationType/gate");
-            case "Vessel":
-                return this.props.history.push("/operationType/vessel");
-            case "CY":
-                return this.props.history.push("/operationType/cy");
-            default:
-                return this.props.history.push("/");
-        }
-    };
-    handleClick = () => {
-        getLoadUnloadStatisticsByVoyageId({ voyageId: this.state.value }).then(res =>
-             console.log()
-             ).catch(err => console.log(err));
     }
     render() {
        // console.log(this.state)

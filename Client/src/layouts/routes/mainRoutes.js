@@ -22,7 +22,7 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          .filter((c) => c !== "")
          .map((c) => _.toUpper(c));
 
-      // console.log('item', items);
+      console.log('item', items);
       switch (items.length) {
          case 0:
             return true
@@ -41,9 +41,9 @@ const MainLayoutRoute = ({ location, path, render, ...rest }) => {
          case 3:
          case 4:
             let temp2 = permissions.filter(c => _.toUpper(c.name) === items[1] && c.isGranted === true);
-            //console.log('from main route', temp2)
+            console.log('from main route', temp2)
             if (temp2.length === 1) {
-               let temp3 = temp2[0].access.filter(c => _.toUpper(c.key) === items[2] && c.value === true);
+               let temp3 = temp2[0].access.filter(c => _.toUpper(c.key.replace('-','')) === items[2] && c.value === true);
                if (temp3.length === 1)
                   return true
             }

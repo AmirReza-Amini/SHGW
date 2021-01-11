@@ -10,3 +10,4 @@ SELECT HVI.VoyageID ,
        HVI.POD ,
        HVI.ShipName FROM dbo.H_VoyageInfo AS HVI
 WHERE HVI.VoyageStatus = 1 AND HVI.BerthID IS NOT NULL
+ORDER BY HVI.VoyageID DESC

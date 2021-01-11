@@ -21,7 +21,7 @@ const Footer = props => (
       <div className="container-fluid">
          <p className="text-center">
             © 2020{" "}Created by<i className="ft-heart font-small-3" />{" "}
-               Sina TOS Team
+               Keyhan TOS Team
          </p>
       </div>
    </footer>

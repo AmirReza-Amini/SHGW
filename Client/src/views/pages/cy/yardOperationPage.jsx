@@ -38,13 +38,13 @@ const validationSchema = Yup.object({
 //#region SUBMIT FORMIK ----------------------------------------------------
 
 const onSubmit = (values, props, staffId) => {
-    console.log("Form Submit Data", values);
+    //console.log("Form Submit Data", values);
     let parameters = {
         cntrNo: values.containerNo
     };
 
     getCntrInfoForYardOperation(parameters).then((response) => {
-        console.log("response", response);
+        //console.log("response", response);
         let { data, result } = response.data;
         if (result) {
             let parametersForYardOperation = {
@@ -52,7 +52,7 @@ const onSubmit = (values, props, staffId) => {
                 equipmentId: values.selectEquipmentType.value,
                 cntrNo: data[0].CntrNo,
                 voyageId: data[0].VoyageID,
-                cntrLocation: values.yardCode,
+                cntrLocation: _(values.yardCode).toUpper(),
                 actId: data[0].ActID,
                 truckNo: data[0].TruckNo
             };
@@ -62,7 +62,7 @@ const onSubmit = (values, props, staffId) => {
                     console.log("saveYardOperation", res);
                     if (res.data.result) {
                         toast.success(res.data.data[0]['message']);
-                        return props.history.push(urls.YardOperationDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                        return props.history.push(urls.YardOperationDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
                     } else return toast.error(res.data.data[0]);
                 })
                 .catch((error) => {
@@ -89,7 +89,7 @@ const YardOperationPage = (props) => {
         yardCode: "",
         truckNo: ""
     });
-    console.log('EquipmentData', EquipmentData);
+    //console.log('EquipmentData', EquipmentData);
     const [CntrInfo, setCntrInfo] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
@@ -101,7 +101,7 @@ const YardOperationPage = (props) => {
     //#region INITIAL FUNCTIONS ----------------------------------------------
 
     useEffect(() => {
-        console.log(EquipmentData)
+        //console.log(EquipmentData)
         if (
             EquipmentData.equipments === null ||
             EquipmentData.equipments.length === 0
@@ -140,7 +140,7 @@ const YardOperationPage = (props) => {
                     return toast.error("No container has been found");
                 }
                 const result = response.data.data[0];
-                console.log('result cntr', result)
+                //console.log('result cntr', result)
                 setCntrInfo(result);
             })
             .catch((error) => {
@@ -303,16 +303,16 @@ const YardOperationPage = (props) => {
                                                                 <FormikControl
                                                                     control="inputMaskDebounce"
                                                                     name="yardCode"
-                                                                    mask="aa-99-99-9"
+                                                                    mask="99-99-99-a"
                                                                     debounceTime={0}
                                                                     placeholder="Yard"
                                                                     className="ltr"
                                                                     defaultValue={
                                                                         CntrInfo.CntrLocation
                                                                     }
-                                                                    onChange={() =>
-                                                                        console.log('formik.values.yardCode', formik.values.yardCode)
-                                                                    }
+                                                                    // onChange={() =>
+                                                                    //     console.log('formik.values.yardCode', formik.values.yardCode)
+                                                                    // }
                                                                     toUppercase={true}
                                                                 />
                                                             </Col>

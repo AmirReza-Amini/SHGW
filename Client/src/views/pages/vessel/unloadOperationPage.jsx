@@ -6,7 +6,8 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import urls from '../../../urls.json'
+import urls from '../../../urls.json';
+import config from '../../../config.json';
 
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
@@ -68,7 +69,7 @@ const onSubmit = (values, props, staffId) => {
   let og = _(values.checkboxListSelected)
     .filter((c) => c === "OG")
     .first();
-
+  
   getCntrInfoForUnload(parameters).then((response) => {
     //console.log("response", response);
     let { data, result } = response.data;
@@ -120,23 +121,23 @@ const onSubmit = (values, props, staffId) => {
           } else {
             saveUnload(parametersForUnload)
               .then((res) => {
-                //console.log("res save unload", res, res.data.data[0]);
+                console.log("res save unload", res, res.data.data[0]);
                 if (res.data.result) {
                   toast.success(res.data.data[0]['message']);
-                  return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                  return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
                 } else return toast.error(res.data.data[0]);
               })
               .catch((error) => {
                 //return toast.error(error);
               });
           }
-        } else if (data[0].PortOfDischarge === "IRBND") {
-          saveUnloadIncrement({ ...parametersForUnload, terminalId: 39 })
+        } else if (data[0].PortOfDischarge === config.portName) {
+          saveUnloadIncrement({ ...parametersForUnload, terminalId: config.terminalId })
             .then((res) => {
               //console.log("res save unload INCREAMENT", res);
               if (res.data.result) {
                 toast.success(res.data.data[0]['message']);
-                return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
               } else return toast.error(res.data.data[0]);
             })
             .catch((error) => {
@@ -182,10 +183,11 @@ const UnloadOperationPage = (props) => {
     if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
       dispatch(fetchVoyagesTopTenOpen());
     }
+   // console.log('eqqqqqqqq',EquipmentData)
     if (
-      EquipmentData.equipments === null ||
-      EquipmentData.equipments.length === 0
+      EquipmentData.equipments === null || EquipmentData.equipments.length === 0
     ) {
+     // console.log('qweqw',EquipmentData.equipments.length)
       dispatch(fetchEquipments());
     }
   }, []);
@@ -236,18 +238,18 @@ const UnloadOperationPage = (props) => {
           guessedOperation = "Shifting";
         } else if (
           result.PortOfDischarge !== null &&
-          result.PortOfDischarge === "IRBND"
+          result.PortOfDischarge === config.portName
         ) {
           guessedOperation = "Additional";
         } else if (
           result.PortOfDischarge !== null &&
-          result.PortOfDischarge !== "IRBND"
+          result.PortOfDischarge !== config.portName
         ) {
           guessedOperation = "Visibility";
           if (result.ActID == null) {
             addToShifting({ ...data })
               .then((response) => {
-                //console.log(response);
+                //console.log('Visibility',response);
                 if (response.data.result) {
                   toast.success(response.data.data[0]);
                 } else {
@@ -331,7 +333,7 @@ const UnloadOperationPage = (props) => {
                   enableReinitialize
                 >
                   {(formik) => {
-                    console.log("Formik props values", formik);
+                    //console.log("Formik props values", formik);
                     // console.log(
                     //   "in formik",
                     //   VoyageData,

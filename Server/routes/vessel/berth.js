@@ -38,10 +38,9 @@ router.post("/saveUnload", auth, async (req, res) => {
         sE: req.body.sE,
         oG: req.body.oG,
       });
-      //[ { '': [ '12329941', 'OK' ] } ]
       console.log('result unload save', result);
       let data = result[0]['OutVal'] !== false ? {
-        ActId: result[0]['ActID'],
+        ActID: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
 
@@ -97,17 +96,18 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
         oG: req.body.oG,
       });
 
-      let data = result[0][""][0] !== '0' ? {
-        ActId: result[0][""][0],
+      console.log('result unload save', result);
+      let data = result[0]['OutVal'] !== false ? {
+        ActID: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
 
-      console.log(result);
+      console.log(result, result[0]['OutVal']);
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log('increment data', result2);
       res.io.emit("get_data", result2);
 
-      return SendResponse(req, res, data, result[0][""][0] !== '0');
+      return SendResponse(req, res, data, result[0]['OutVal']);
     } catch (error) {
       console.log(error)
       return SendResponse(req, res, 'saveUnloadIncrement', false, 500);
@@ -128,7 +128,15 @@ router.post("/addToShifting", auth, async (req, res) => {
         staffId: req.user.userId,
       });
 
-      if (result && result.length > 0)
+      // console.log({
+      //   voyageId: req.body.voyageId,
+      //   cntrNo: req.body.cntrNo,
+      //   staffId: req.user.userId,
+      // })
+
+      let data = result && result.length > 0 && result[0]['Result'];
+      //console.log(result,data)
+      if (data > 0)
         return SendResponse(req, res, "The container has been added to shifting list");
       else return SendResponse(req, res, "The container has not been added to shifting list", false);
     } catch (error) {

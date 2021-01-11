@@ -62,7 +62,7 @@ const HatchPage = (props) => {
             defaultSortOrder: 'ascend',
         },
         {
-            title: 'Hatch Date',
+            title: 'Date',
             dataIndex: 'HatchDatePersian',
             key: 'HatchDatePersian',
             sorter: {
@@ -72,7 +72,7 @@ const HatchPage = (props) => {
             sortDirections: ['ascend', 'descend']
         },
         {
-            title: 'Equipment',
+            title: 'EQ..',
             dataIndex: 'EquipmentName',
             key: 'EquipmentName'
         },
@@ -87,12 +87,12 @@ const HatchPage = (props) => {
             key: 'ClerkName'
         },
         {
-            title: 'Hatch Direction',
+            title: 'Direction',
             dataIndex: 'HatchDirection',
             key: 'HatchDirection',
         },
         {
-            title: 'Hatch Operation Type',
+            title: 'Type',
             dataIndex: 'HatchOperationTypeName',
             key: 'HatchOperationTypeName',
         }
@@ -102,7 +102,7 @@ const HatchPage = (props) => {
     //#region SUBMIT FORMIK ----------------------------------------------------
 
     const onSubmit = (values) => {
-        console.log("Form Submit Data", values, OperatorData);
+        //console.log("Form Submit Data", values, OperatorData);
         let parameters = {
             voyageId: values.selectVoyageNo.value,
             operatorId: OperatorData.operator.staffId,
@@ -111,7 +111,7 @@ const HatchPage = (props) => {
             hatchOperationType: values.selectHatchOperationType.value,
             isLoaded: values.selectHatchDirection.value === 1 ? false : true
         };
-        console.log(parameters)
+        //console.log(parameters)
         saveVesselHatchInfo(parameters).then(response => {
             if (response.data.result) {
                 return toast.success(response.data.data[0]);
@@ -195,7 +195,7 @@ const HatchPage = (props) => {
         dispatch(voyageSelectedChanged(value));
         getVesselHatchInfoByVoyage(value.value).then(response => {
             if (response.data.result) {
-                console.log('asdfafd', response.data)
+                //console.log('asdfafd', response.data)
                 const temp = response.data.data.map(item => { return { ...item, key: item.HatchOperationID } })
                 setState(prevState => ({ ...prevState, vesselHatchInfoList: temp }))
             }
@@ -242,7 +242,7 @@ const HatchPage = (props) => {
                                     enableReinitialize
                                 >
                                     {(formik) => {
-                                         console.log("Formik props values", formik.values);
+                                         //console.log("Formik props values", formik.values);
                                         return (
                                             <React.Fragment>
                                                 <Form>
