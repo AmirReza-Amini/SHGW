@@ -4,7 +4,7 @@ const router = express.Router();
 const Area = require('../models/areas.model')
 const { GetAll, Insert, Update, GetOne, Delete, HardDelete, } = require('../util/genericMethods');
 const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const adminOrSuperuser = require('../middleware/adminOrSuperuser');
 const { SendResponse } = require('../util/utility');
 
 router.route('/')

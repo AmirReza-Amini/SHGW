@@ -15,9 +15,9 @@ module.exports = {
             driver: 'mssql',
             config: {
                 user: 'sa',
-                password: 'qwe123!@#',
-                server: '172.17.30.2\\mssqlserver2016',
-                database: 'ZBR',
+                password: '110',
+                server: 'localhost',
+                database: 'SHRCT',
                 pool: {
                     max: 10,
                     min: 0,

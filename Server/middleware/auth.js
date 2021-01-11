@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
                     return SendResponse(req, res, "Access to the part has been forbidden", false, 403);
             }
             else {
-                console.log('auth decode', decoded);
+                //console.log('auth decode', decoded);
                 let userInfo = await Users.findOne({ _id: decoded._id });
                 if (!userInfo.isActive)
                     return SendResponse(req, res, "The user account is inactive", false, 200);

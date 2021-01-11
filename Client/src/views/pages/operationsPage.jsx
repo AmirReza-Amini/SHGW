@@ -29,7 +29,7 @@ class operationsPage extends Component {
 
     const { userType, permissions } = auth.getCurrentUser();
 
-    if (userType === "Admin")
+    if (userType === "Admin" || userType === "Superuser")
       return this.setState({ group: group.operations });
     else {
       const permission = permissions.filter(c => _.toUpper(c.name) === _.toUpper(a));

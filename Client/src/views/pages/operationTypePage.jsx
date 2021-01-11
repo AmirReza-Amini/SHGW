@@ -25,7 +25,7 @@ class operationTypePage extends Component {
 
     const { userType, permissions } = auth.getCurrentUser();
     //console.log(userType, permissions, group)
-    if (userType === "Admin")
+    if (userType === "Admin" || userType === "Superuser")
       return this.setState({ group });
     else {
       const accessGroup = group.filter(c => permissions.filter(p => _.toUpper(p.name) === _.toUpper(c.enName) && p.isGranted === true).length === 1);

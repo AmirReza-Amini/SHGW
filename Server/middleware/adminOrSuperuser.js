@@ -7,7 +7,8 @@ module.exports = function (req, res, next) {
   if (!requiresAuth) return next();
 
   //console.log('from admin middleware ' , req.user);
-  if (req.user.userType !== "Admin") return SendResponse(req, res,"Access to this section is forbidden", false, 403)
+  if (req.user.userType !== "Admin" && req.user.userType !== "Superuser")
+    return SendResponse(req, res, "Access to this section is forbidden", false, 403)
 
-  next();
+   next();
 };

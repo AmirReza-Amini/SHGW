@@ -4,10 +4,10 @@ const router = express.Router();
 const Permission = require('../models/permissions.model')
 const { GetAll, Insert, Update, GetOne, Delete, HardDelete, } = require('../util/genericMethods');
 const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const adminOrSuperuser = require('../middleware/adminOrSuperuser');
 
 router.route('/')
-    .get([auth, admin],async (req, res) => {
+    .get([auth, adminOrSuperuser],async (req, res) => {
         //console.log('permission', req.body)
         await GetAll(Permission, req, res)
     })
@@ -20,7 +20,7 @@ router.route('/')
     // .put([auth, admin],async (req, res) => { await Update(Permission, req, res) })
 
 router.route('/:id')
-    .get([auth, admin],async (req, res) => {
+    .get([auth, adminOrSuperuser],async (req, res) => {
         await GetOne(Permission, req, res)
     })
     // .put([auth, admin],async (req, res) => { await Update(Permission, req, res) })

@@ -4,13 +4,14 @@ const router = express.Router();
 const userType = require('../models/userTypes.model')
 const { GetAll, Insert, Update, GetOne, Delete, HardDelete, } = require('../util/genericMethods');
 const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const adminOrSuperuser = require('../middleware/adminOrSuperuser');
 
 router.route('/')
-    .get([auth, admin],async (req, res) => {
+    .get([auth, adminOrSuperuser],async (req, res) => {
         console.log('userType', req.body)
-        try{
-            await GetAll(userType, req, res)
+        try {
+            let options = { condition: { name: { $ne: 'Superuser' } } }
+            await GetAll(userType, req, res, options)
         }
         catch(error){
             console.log(error)
@@ -25,7 +26,7 @@ router.route('/')
     // .put([auth, admin],async (req, res) => { await Update(userType, req, res) })
 
 router.route('/:id')
-    .get([auth, admin],async (req, res) => {
+    .get([auth, adminOrSuperuser],async (req, res) => {
         await GetOne(userType, req, res)
     })
     // .put([auth, admin],async (req, res) => { await Update(userType, req, res) })

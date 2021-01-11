@@ -11,7 +11,7 @@ doesUserHavePermission = async (userInfo, permission, access) => {
     try {
        // let userInfo = await Users.findOne({ _id: user._id });
         if (userInfo) {
-            if (userInfo.userType === "Admin")
+            if (userInfo.userType === "Admin" || userInfo.userType === "Superuser")
                 return { message: '', result: true, statusCode: '' };
             if (!userInfo.isActive)
                 return { message: "The user account is inactive", result: false, statusCode: 200 };

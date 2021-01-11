@@ -85,7 +85,7 @@ class ThemeNavbar extends Component {
                            {/* <DropdownToggle nav>
                               <ReactCountryFlag code="us" svg /> EN
                            </DropdownToggle> */}
-                           <DropdownMenu right>
+                           {/* <DropdownMenu right> */}
                               {/* <DropdownItem>
                                  <ReactCountryFlag code="us" svg /> English
                               </DropdownItem>
@@ -98,7 +98,7 @@ class ThemeNavbar extends Component {
                               <DropdownItem>
                                  <ReactCountryFlag code="cn" svg /> Chinese
                               </DropdownItem> */}
-                           </DropdownMenu>
+                           {/* </DropdownMenu> */}
                         </UncontrolledDropdown>
                         {/* <NavItem className="pr-1">
                            <Link to="/email/" className="nav-link">
