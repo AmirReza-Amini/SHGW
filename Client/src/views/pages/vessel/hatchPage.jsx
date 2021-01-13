@@ -230,7 +230,7 @@ const HatchPage = (props) => {
                     <div>
                         <CustomNavigation path={props.match.path} />
                     </div>
-                    <Card >
+                    <Card className="customBackgroundColor">
                         <CardBody>
                         
                             <div className="px-3">

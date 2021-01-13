@@ -38,7 +38,7 @@ const CustomNavigation = ({ path ,className }) => {
             });
             //console.log(link);
             return (
-              <BreadcrumbItem key={item} >
+              <BreadcrumbItem key={item}  className="bg-customBackgroundColor">
                 <NavLink to={link}>{item}</NavLink>
               </BreadcrumbItem>
             );

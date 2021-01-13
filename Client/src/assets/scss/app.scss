@@ -8,3 +8,7 @@
 @import "plugins.scss";
 @import "customizer.scss";
 @import "demo.scss";  // Remove this SCSS from production
+
+body{
+    overflow: hidden;
+}

@@ -313,10 +313,10 @@ const UnloadOperationPage = (props) => {
     <Fragment>
       <Row className="row-eq-height justify-content-md-center">
         <Col md="6">
-          <div>
+          <div >
             <CustomNavigation path={props.match.path} />
-          </div>
-          <Card >
+           </div>
+          <Card className="customBackgroundColor">
             <CardBody>
               {/* <CardTitle>Event Registration</CardTitle> */}
               {/* <p className="mb-2" style={{ textAlign: "center" }}>

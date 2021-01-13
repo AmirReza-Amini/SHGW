@@ -257,7 +257,7 @@ const StowagePage = (props) => {
                     <div>
                         <CustomNavigation path={props.match.path} />
                     </div>
-                    <Card >
+                    <Card className="customBackgroundColor">
                         <CardBody>
                             {/* <CardTitle>Event Registration</CardTitle> */}
                             {/* <p className="mb-2" style={{ textAlign: "center" }}>
