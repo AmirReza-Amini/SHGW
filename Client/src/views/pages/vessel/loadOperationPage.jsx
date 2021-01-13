@@ -171,7 +171,7 @@ const LoadOperationPage = (props) => {
             EquipmentData.equipments === null || EquipmentData.equipments.length === 0
         ) {
            // console.log('qweqw',EquipmentData.equipments.length)
-            dispatch(fetchEquipments);
+            dispatch(fetchEquipments());
         }
         //console.log("salam");
     }, []);
@@ -283,9 +283,7 @@ const LoadOperationPage = (props) => {
                     <Card className="customBackgroundColor" >
                         <CardBody>
                             {/* <CardTitle>Event Registration</CardTitle> */}
-                            {/* <p className="mb-2" style={{ textAlign: "center" }}>
-                ثبت عملیات تخلیه
-              </p> */}
+                            {/* <p className="mb-2" style={{ textAlign: "center" }}>ثبت عملیات تخلیه</p> */}
                             <div className="px-3">
                                 <Formik
                                     initialValues={state || initialValues}

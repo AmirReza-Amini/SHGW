@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import rootReducer from "./rootReducer";
 import logger from 'redux-logger';
 
-const middlewares = [thunk, createDebounce()];
+const middlewares = [logger,thunk, createDebounce()];
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

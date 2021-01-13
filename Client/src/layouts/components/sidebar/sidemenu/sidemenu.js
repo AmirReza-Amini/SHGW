@@ -32,7 +32,7 @@ class SideMenuContent extends Component {
     }
     else {
       const user = auth.getCurrentUser();
-      const isAdmin = user.userType === "Admin" ? true : false;
+      const isAdmin = user.userType === "Admin" || user.userType === "Superuser" ? true : false;
       this.setState({ user, isAdmin });
       const roles = user.permissions.filter(c => c.isGranted === true);
       this.setState({ hasRoles: roles.length > 0 ? true : false });
