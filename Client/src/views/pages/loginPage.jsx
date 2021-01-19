@@ -12,6 +12,7 @@ import FormikControl from "../../components/common/formik/FormikControl";
 import { getAreas } from "../../services/area";
 import ReactRevealText from 'react-reveal-text';
 import config from '../../config.json';
+import ClientCaptcha from "react-client-captcha";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -21,13 +22,15 @@ toast.configure({ bodyClassName: "customFont" });
 const initialValues = {
   username: "",
   password: "",
-  selectedArea: ""
+  selectedArea: "",
+  captchaText: ""
 };
 
 const validationSchema = Yup.object({
   username: Yup.string().required("Enter Username !"),
   password: Yup.string().required("Enter Password !"),
-  selectedArea: Yup.string().required("Select Operation Area !")
+  selectedArea: Yup.string().required("Select Operation Area !"),
+  captchaText: Yup.string().required("Enter Security Code !")
 });
 
 //#endregion ---------------------------------------------------------------
@@ -68,7 +71,9 @@ const LoginPage = (props) => {
   //#region STATE ------------------------------------------
 
   const [state, setState] = useState({
-    areaList: []
+    areaList: [],
+    captchaCode: '',
+    captchaTextIsValid:false
   });
   const [show, setShow] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
@@ -77,10 +82,20 @@ const LoginPage = (props) => {
 
   //#region INITAL FUNCTIONS ---------------------------------------------
 
+  // setState(prevState => {
+  //   // Object.assign would also work
+  //   return {...prevState, ...updatedValues};
+  // });
   useEffect(() => {
     getAreas().then(res => {
       if (res.data.result) {
-        setState({ areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } }) })
+        setState(prevState => {
+          return {
+            ...prevState,
+            captchaTextIsValid:false,
+            areaList: res.data.data.map(item => { return { label: item.areaName, value: item.areaName } })
+          }
+        })
       }
       else {
         return toast.error(res.data.data[0]);
@@ -108,6 +123,15 @@ const LoginPage = (props) => {
 
   //#endregion -----------------------------------------------------------
 
+  const handleCaptchaText = (text) => {
+     setState(prevState=>{
+       return{
+         ...prevState,
+         captchaTextIsValid:_.isEqual(text, _.toUpper(state.captchaCode))
+       }
+     }) 
+  }
+
   return (
 
 
@@ -117,7 +141,7 @@ const LoginPage = (props) => {
           xs="12"
           className="d-flex align-items-center justify-content-center"
         >
-          <Card className=" text-center width-400 bg-transparency" >
+          <Card className=" text-center width-400 bg-transparency customBackgroundColor">
             <CardBody>
               <h2 className="white py-4">
                 <ReactRevealText show={show}>
@@ -186,9 +210,32 @@ const LoginPage = (props) => {
                               />
                             </Col>
                           </Row>
+                          <Row>
+                            <Col md="6">
+                              <ClientCaptcha captchaCode={code => setState(prevState => {
+                                return { ...prevState,captchaTextIsValid:false, captchaCode: code }
+                              })} />
+                            </Col>
+                            <Col md="6">
+                              <FormikControl
+                                control="inputMaskDebounce"
+                                name="captchaText"
+                                mask="****"
+                                debounceTime={0}
+                                placeholder="Security Code"
+                                className="ltr"
+                                onChange={() =>
+                                  handleCaptchaText(
+                                    formik.values.captchaText
+                                  )
+                                }
+                                toUppercase={true}
+                              />
+                            </Col>
+                          </Row>
                           <div className="form-actions center">
 
-                            <Button color="primary" type="submit" className="mr-1" disabled={!formik.isValid}>
+                            <Button color="primary" type="submit" className="mr-1" disabled={!formik.isValid || !state.captchaTextIsValid}>
                               <LogIn size={16} color="#FFF" /> Enter
                             </Button>
 

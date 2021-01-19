@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { tokenHashKey, jwtSecret, jwtExpireTime } = require('../app-setting')
 const jwt = require('jsonwebtoken');
 const AES = require('crypto-js/aes');
 
@@ -11,6 +10,7 @@ const userSchema = new mongoose.Schema({
   isActive: { type: Boolean, required: true, default: false },
   password: { type: String, required: true, trim: true },
   userType: { type: String, required: true, trim: true },
+  area: { type: String, required: true, trim: true },
   permissions: { type: [] }
 });
 

@@ -13,7 +13,6 @@ router.get('/:count?', auth, async (req, res) => {
   try {
     let count = req.params.count || 10;
     //console.log('from voyage', req.params, count);
-
     var result = await db.query(queries.VOYAGE.loadLastVoyages, { count: count });
     SendResponse(req, res, result, (result && result.length > 0))
   } catch (error) {

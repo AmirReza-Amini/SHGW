@@ -2,6 +2,9 @@ const { LoadText } = require('../utility')
 
 
 module.exports = {
+    USER:{
+        getAllUsersFromBcts : LoadText(__dirname + '/user/get-all-users-from-bcts.sql')
+    },
     VOYAGE: {
         loadLastVoyages: LoadText(__dirname + '/voyage/load-last-voyages.sql'),
         getLoadUnloadStatisticsByVoyageId: LoadText(__dirname + '/voyage/get-load-unload-statistics-by-voyageid.sql')
@@ -49,5 +52,4 @@ module.exports = {
     ACT: {
         isPossibleSaveAct: LoadText(__dirname + '/act/is-possible-save-act.sql')
     }
-
 }

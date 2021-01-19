@@ -11,6 +11,7 @@ router.post('/', async (req, res) => {
     password: md5(req.body.password),
     area: req.body.area
   })
+  
   //console.log('from server ', md5(req.body.password))
   if (user) {
     if (!user.isActive)

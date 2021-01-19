@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { toast } from 'react-toastify';
 import { User, X, Check, Edit2, Trash2 } from "react-feather";
 import { Table, Tag, Space, Checkbox, Switch, Radio } from 'antd';
-import { Card, CardBody, Button, Form, FormGroup, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Card, CardBody, Button, Form, FormGroup, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Input } from "reactstrap";
 
 // const antdClass = require("antd/dist/antd.css");
 import antdClass from 'antd/dist/antd.css';
@@ -114,6 +114,15 @@ class UsersPage extends Component {
     constructor(props) {
         super(props)
         this.state = { ListOfUserTypes: [], ListOfPermissions: [], ListOfUsers: [], ListOfUsersForTable: [], selectedRowKeys: [], editModal: false, deleteModal: false, currentRow: {} };
+    }
+
+
+    handleSearchGrid = (value) => {
+        console.log(value);
+        let tempList = [...this.state.ListOfUsers ];
+        tempList = tempList.filter(c => _.includes(c.firstName, value) === true);
+        const tempListForGrid = this.createDataModelForDataTabel(tempList);
+        this.setState({ ListOfUsersForTable: tempListForGrid });
     }
 
     createDataModelForDataTabel(data) {
@@ -314,9 +323,10 @@ class UsersPage extends Component {
 
     //#endregion ------------------------------------------------------------
 
+
     render() {
         const { selectedRowKeys } = this.state.selectedRowKeys;
-       // console.log('render state', this.state);
+        // console.log('render state', this.state);
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
@@ -324,6 +334,7 @@ class UsersPage extends Component {
                 Table.SELECTION_ALL
             ],
         };
+
         return (
             <React.Fragment>
                 {/* <h4 className="mt-4 mb-0 text-bold-400">Users</h4>
@@ -334,18 +345,27 @@ class UsersPage extends Component {
 
                 <Row className="row-eq-height">
                     <Col sm="12" md="12">
-                        <Card>
+                        <Card className="customBackgroundColor">
                             <CardBody>
                                 {/* <CardTitle>Users</CardTitle> */}
                                 {/* <CardText>With supporting text below as a natural lead-in to additional content.</CardText> */}
                                 <Form>
                                     <div className="form-body">
                                         <h4 className="form-section">
-                                            <User size={20} color="#212529" /> Users
+                                            <Row>
+                                                <Col md="1"><p>Users</p></Col>
+                                                <Col md="3">
+                                                    <FormGroup>
+                                                        <input className="form-control" name="SearchGrid" onChange={(e) => this.handleSearchGrid(e.target.value)} />
+                                                    </FormGroup>
+                                                </Col>
+                                            </Row>
+
+
                                         </h4>
-                                        <Row>
-                                            <Col md="12">
-                                                <FormGroup>
+                                        <Row >
+                                            <Col md="12" >
+                                                <FormGroup >
                                                     {/* <Input type="text" id="projectinput1" name="fname" placeholder="First Name" /> */}
                                                     <Table
                                                         rowSelection={rowSelection}
@@ -373,7 +393,7 @@ class UsersPage extends Component {
                                         <Button color="warning" >
                                             <X size={20} color="#FFF" /> Cancel
                                         </Button>
-                                        
+
                                     </div>
                                 </Form>
                             </CardBody>
