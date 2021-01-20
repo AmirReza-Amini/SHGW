@@ -6,7 +6,8 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import _ from "lodash";
-import urls from '../../../urls.json'
+import urls from '../../../urls.json';
+import config from '../../../config.json';
 
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
@@ -303,9 +304,9 @@ const YardOperationPage = (props) => {
                                                                 <FormikControl
                                                                     control="inputMaskDebounce"
                                                                     name="yardCode"
-                                                                    mask="99-99-99-a"
+                                                                    mask={config.patternYardLocation}
                                                                     debounceTime={0}
-                                                                    placeholder="Yard"
+                                                                    placeholder="Area-Row-Bay-Tier"
                                                                     className="ltr"
                                                                     defaultValue={
                                                                         CntrInfo.CntrLocation
