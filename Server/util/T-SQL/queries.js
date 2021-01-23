@@ -2,8 +2,8 @@ const { LoadText } = require('../utility')
 
 
 module.exports = {
-    USER:{
-        getAllUsersFromBcts : LoadText(__dirname + '/user/get-all-users-from-bcts.sql')
+    USER: {
+        getAllUsersFromBcts: LoadText(__dirname + '/user/get-all-users-from-bcts.sql')
     },
     VOYAGE: {
         loadLastVoyages: LoadText(__dirname + '/voyage/load-last-voyages.sql'),
@@ -42,6 +42,11 @@ module.exports = {
         YARDOPERATION: {
             getCntrInfoForYardOperation: LoadText(__dirname + '/cy/get-cntr-info-for-yard-operation.sql'),
             saveYardOperation: LoadText(__dirname + '/cy/save-yard-operation.sql')
+        },
+        MOVEMENT: {
+            getCntrInfoForMovement: LoadText(__dirname + '/cy/movement/get-cntr-info-for-movement.sql'),
+            isDuplicateYardCodeByCntrNoInVoyage: LoadText(__dirname + '/cy/movement/is-duplicate-yard-code-by-cntrNo-in-voyage.sql'),
+            saveMovement: LoadText(__dirname + '/cy/movement/save-movement.sql')
         }
     },
     DAMAGE: {

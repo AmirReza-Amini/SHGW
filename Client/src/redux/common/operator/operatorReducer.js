@@ -29,7 +29,7 @@ import {
         };
       case FETCH_OPERATOR_FAILURE:
         return {
-          ...state,
+          operator:"",
           loading: false,
           error: action.payload,
         };

@@ -11,14 +11,30 @@ import LogoutLayoutRoute from "../layouts/routes/logoutRoutes";
 import urls from '../urls.json'
 const LazyOperationTypePage = lazy(() => import("../views/pages/operationTypePage"));
 const LazyOperationsPage = lazy(() => import("../views/pages/operationsPage"));
+
+
+//#region Vessel Operation Pages -----------------------------------------
+
 const LazyUnloadOperationPage = lazy(() => import("../views/pages/vessel/unloadOperationPage"));
 const LazyLoadOperationsPage = lazy(() => import("../views/pages/vessel/loadOperationPage"));
-const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
-const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
 const LazyLoadUnloadPage = lazy(() => import("../views/pages/statistics/loadUnloadStatisticsPage"));
 const LazyStowagePage = lazy(() => import("../views/pages/vessel/stowagePage"));
 const LazyHatchPage = lazy(() => import("../views/pages/vessel/hatchPage"));
+
+//#endregion --------------------------------------------------------------
+
+//#region Gate Operation Paes ---------------------------------------------
+
 const LazyYardOperationPage = lazy(() => import("../views/pages/cy/yardOperationPage"));
+const LazyMovementOperation = lazy(() => import("../views/pages/cy/movementPage"));
+
+//#endregion --------------------------------------------------------------
+
+
+
+const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
+const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
+
 const LazyUsersPage = lazy(() => import("../views/pages/usersPage"));
 const LazyLogout = lazy(() => import("../views/pages/logoutPage"));
 const LazyMaintainance = lazy(() => import("../views/pages/maintainance"));
@@ -173,6 +189,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyDamagePage {...matchprops} />
+              </Suspense>
+            )}
+          />
+           <MainLayoutRoutes
+            exact
+            path={urls.Movement}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyMovementOperation {...matchprops} />
               </Suspense>
             )}
           />

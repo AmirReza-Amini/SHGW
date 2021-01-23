@@ -37,7 +37,7 @@ export const fetchOperatorInfoBasedOnCode = (code) => {
           dispatch(fetchOperatorSuccess(data[0]));
         }
         else{
-          dispatch(fetchOperatorFailure("کد اپراتور یافت نشد"));
+          dispatch(fetchOperatorFailure(response.data.data[0]));
         }
         
       })
