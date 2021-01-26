@@ -23,10 +23,12 @@ const LazyHatchPage = lazy(() => import("../views/pages/vessel/hatchPage"));
 
 //#endregion --------------------------------------------------------------
 
-//#region Gate Operation Paes ---------------------------------------------
+//#region CY Operation Paes ---------------------------------------------
 
 const LazyYardOperationPage = lazy(() => import("../views/pages/cy/yardOperationPage"));
 const LazyMovementOperation = lazy(() => import("../views/pages/cy/movementPage"));
+const LazySendOperation = lazy(() => import("../views/pages/cy/sendPage"));
+const LazyReceiveOperation = lazy(()=>import("../views/pages/cy/receivePage"));
 
 //#endregion --------------------------------------------------------------
 
@@ -193,6 +195,24 @@ class Router extends Component {
             )}
           />
            <MainLayoutRoutes
+            exact
+            path={urls.Send}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazySendOperation {...matchprops} />
+              </Suspense>
+            )}
+          />
+           <MainLayoutRoutes
+            exact
+            path={urls.Receive}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyMaintainance {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
             exact
             path={urls.Movement}
             render={(matchprops) => (

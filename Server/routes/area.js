@@ -12,7 +12,7 @@ router.route('/')
         try {
             await GetAll(Area, req, res, { condition: { isActive: true } })
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return SendResponse(req, res, 'getAreas', false, 500);
         }
 

@@ -39,6 +39,7 @@ class loadUnloadStatisticsPage extends Component {
         let lables = [];
         let dataSet = [];
         let tempVoyageData = [];
+        //console.log(data)
         //console.log(data);
         if (data[0]["ActualUnloadCount20"] !== 0) {
             lables.push("Unloaded 20\'");
@@ -74,6 +75,7 @@ class loadUnloadStatisticsPage extends Component {
                 });
         }
         if (data[0]["UnloadCount40"] !== 0) {
+            
             // lables.push("UnloadCount40");
             // dataSet.push(data[0]["UnloadCount40"]);
             tempVoyageData.push(
@@ -139,7 +141,7 @@ class loadUnloadStatisticsPage extends Component {
         //     dataSet.push(data[0]["VisibilityCount40"]);
         // }
 
-        this.setState({ voyageData: tempVoyageData });
+        //this.setState({ voyageData: tempVoyageData });
 
         if (dataSet.length > 0) {
             let chartData = {
@@ -189,6 +191,7 @@ class loadUnloadStatisticsPage extends Component {
             }
             let temp = { ...this.state };
             temp.chartData = chartData;
+            temp.voyageData = tempVoyageData
             this.setState(temp);
         }
     }
@@ -202,13 +205,13 @@ class loadUnloadStatisticsPage extends Component {
             .then(response => {
                 const { data, result } = response.data;
                 if (result) {
-                    console.log(response)
+                    //console.log(response)
                     this.generateChartData(data);
                 }
 
             })
             .catch(err => {
-                console.log('rrrrrr', err.response)
+                //console.log('rrrrrr', err.response)
                 //   this.setState({chartData:[]})
                 return toast.error(err.response.data.data[0]);
             });
@@ -245,7 +248,7 @@ class loadUnloadStatisticsPage extends Component {
                                                     this.state.voyageData.map((item, index) => {
                                                         return (
                                                             <React.Fragment>
-                                                                <Tag color={item.color} style={{width:'15rem',textAlign:"center"}}>{
+                                                                <Tag color={item.color} style={{ width: '15rem', textAlign: "center" }}>{
                                                                     item.key
                                                                 }</Tag>
                                                                 {((index + 1) % 3 === 0) ? <br /> : null}

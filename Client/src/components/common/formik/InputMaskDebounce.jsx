@@ -21,7 +21,7 @@ class InputMaskDebounce extends Component {
   }
 
   onChange = (event, form) => {
-    console.log('event', event)
+    //console.log('event', event)
     // console.log('props',this.props);
     event.persist();
     const { debounceTime, name, toUppercase } = this.props;

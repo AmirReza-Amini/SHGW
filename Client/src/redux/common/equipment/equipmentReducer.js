@@ -11,7 +11,10 @@ export const initEquipment = {
     discharge: '',
     load: '',
     stowage: '',
-    yardOperation: ''
+    yardOperation: '',
+    movement:'',
+    send:'',
+    Receive:''
   },
   equipments: [],
   error: ""

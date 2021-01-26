@@ -16,7 +16,8 @@ const CheckboxGroup = (props) => {
                 {({ form, meta }) => {
                     //console.log("Field", options);
                     return (
-                        <div>
+                        // <div className="mt-50">
+                        <React.Fragment >
                             <Checkbox.Group
                                 disabled={disabled}
                                 options={options}
@@ -31,7 +32,8 @@ const CheckboxGroup = (props) => {
                             {meta.touched && meta.error ? (
                                 <div className="error">{meta.error}</div>
                             ) : null}
-                        </div>
+                            </React.Fragment>
+                        // </div>
                     );
                 }}
             </Field>

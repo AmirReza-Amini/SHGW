@@ -72,7 +72,7 @@ FindAndUpdate = async (entity, req, res, condition, update) => {
     let doc = await entity.findOne(condition);
     if (doc) {
 
-        console.log('user edt info',req.user)
+        //console.log('user edt info',req.user)
         if (req.user && req.user.userType === "Admin" && doc.userType === "Admin") {
             return SendResponse(req, res, "Access to this section is forbidden", false, 403);
         }

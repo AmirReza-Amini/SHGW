@@ -123,7 +123,7 @@ router.post("/saveVesselHatchInfo", auth, async (req, res) => {
 
     const check = await DoesUserHavePermission(req.user, 'Vessel', 'Hatch');
     if (check.result) {
-        console.log(req.body)
+        //console.log(req.body)
         try {
             var query = await db.query(queries.VESSEL.DECK.saveVesselHatchInfo, {
                 voyageId: req.body.voyageId,

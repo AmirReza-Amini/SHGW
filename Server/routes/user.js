@@ -35,14 +35,14 @@ router.get('/getAllUsersFromBcts', async (req, res) => {
     }
   } 
   catch (error) {
-    console.log(error)
+    //console.log(error)
     return SendResponse(req, res, error, false, 500);
   }
 });
 
 router.route('/')
   .get([auth, adminOrSuperuser], async (req, res) => {
-    console.log('user', req.body)
+    //console.log('user', req.body)
     await GetAll(Users, req, res)
   })
   // .post([auth, admin],async (req, res) => {

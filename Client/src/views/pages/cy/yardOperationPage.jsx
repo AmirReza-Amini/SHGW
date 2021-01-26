@@ -60,7 +60,7 @@ const onSubmit = (values, props, staffId) => {
 
             saveYardOperation(parametersForYardOperation)
                 .then((res) => {
-                    console.log("saveYardOperation", res);
+                    //console.log("saveYardOperation", res);
                     if (res.data.result) {
                         toast.success(res.data.data[0]['message']);
                         return props.history.push(urls.YardOperationDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });

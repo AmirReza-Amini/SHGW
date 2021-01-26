@@ -36,11 +36,16 @@ const initialValues = {
   operatorCode: "",
   truckNo: "",
   checkboxListSelected: [],
+  checkboxAdditionalSelected: []
 };
 
 const checkboxListOptions = [
-  { value: "SE", label: 'Special Equipment' },
+  { value: "SE", label: 'Special Eq' },
   { value: "OG", label: 'Out of Gate' },
+];
+
+const checkboxListOptions2 = [
+  { value: "ADDITIONAL", label: "Additional" }
 ];
 
 const validationSchema = Yup.object({
@@ -69,7 +74,11 @@ const onSubmit = (values, props, staffId) => {
   let og = _(values.checkboxListSelected)
     .filter((c) => c === "OG")
     .first();
-  
+
+  let addSelected = false;
+  if (values.checkboxAdditionalSelected && values.checkboxAdditionalSelected.length > 0) {
+    addSelected = _(values.checkboxAdditionalSelected).filter(c => c === "ADDITIONAL").first();
+  }
   getCntrInfoForUnload(parameters).then((response) => {
     //console.log("response", response);
     let { data, result } = response.data;
@@ -77,9 +86,10 @@ const onSubmit = (values, props, staffId) => {
       //---------------- Duplicate Act Check---------------------------------
       if (data[0].ActID != null) {
         return toast.error("The container info has been saved already");
-      } else {
+      } 
+      else {
         let parametersForUnload = {
-          cntrNo: data[0].BayCntrNo,
+          cntrNo: data[0].CntrNo,
           voyageId: data[0].VoyageID,
           berthId: data[0].BerthID,
           equipmentId: values.selectEquipmentType.value,
@@ -89,7 +99,20 @@ const onSubmit = (values, props, staffId) => {
           sE: se ? 1 : 0,
           oG: og ? 1 : 0,
         };
-        if (data[0].ManifestCntrID != null || data[0].ShiftingID !== null) {
+        if (data[0].ShiftingID !== null && addSelected) {
+          saveUnloadIncrement({ ...parametersForUnload, terminalId: config.terminalId, isShifting: 0 })
+            .then((res) => {
+              //console.log("res save unload INCREAMENT", res);
+              if (res.data.result) {
+                toast.success(res.data.data[0]['message']);
+                return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
+              } else return toast.error(res.data.data[0]);
+            })
+            .catch((error) => {
+              //return toast.error(error);
+            });
+        }
+        else if (data[0].ManifestCntrID != null || data[0].ShiftingID !== null) {
           if (data[0].ShiftingID != null) {
             let paramData = {
               voyageId: parametersForUnload.voyageId,
@@ -108,7 +131,7 @@ const onSubmit = (values, props, staffId) => {
                       else return toast.error(res.data.data[0]);
                     })
                     .catch((error) => {
-                      //return toast.error(error);
+                      return toast.error(error);
                     });
                 }
               })
@@ -116,22 +139,24 @@ const onSubmit = (values, props, staffId) => {
                 //return toast.error(error);
               });
           }
+
           if (data[0].ManifestCntrID != null && data[0].TerminalID == null) {
             return toast.error("Terminal of Discharge has not been planned");
-          } else {
-            saveUnload(parametersForUnload)
-              .then((res) => {
-                console.log("res save unload", res, res.data.data[0]);
-                if (res.data.result) {
-                  toast.success(res.data.data[0]['message']);
-                  return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
-                } else return toast.error(res.data.data[0]);
-              })
-              .catch((error) => {
-                //return toast.error(error);
-              });
           }
-        } else if (data[0].PortOfDischarge === config.portName) {
+
+          saveUnload(parametersForUnload)
+            .then((res) => {
+              //console.log("res save unload", res, res.data.data[0]);
+              if (res.data.result) {
+                toast.success(res.data.data[0]['message']);
+                return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
+              } else return toast.error(res.data.data[0]);
+            })
+            .catch((error) => {
+              //return toast.error(error);
+            });
+        }
+        else if (data[0].PortOfDischarge === config.portName) {
           saveUnloadIncrement({ ...parametersForUnload, terminalId: config.terminalId })
             .then((res) => {
               //console.log("res save unload INCREAMENT", res);
@@ -144,8 +169,73 @@ const onSubmit = (values, props, staffId) => {
               //return toast.error(error);
             });
         }
+        else if (data[0].PortOfDischarge !== null && data[0].PortOfDischarge !== config.portName) {
+          // container is visibility but add selected
+          if (addSelected) {
+            saveUnloadIncrement({ ...parametersForUnload, terminalId: config.terminalId, isShifting: 0 })
+              .then((res) => {
+                //console.log("res save unload INCREAMENT", res);
+                if (res.data.result) {
+                  toast.success(res.data.data[0]['message']);
+                  return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
+                } else return toast.error(res.data.data[0]);
+              })
+              .catch((error) => {
+                //return toast.error(error);
+              });
+          }
+          else {
+            //console.log('parametersssss',parameters)
+            addToShifting(parameters)
+              .then((response) => {
+                //console.log('add Visibility', response);
+                if (response.data.result) {
+                  //toast.success(response.data.data[0]);
+                  isExistCntrInInstructionLoading(parameters)
+                    .then((res) => {
+                      if (!res.data.result) {
+                        addToLoadingList(parameters)
+                          .then((res) => {
+                            if (res.data.result) {
+                              //console.log('addToLoadingList for visibility', res);
+                              // go for save unload
+                            }
+                            else return toast.error(res.data.data[0]);
+                          })
+                          .catch((error) => {
+                            return toast.error(error);
+                          });
+                      }
+                      saveUnload({ ...parametersForUnload, isShifting: 1 })
+                        .then((res) => {
+                          //console.log("res save shifted down", res, res.data.data[0]);
+                          if (res.data.result) {
+                            toast.success(res.data.data[0]['message']);
+                            return props.history.push(urls.DischargeDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
+                          } else return toast.error(res.data.data[0]);
+                        })
+                        .catch((error) => {
+                          //return toast.error(error);
+                        });
+                    })
+                    .catch((error) => {
+                      //toast.error(error);
+                      return;
+                    });
+                } else {
+                  return toast.error(response.data.data[0]);
+                }
+              })
+              .catch((error) => {
+                //toast.error(error);
+                return;
+              });
+          }
+        }
       }
-    } else {
+    } 
+    else {
+      // show modal for increment act
       return toast.error("No container has been found");
     }
   });
@@ -166,11 +256,13 @@ const UnloadOperationPage = (props) => {
     containerNo: "",
     operatorCode: OperatorData.operator.staffCode,
     truckNo: "",
-    checkboxListSelected: []
+    checkboxListSelected: [],
+    checkboxAdditionalSelected:[]
   });
   // console.log(tempstate);
   const [CntrInfo, setCntrInfo] = useState({});
   const [isOpen, setIsOpen] = useState(false);
+  const [showAdditional, setShowAddtional] = useState(false);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const dispatch = useDispatch();
@@ -183,11 +275,11 @@ const UnloadOperationPage = (props) => {
     if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
       dispatch(fetchVoyagesTopTenOpen());
     }
-   // console.log('eqqqqqqqq',EquipmentData)
+    // console.log('eqqqqqqqq',EquipmentData)
     if (
       EquipmentData.equipments === null || EquipmentData.equipments.length === 0
     ) {
-     // console.log('qweqw',EquipmentData.equipments.length)
+      // console.log('qweqw',EquipmentData.equipments.length)
       dispatch(fetchEquipments());
     }
   }, []);
@@ -214,7 +306,7 @@ const UnloadOperationPage = (props) => {
 
   const handleContainerNoChange = (value) => {
     const data = { cntrNo: value, voyageId: VoyageData.selectedVoyage.value };
-
+    setShowAddtional(false);
     // console.log("voyage and cntr", data);
     getCntrInfoForUnload(data)
       .then((response) => {
@@ -235,6 +327,7 @@ const UnloadOperationPage = (props) => {
         if (result.ManifestCntrID !== null) {
           guessedOperation = "Unload";
         } else if (result.ShiftingID !== null) {
+          setShowAddtional(true);
           guessedOperation = "Shifting";
         } else if (
           result.PortOfDischarge !== null &&
@@ -246,19 +339,20 @@ const UnloadOperationPage = (props) => {
           result.PortOfDischarge !== config.portName
         ) {
           guessedOperation = "Visibility";
+          setShowAddtional(true);
           if (result.ActID == null) {
-            addToShifting({ ...data })
-              .then((response) => {
-                //console.log('Visibility',response);
-                if (response.data.result) {
-                  toast.success(response.data.data[0]);
-                } else {
-                  toast.error(response.data.data[0]);
-                }
-              })
-              .catch((error) => {
-                //toast.error(error);
-              });
+            // addToShifting({ ...data })
+            //   .then((response) => {
+            //     //console.log('Visibility',response);
+            //     if (response.data.result) {
+            //       toast.success(response.data.data[0]);
+            //     } else {
+            //       toast.error(response.data.data[0]);
+            //     }
+            //   })
+            //   .catch((error) => {
+            //     //toast.error(error);
+            //   });
           }
         }
         setCntrInfo(
@@ -315,7 +409,7 @@ const UnloadOperationPage = (props) => {
         <Col md="6">
           <div >
             <CustomNavigation path={props.match.path} />
-           </div>
+          </div>
           <Card className="customBackgroundColor">
             <CardBody>
               {/* <CardTitle>Event Registration</CardTitle> */}
@@ -455,7 +549,7 @@ const UnloadOperationPage = (props) => {
                               </Col>
                             </Row>
                             <Row>
-                              <Col md="6">
+                              <Col md="5">
                                 <FormikControl
                                   control="input"
                                   type="text"
@@ -464,7 +558,17 @@ const UnloadOperationPage = (props) => {
                                   placeholder="Truck No"
                                 />
                               </Col>
-                              <Col md="6" className="ml-1">
+                              <Col md="7" className="pt-3">
+                                {showAdditional &&
+                                  <FormikControl
+                                    control="customCheckboxGroup"
+                                    name="checkboxAdditionalSelected"
+                                    options={checkboxListOptions2}
+                                  />}
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col md="7" className="ml-1">
                                 <FormikControl
                                   control="customCheckboxGroup"
                                   name="checkboxListSelected"

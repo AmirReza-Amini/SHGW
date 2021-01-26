@@ -1,0 +1,12 @@
+EXEC dbo.SP_H_SaveSend @VoyageId = @voyageId, -- bigint
+    @CntrNo = @cntrNo, -- nvarchar(12)
+    @CntrLocation = @cntrLocation, -- nvarchar(40)
+    @FullEmptyStatus = @fullEmptyStatus, -- smallint
+    @CntrId = @cntrId, -- bigint
+    @AgentId = @agentId, -- bigint
+    @OwnerId = @ownerId, -- bigint
+    @TerminalId = @terminalId, -- bigint
+    @OperatorId = @operatorId, -- int
+    @EquipmentId = @equipmentId, -- int
+    @TruckNo = @truckNo, -- nvarchar(30)
+    @UserId = @userId -- int

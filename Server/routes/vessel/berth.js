@@ -38,11 +38,13 @@ router.post("/saveUnload", auth, async (req, res) => {
         sE: req.body.sE,
         oG: req.body.oG,
       });
-      console.log('result unload save', result);
+      
       let data = result[0]['OutVal'] !== false ? {
         ActID: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
+
+      console.log('result unload save', result,data);
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log(result2);

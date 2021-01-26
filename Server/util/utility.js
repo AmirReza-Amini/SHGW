@@ -19,7 +19,7 @@ exports.SendResponse = (req, res, data, result = true, code = 200) => {
     req.body.data = data;
     delete req.body.from;
     const a = req.user ? this.GenerateAuthToken(req.user) : null;
-     console.log('send res',a)
+     //console.log('send res',a)
     //console.log('toke is:', a);
     Log({ type: result ? 'info' : 'error', res: req.body })
 

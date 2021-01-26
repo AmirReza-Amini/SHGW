@@ -37,17 +37,17 @@ const validationSchema = Yup.object({
 //#endregion ---------------------------------------------------------------
 
 
-const MovementPage = (props) => {
+const ReceivePage = (props) => {
 
     //#region SUBMIT FORMIK ----------------------------------------------------
 
     const onSubmit = (values) => {
-        console.log("Form Submit Data", values, OperatorData.operator.staffId);
+        //console.log("Form Submit Data", values,OperatorData.operator.staffId);
         let parameters = {
             cntrNo: values.containerNo
         };
 
-        if (!OperatorData.operator || OperatorData.operator.staffId === undefined) {
+        if (!OperatorData.operator || OperatorData.operator.staffId === undefined){
             return toast.error("Enter Operator Code")
         }
 
@@ -107,7 +107,7 @@ const MovementPage = (props) => {
     const EquipmentData = useSelector((state) => state.equipment);
     const OperatorData = useSelector((state) => state.operator);
     const [state, setState] = useState({
-        selectEquipmentType: EquipmentData.selectedEquipment['movement'],
+        selectEquipmentType: EquipmentData.selectedEquipment['yardOperation'],
         operatorCode: OperatorData.operator.staffCode,
         containerNo: "",
         yardCode: "",
@@ -115,6 +115,7 @@ const MovementPage = (props) => {
     });
     //console.log('OperatorData', OperatorData);
     const [CntrInfo, setCntrInfo] = useState({});
+    const [isOpen, setIsOpen] = useState(false);
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
     const [validYardCode, setValidYardCode] = useState({ message: '', result: false });
     const dispatch = useDispatch();
@@ -124,7 +125,11 @@ const MovementPage = (props) => {
     //#region INITIAL FUNCTIONS ----------------------------------------------
 
     useEffect(() => {
-        if (EquipmentData.equipments === null || EquipmentData.equipments.length === 0) {
+        //console.log(EquipmentData)
+        if (
+            EquipmentData.equipments === null ||
+            EquipmentData.equipments.length === 0
+        ) {
             dispatch(fetchEquipments());
         }
     }, []);
@@ -174,12 +179,13 @@ const MovementPage = (props) => {
 
     const handleOperatorCodeChange = (value) => {
         //console.log("operator code", value);
-        if (value !== "")
-            dispatch(fetchOperatorInfoBasedOnCode(value));
+        if (value !== "") 
+        dispatch(fetchOperatorInfoBasedOnCode(value));
         //setOperatorCode(value)
     };
 
     const handleEquipmentSelectedChanged = (value) => {
+        //console.log("handleEquipmentSelectedChanged", value);
         dispatch(equipmentSelectedChanged(value, 'movement'));
     };
 
@@ -290,8 +296,8 @@ const MovementPage = (props) => {
                                                                         )
                                                                     }
                                                                     defaultValue={
-                                                                        OperatorData.operator.staffCode ?
-                                                                            OperatorData.operator.staffCode : ""
+                                                                        OperatorData.operator.staffCode?
+                                                                        OperatorData.operator.staffCode:""
                                                                     }
                                                                 />
                                                             </Col>
@@ -426,4 +432,4 @@ const MovementPage = (props) => {
     );
 };
 
-export default MovementPage;
+export default ReceivePage;

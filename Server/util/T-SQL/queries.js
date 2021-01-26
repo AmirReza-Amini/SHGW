@@ -47,7 +47,12 @@ module.exports = {
             getCntrInfoForMovement: LoadText(__dirname + '/cy/movement/get-cntr-info-for-movement.sql'),
             isDuplicateYardCodeByCntrNoInVoyage: LoadText(__dirname + '/cy/movement/is-duplicate-yard-code-by-cntrNo-in-voyage.sql'),
             saveMovement: LoadText(__dirname + '/cy/movement/save-movement.sql')
+        },
+        SEND:{
+            isAlreadySentCntrNoByOperatorInVoyage:LoadText(__dirname + '/cy/send/is-already-sent-cntrNo-by-operator-in-voyage.sql'),
+            saveSend:LoadText(__dirname + '/cy/send/save-send.sql')
         }
+
     },
     DAMAGE: {
         getDamageDefinition: LoadText(__dirname + '/damage/get-damage-definition.sql'),

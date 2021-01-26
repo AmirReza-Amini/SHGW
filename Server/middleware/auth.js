@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
 
         jwt.verify(token, jwtSecret, async (error, decoded) => {
             if (error) {
-                console.log('from Auth middleWare', error)
+                //console.log('from Auth middleWare', error)
                 if (error.name == 'TokenExpiredError')
                     return SendResponse(req, res, "Your credential is expired, Please login again", false, 403);
                 else

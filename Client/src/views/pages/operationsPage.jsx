@@ -62,6 +62,10 @@ class operationsPage extends Component {
         return this.props.history.push(urls.YardOperation);
       case "Movement":
         return this.props.history.push(urls.Movement);
+      case "Send":
+        return this.props.history.push(urls.Send);
+      //case "Receive":
+       // return this.props.history.push(urls.Receive);
     }
   };
 
