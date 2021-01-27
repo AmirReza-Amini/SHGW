@@ -23,7 +23,7 @@ module.exports = {
             addToLoadingList: LoadText(__dirname + '/vessel/berth/add-to-loading-list.sql'),
             isExistCntrInInstructionLoading: LoadText(__dirname + '/vessel/berth/is-exist-cntr-in-instruction-loading.sql'),
             saveUnloadIncrement: LoadText(__dirname + '/vessel/berth/save-unload-increment.sql'),
-
+            saveUnloadIncrementWithoutBayplanAndManifest: LoadText(__dirname + '/vessel/berth/save-unload-increment-without-bayplan-and-manifest.sql'),
             getCntrInfoForLoad: LoadText(__dirname + '/vessel/berth/get-cntr-info-for-load.sql'),
             saveLoad: LoadText(__dirname + '/vessel/berth/save-load.sql')
         },
@@ -48,9 +48,9 @@ module.exports = {
             isDuplicateYardCodeByCntrNoInVoyage: LoadText(__dirname + '/cy/movement/is-duplicate-yard-code-by-cntrNo-in-voyage.sql'),
             saveMovement: LoadText(__dirname + '/cy/movement/save-movement.sql')
         },
-        SEND:{
-            isAlreadySentCntrNoByOperatorInVoyage:LoadText(__dirname + '/cy/send/is-already-sent-cntrNo-by-operator-in-voyage.sql'),
-            saveSend:LoadText(__dirname + '/cy/send/save-send.sql')
+        SEND: {
+            isAlreadySentCntrNoByOperatorInVoyage: LoadText(__dirname + '/cy/send/is-already-sent-cntrNo-by-operator-in-voyage.sql'),
+            saveSend: LoadText(__dirname + '/cy/send/save-send.sql')
         }
 
     },

@@ -233,7 +233,7 @@ class loadUnloadStatisticsPage extends Component {
                         </div>
                         {
                             this.state.chartData && this.state.chartData.data &&
-                            <Card>
+                            <Card >
                                 <CardHeader>
                                     <CardTitle className="ltr customFont" style={{ float: "left" }}>
                                         <Row>

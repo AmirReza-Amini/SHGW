@@ -18,6 +18,10 @@ export const saveUnloadIncrement = (data) => {
   return http.post(apiEndpoint + "/saveUnloadIncrement", data);
 };
 
+export const saveUnloadIncrementWithoutBayplanAndManifest = (data) => {
+  return http.post(apiEndpoint + "/saveUnloadIncrementWithoutBayplanAndManifest", data);
+};
+
 export const addToShifting = (data) => {
   return http.post(apiEndpoint + "/addToShifting", data);
 };

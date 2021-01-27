@@ -38,13 +38,13 @@ router.post("/saveUnload", auth, async (req, res) => {
         sE: req.body.sE,
         oG: req.body.oG,
       });
-      
+
       let data = result[0]['OutVal'] !== false ? {
         ActID: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
 
-      console.log('result unload save', result,data);
+      console.log('result unload save', result, data);
 
       var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
       //console.log(result2);
@@ -113,6 +113,45 @@ router.post("/saveUnloadIncrement", auth, async (req, res) => {
     } catch (error) {
       console.log(error)
       return SendResponse(req, res, 'saveUnloadIncrement', false, 500);
+    }
+  }
+  else {
+    return SendResponse(req, res, check.message, check.result, check.statusCode);
+  }
+});
+
+router.post("/saveUnloadIncrementWithoutBayplanAndManifest", auth, async (req, res) => {
+  const check = await DoesUserHavePermission(req.user, 'Vessel', 'Discharge');
+  if (check.result) {
+    try {
+      console.log('ezafe takhlie', req.user, req.body)
+      var result = await db.query(queries.VESSEL.BERTH.saveUnloadIncrementWithoutBayplanAndManifest, {
+        voyageId: req.body.voyageId,
+        cntrNo: req.body.cntrNo,
+        userId: req.user.userId,
+        equipmentId: req.body.equipmentId,
+        operatorId: req.body.operatorId,
+        terminalId: req.body.terminalId,
+        truckNo: req.body.truckNo,
+        sE: req.body.sE,
+        oG: req.body.oG,
+      });
+
+      console.log('result unload save', result);
+      let data = result[0]['OutVal'] !== false ? {
+        ActID: result[0]['ActID'],
+        message: "The operation has been done successfully",
+      } : "Operation failed";
+
+      console.log(result, result[0]['OutVal']);
+      var result2 = await db.query(queries.VOYAGE.getLoadUnloadStatisticsByVoyageId, { voyageId: req.body.voyageId });
+      //console.log('increment data', result2);
+      res.io.emit("get_data", result2);
+
+      return SendResponse(req, res, data, result[0]['OutVal']);
+    } catch (error) {
+      console.log(error)
+      return SendResponse(req, res, 'saveUnloadIncrementWithoutBayplanAndManifest', false, 500);
     }
   }
   else {

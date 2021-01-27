@@ -70,7 +70,7 @@
 }
 
 .labelDescription{
-  color: black;
+  color:white;
   font-weight: bold;
 }
 
@@ -110,9 +110,8 @@
 
 
 .customBackgroundColor{
-  background-color: rgba(252, 252, 252, 0.2);
+  background-color: rgba(245, 248, 250, 0.226);
 }
-
 
 ::-webkit-scrollbar {
   width: 10px;

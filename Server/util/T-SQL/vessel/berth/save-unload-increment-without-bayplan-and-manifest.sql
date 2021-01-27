@@ -1,0 +1,9 @@
+EXEC dbo.SP_H_SaveUnloadIncrementWithoutBayplanAndManifest @CntrNo = @cntrNo, -- nvarchar(12)
+    @VoyageId = @voyageId, -- bigint
+    @UserId = @userId, -- int
+    @EquipmentId = @equipmentId, -- int
+    @OperatorId = @operatorId, -- int
+    @TerminalId = @terminalId, -- bigint
+    @Vehicle = @truckNo, -- nvarchar(15)
+    @SE = @se, -- bit
+    @OG = @og -- bit
