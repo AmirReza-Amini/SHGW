@@ -51,8 +51,11 @@ module.exports = {
         SEND: {
             isAlreadySentCntrNoByOperatorInVoyage: LoadText(__dirname + '/cy/send/is-already-sent-cntrNo-by-operator-in-voyage.sql'),
             saveSend: LoadText(__dirname + '/cy/send/save-send.sql')
+        },
+        RECEIVE:{
+            getCntrInfoForReceive:LoadText(__dirname + '/cy/receive/get-cntr-info-for-receive.sql'),
+            saveReceive:LoadText(__dirname + '/cy/receive/save-receive.sql')
         }
-
     },
     DAMAGE: {
         getDamageDefinition: LoadText(__dirname + '/damage/get-damage-definition.sql'),

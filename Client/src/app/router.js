@@ -32,7 +32,11 @@ const LazyReceiveOperation = lazy(()=>import("../views/pages/cy/receivePage"));
 
 //#endregion --------------------------------------------------------------
 
+//#region Gate Operation Paes ---------------------------------------------
 
+const LazyFullGateoutPage = lazy(() => import("../views/pages/gate/fullGateoutPage"));
+
+//#endregion --------------------------------------------------------------
 
 const LazyLoginPage = lazy(() => import("../views/pages/loginPage"));
 const LazyDamagePage = lazy(() => import("../views/pages/damagePage"));
@@ -92,6 +96,15 @@ class Router extends Component {
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
                 <LazyLoginPage {...matchprops} />
+              </Suspense>
+            )}
+          />
+          <MainLayoutRoutes
+            exact
+            path={urls.FullGateOut}
+            render={(matchprops) => (
+              <Suspense fallback={<Spinner />}>
+                <LazyFullGateoutPage {...matchprops} />
               </Suspense>
             )}
           />
@@ -208,7 +221,7 @@ class Router extends Component {
             path={urls.Receive}
             render={(matchprops) => (
               <Suspense fallback={<Spinner />}>
-                <LazyMaintainance {...matchprops} />
+                <LazyReceiveOperation {...matchprops} />
               </Suspense>
             )}
           />

@@ -1,0 +1,1 @@
+EXEC dbo.SP_H_GetCntrInfoForReceive  @CntrNo = @cntrNo -- nvarchar(12)

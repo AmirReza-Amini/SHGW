@@ -5,15 +5,15 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import _, { toArray } from "lodash";
-import urls from '../../../urls.json';
+import _ from "lodash";
 import config from '../../../config.json';
 
 import CustomNavigation from "../../../components/common/customNavigation";
 import FormikControl from "../../../components/common/formik/FormikControl";
 import { fetchEquipments, equipmentSelectedChanged } from "../../../redux/common/equipment/equipmentActions";
 import { fetchOperatorInfoBasedOnCode } from "../../../redux/common/operator/operatorActions";
-import { getCntrInfoForReceive, saveReceive } from "../../../services/cy/receive";
+import { getCntrInfoForMovement } from "../../../services/cy/movement";
+import { saveSend, isAlreadySentCntrNoByOperatorInVoyage } from "../../../services/cy/send";
 
 
 toast.configure({ bodyClassName: "customFont" });
@@ -24,49 +24,99 @@ const initialValues = {
     selectEquipmentType: "",
     containerNo: "",
     operatorCode: "",
-    yardCode: ""
+    truckNo: ""
 };
 
-
+const validationSchema = Yup.object({
+    selectEquipmentType: Yup.string().required("Select Equipment No !"),
+    containerNo: Yup.string().required("Enter Container No !"),
+    operatorCode: Yup.string().required("Enter Operator Code !"),
+    truckNo: Yup.string().required("Enter Truck No !")
+});
 
 //#endregion ---------------------------------------------------------------
 
 
-const ReceivePage = (props) => {
+const FullGateoutPage = (props) => {
 
-    //#region Validation Schema ---------------------------------------------
+    //#region SUBMIT FORMIK ----------------------------------------------------
 
-    const validationSchema = Yup.object({
-        selectEquipmentType: Yup.string().required("Select Equipment No !"),
-        containerNo: Yup.string().required("Enter Container No !"),
-        operatorCode: Yup.string().required("Enter Operator Code !")
-            .test('validoperator', 'Operator not found', (value) => {
-                if (OperatorData.operator.staffCode === value) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }),
-        yardCode: Yup.string().required("Enter Yard Code !")
-    });
+    const onSubmit = (values) => {
+        //console.log("Form Submit Data", values, OperatorData.operator.staffId);
+        let parameters = {
+            cntrNo: values.containerNo
+        };
 
-    //#endregion ------------------------------------------------------------
+        if (!OperatorData.operator || OperatorData.operator.staffId === undefined) {
+            return toast.error("Enter Operator Code")
+        }
+
+        getCntrInfoForMovement(parameters).then((response) => {
+            //console.log("response", response);
+            let { data, result } = response.data;
+            if (result) {
+                isAlreadySentCntrNoByOperatorInVoyage({
+                    ...parameters,
+                    voyageId: data[0].VoyageID,
+                    operatorId: OperatorData.operator.staffId,
+                    equipmentId: values.selectEquipmentType.value
+                }).then(response2 => {
+                    if (!response2.data.result) {
+
+                        let parametersForSave = {
+                            voyageId: data[0].VoyageID,
+                            cntrNo: data[0].CntrNo,
+                            cntrLocation:data[0].CntrLocation,
+                            fullEmptyStatus: data[0].FullEmptyStatus,
+                            cntrId: data[0].CntrID,
+                            agentId: data[0].AgentID,
+                            ownerId: data[0].OwnerID,
+                            terminalId: config.terminalId,
+                            operatorId: OperatorData.operator.staffId,
+                            equipmentId: values.selectEquipmentType.value,
+                            truckNo: values.truckNo
+                        }
+                        //console.log('parametersForSave', parametersForSave)
+
+                        saveSend(parametersForSave)
+                            .then((response3) => {
+                                //console.log("res save Send", response3, response3.data.data[0]);
+                                if (response3.data.result) {
+                                    return toast.success(response3.data.data[0]['message']);
+                                } else return toast.error(response3.data.data[0]);
+                            })
+                            .catch(error => {
+                                // error handler
+                            })
+                    }
+                    else {
+                        return toast.error(response2.data.data[0]);
+                    }
+                }).catch(error => {
+                    // error handler
+                })
+            } else {
+                return toast.error("No container has been found");
+            }
+        });
+    };
+
+    //#endregion ---------------------------------------------------------------
 
     //#region SELECTORS AND STATE --------------------------------------------
 
     const EquipmentData = useSelector((state) => state.equipment);
     const OperatorData = useSelector((state) => state.operator);
     const [state, setState] = useState({
-        selectEquipmentType: EquipmentData.selectedEquipment['receive'],
+        selectEquipmentType: EquipmentData.selectedEquipment['send'],
         operatorCode: OperatorData.operator.staffCode,
         containerNo: "",
         yardCode: "",
         truckNo: ""
     });
+    //console.log('OperatorData', OperatorData);
     const [CntrInfo, setCntrInfo] = useState({});
     const [disableSubmitButton, setDisableSubmitButton] = useState(false);
-    const [validYardCode, setValidYardCode] = useState({ message: '', result: false });
     const dispatch = useDispatch();
 
     //#endregion -------------------------------------------------------------
@@ -75,10 +125,7 @@ const ReceivePage = (props) => {
 
     useEffect(() => {
         //console.log(EquipmentData)
-        if (
-            EquipmentData.equipments === null ||
-            EquipmentData.equipments.length === 0
-        ) {
+        if (EquipmentData.equipments === null || EquipmentData.equipments.length === 0) {
             dispatch(fetchEquipments());
         }
     }, []);
@@ -88,10 +135,13 @@ const ReceivePage = (props) => {
         if (EquipmentData.error) {
             errorMessage += "\n" + EquipmentData.error;
         }
+        if (OperatorData.error) {
+            errorMessage += "\n" + OperatorData.error;
+        }
         if (errorMessage !== "") {
             toast.error(errorMessage);
         }
-    }, [EquipmentData.error]);
+    }, [EquipmentData.error, OperatorData.error]);
 
     //#endregion -------------------------------------------------------------
 
@@ -99,26 +149,18 @@ const ReceivePage = (props) => {
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value };
-        setCntrInfo({})
-        getCntrInfoForReceive(data)
+        getCntrInfoForMovement(data)
             .then((response) => {
                 setDisableSubmitButton(false);
-                console.log("cntrno change res", response);
+                //console.log("cntrno change res", response);
                 if (!response.data.result) {
                     setDisableSubmitButton(true);
                     return toast.error("No container has been found");
                 }
                 const result = response.data.data[0];
-                if (result.Operation === "Receive") {
+                if (!result.IsActAllowed) {
                     setDisableSubmitButton(true);
-                    toast.error('Receive Operation has been saved already');
-                }
-                else if (result.Operation !== "Send") {
-                    setDisableSubmitButton(true);
-                    return toast.error("No container has been found");
-                }
-                else {
-                    result.CntrLocation = "";
+                    return toast.error('Sequence Act is not correct');
                 }
                 //console.log('result cntr', result)
                 setCntrInfo(result);
@@ -138,100 +180,13 @@ const ReceivePage = (props) => {
 
     const handleEquipmentSelectedChanged = (value) => {
         //console.log("handleEquipmentSelectedChanged", value);
-        dispatch(equipmentSelectedChanged(value, 'receive'));
+        dispatch(equipmentSelectedChanged(value, 'send'));
     };
 
     const handleCancelButton = () => {
-        return props.history.push(props.location.pathname.replace("/receive", ''))
+        return props.history.push(props.location.pathname.replace("/send", ''))
     }
-
-    const handleYardCodeChange = (value) => {
-        setDisableSubmitButton(false);
-        //console.log(CntrInfo)
-        if (!CntrInfo || !CntrInfo.CntrNo) {
-            setValidYardCode({ message: 'CntrNo not found', result: false });
-            setDisableSubmitButton(true);
-            return;
-        }
-        if (!CntrInfo || !CntrInfo.VoyageID || CntrInfo.VoyageID === 0) {
-            setValidYardCode({ message: 'Voyage not found', result: false });
-            setDisableSubmitButton(true);
-            return;
-        }
-        //console.log('yard code changed', value);
-        const yardCodeTemp = `${value.split(" ").join("")}`;
-        const params = { cntrNo: CntrInfo.CntrNo };
-        //console.log('yard code changed', value, params);
-        getCntrInfoForReceive(params).then(response => {
-            //console.log('duplicate yard', response);
-            if (response.data.result) {
-                //return toast.error(response.data.data[0]);
-                if (response.data.data[0].CntrLocation === yardCodeTemp) {
-                    setValidYardCode({ message: "Duplicate Yard", result: false });
-                    setDisableSubmitButton(true);
-                }
-                else {
-                    setValidYardCode({ message: "Location is valid", result: true });
-                }
-            }
-            else {
-                //return toast.success(response.data.data[0]);
-                setValidYardCode({ message: "CntrNo not found", result: false });
-            }
-        })
-    }
-
     //#endregion -------------------------------------------------------------
-
-    //#region SUBMIT FORMIK ----------------------------------------------------
-
-    const onSubmit = (values) => {
-        //console.log("Form Submit Data", values,OperatorData.operator.staffId);
-        let parameters = {
-            cntrNo: values.containerNo
-        };
-
-        getCntrInfoForReceive(parameters).then((response) => {
-            console.log("response", response);
-            let { data, result } = response.data;
-            if (result) {
-
-                if (data[0].Operation === "Receive") {
-                    return toast.error("Receive opearation has been saved already");
-                }
-                else if (data[0].Operation !== "Send") {
-                    return toast.error("No cotainer has been found");
-                }
-
-                let parametersForSave = {
-                    voyageId: data[0].VoyageID,
-                    cntrNo: data[0].CntrNo,
-                    cntrLocation: _(values.yardCode).toUpper(),
-                    actId: data[0].ActID,
-                    terminalId: config.terminalId,
-                    operatorId: OperatorData.operator.staffId,
-                    equipmentId: values.selectEquipmentType.value,
-                    truckNo:data[0].TruckNo
-                }
-
-                saveReceive(parametersForSave)
-                .then((response1) => {
-                    console.log("res save receive", response1, response1.data.data[0]);
-                    if (response1.data.result) {
-                        return toast.success(response1.data.data[0]['message']);
-                    } else return toast.error(response1.data.data[0]);
-                })
-                .catch(error => {
-                    // error handler
-                })
-
-            } else {
-                return toast.error("No container has been found");
-            }
-        });
-    };
-
-    //#endregion ---------------------------------------------------------------
 
     return (
         <Fragment>
@@ -270,7 +225,7 @@ const ReceivePage = (props) => {
                                                                     control="customSelect"
                                                                     name="selectEquipmentType"
                                                                     selectedValue={
-                                                                        EquipmentData.selectedEquipment['movement']
+                                                                        EquipmentData.selectedEquipment['send']
                                                                     }
                                                                     options={EquipmentData.equipments
                                                                         .filter(c => c.type == 6 || c.type == 3 || c.type == 7 || c.type == 9)
@@ -315,7 +270,8 @@ const ReceivePage = (props) => {
                                                                     name="operatorCodeInfo"
                                                                     className="ltr"
                                                                     disabled={true}
-                                                                    value={OperatorData.operator.name ? OperatorData.operator.name : ""}
+                                                                    value={OperatorData.operator.name ?
+                                                                        OperatorData.operator.name : ""}
                                                                 />
                                                             </Col>
                                                         </Row>
@@ -335,28 +291,15 @@ const ReceivePage = (props) => {
                                                                     }
                                                                     toUppercase={true}
                                                                 />
-                                                                {/* <div>{formik.values.containerNo}</div> */}
                                                             </Col>
                                                             <Col md="6">
                                                                 <FormikControl
-                                                                    control="inputMaskDebounce"
-                                                                    name="yardCode"
-                                                                    mask={config.patternYardLocation}
-                                                                    debounceTime={0}
-                                                                    placeholder="Area-Row-Bay-Tier"
+                                                                    control="input"
+                                                                    type="text"
+                                                                    name="truckNo"
                                                                     className="ltr"
-                                                                    onChange={() =>
-                                                                        handleYardCodeChange(
-                                                                            formik.values.yardCode
-                                                                        )
-                                                                    }
-                                                                    //defaultValue={CntrInfo.CntrLocation}
-                                                                    toUppercase={true}
+                                                                    placeholder="Truck No"
                                                                 />
-
-                                                                {validYardCode && validYardCode.result && <div className="success">{validYardCode.message}</div>}
-                                                                {validYardCode && !validYardCode.result && <div className="error">{validYardCode.message}</div>}
-
                                                             </Col>
                                                         </Row>
 
@@ -377,10 +320,10 @@ const ReceivePage = (props) => {
                                                             style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                Pre Location:
+                                                                Voyage No:
                                                             </span>{" "}
                                                             <span className="labelValue">
-                                                                {CntrInfo.CntrLocation}
+                                                                {CntrInfo.VoyageNo}
                                                             </span>
                                                         </p>
                                                         <p
@@ -410,10 +353,10 @@ const ReceivePage = (props) => {
                                                             style={{ textAlign: "left" }}
                                                         >
                                                             <span className="labelDescription">
-                                                                Voyage No:
+                                                                Terminal:
                                                             </span>{" "}
                                                             <span className="labelValue">
-                                                                {CntrInfo.VoyageNo}
+                                                                {CntrInfo.TerminalName}
                                                             </span>
                                                         </p>
                                                     </div>
@@ -439,4 +382,4 @@ const ReceivePage = (props) => {
     );
 };
 
-export default ReceivePage;
+export default FullGateoutPage;

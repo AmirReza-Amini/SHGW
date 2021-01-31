@@ -49,6 +49,7 @@ class operationsPage extends Component {
   //#region EVENT HANDLRES -------------------------------------------------
 
   handleOperation = (operationType) => {
+    console.log(operationType)
     switch (operationType) {
       case "Discharge":
         return this.props.history.push(urls.Discharge);
@@ -64,8 +65,10 @@ class operationsPage extends Component {
         return this.props.history.push(urls.Movement);
       case "Send":
         return this.props.history.push(urls.Send);
-      //case "Receive":
-       // return this.props.history.push(urls.Receive);
+      case "Receive":
+        return this.props.history.push(urls.Receive);
+      case "Full-Out":
+        return this.props.history.push(urls.FullGateOut);
     }
   };
 
@@ -91,6 +94,7 @@ class operationsPage extends Component {
                 onClick={this.handleOperation}
                 key={op.enName}
                 textAlign="center"
+                
               >
                 {/* <Icon.Briefcase
                   size={56}

@@ -13,13 +13,13 @@
     "FullGateIn": "/operationType/gate/fullGateIn",
     "EmptyGateIn": "/operationType/gate/emptyGateIn",
     "EmptyGateOut": "/operationType/gate/emptyGateOut",
+    "FullGateOut": "/operationType/gate/fullGateOut",
 
     "YardOperation": "/operationType/cy/yardOperation",
     "YardOperationDamage": "/operationType/cy/yardOperation/damage",
     "Movement": "/operationType/cy/movement",
     "Send": "/operationType/cy/send",
     "Receive": "/operationType/cy/receive",
-    "FullGateOut": "/operationType/cy/fullGateOut",
     "PlugIn": "/operationType/cy/plugIn",
     "PlugOut": "/operationType/cy/plugOut",
 
