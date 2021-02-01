@@ -97,10 +97,10 @@ const onSubmit = (values, props, staffId) => {
                             if (res1.data.result) {
                                 saveLoad(parametersForLoad)
                                     .then((res2) => {
-                                        //console.log("res save load", res2, res2.data.data[0]);
+                                        console.log("res save load", res2);
                                         if (res2.data.result) {
                                             toast.success(res2.data.data[0]['message']);
-                                            return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                           // return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActID'], cntrNo: values.containerNo });
                                         } else return toast.error(res2.data.data[0]);
                                     })
                                     .catch((error) => {
@@ -121,7 +121,7 @@ const onSubmit = (values, props, staffId) => {
                             //console.log("res save load", res, res.data.data[0]);
                             if (res.data.result) {
                                 toast.success(res.data.data[0]['message']);
-                                return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActId'], cntrNo: values.containerNo });
+                                return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
                             } else return toast.error(res.data.data[0]);
                         })
                         .catch((error) => {

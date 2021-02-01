@@ -75,11 +75,13 @@ router.post("/saveStowageAndShiftedup", auth, async (req, res) => {
                 actType: req.body.actType
             });
 
-            //console.log('result saveStowageAndShiftedup', result);
+            console.log('result saveStowageAndShiftedup', result);
             //result saveStowageAndShiftedup [ { '': false } ]
-            let data = result[0][""] !== false ? "The operation has been done successfully" : "Operation failed";
+            let data = result[0]['OutVal'] !== false ?
+                "The operation has been done successfully" :
+                "Operation failed";
 
-            return SendResponse(req, res, data, result[0][""] !== false);
+            return SendResponse(req, res, data, result[0]['ActID'] !== false);
         }
         catch (error) {
             //console.log(error);

@@ -266,9 +266,9 @@ router.post("/saveLoad", auth, async (req, res) => {
         oG: req.body.oG,
       });
 
-      console.log('load save', result);
-      let data = result[0][""][0] !== '0' ? {
-        ActId: result[0][""][0],
+      //console.log('load save', result);
+      let data = result[0]['OutVal'] !== false ? {
+        ActID: result[0]['ActID'],
         message: "The operation has been done successfully",
       } : "Operation failed";
 
@@ -276,7 +276,7 @@ router.post("/saveLoad", auth, async (req, res) => {
       //console.log(result2);
       res.io.emit("get_data", result2);
 
-      return SendResponse(req, res, data, result[0][""][0] !== '0');
+      return SendResponse(req, res, data, result[0]['OutVal']);
     } catch (error) {
       return SendResponse(req, res, 'saveLoad', false, 500);
     }
