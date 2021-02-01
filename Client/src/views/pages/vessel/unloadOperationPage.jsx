@@ -72,7 +72,6 @@ const UnloadOperationPage = (props) => {
     }),
     truckNo: Yup.string().required("Enter Truck No !")
   });
-  
 
   //#region SELECTORS AND STATE --------------------------------------------
 
@@ -422,7 +421,6 @@ const UnloadOperationPage = (props) => {
   const handleAdditionalSubmitButton = () => {
     additionalModalToggle();
   }
-
 
   const additionalModalToggle = () => {
     setAdditionalModal(!additionalModal);

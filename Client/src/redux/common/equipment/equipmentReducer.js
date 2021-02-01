@@ -14,7 +14,7 @@ export const initEquipment = {
     yardOperation: '',
     movement:'',
     send:'',
-    Receive:''
+    receive:''
   },
   equipments: [],
   error: ""

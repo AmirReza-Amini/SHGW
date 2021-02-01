@@ -19,7 +19,7 @@ router.post("/isAlreadySentCntrNoByOperatorInVoyage", auth, async (req, res) => 
             cntrNo: req.body.cntrNo,
             voyageId: req.body.voyageId,
             operatorId: req.body.operatorId,
-            equipmentId:req.body.equipmentId
+            equipmentId: req.body.equipmentId
         });
 
         //console.log('isAlreadySentCntrNoByOperatorInVoyage',result,req.body);
@@ -35,6 +35,7 @@ router.post("/isAlreadySentCntrNoByOperatorInVoyage", auth, async (req, res) => 
 
 router.post("/saveSend", auth, async (req, res) => {
     const check = await DoesUserHavePermission(req.user, 'CY', 'Send');
+    console.log('checkkkkkk', check);
     if (check.result) {
         try {
             //console.log('save send', req.user, req.body)
@@ -49,7 +50,7 @@ router.post("/saveSend", auth, async (req, res) => {
                 terminalId: req.body.terminalId,
                 operatorId: req.body.operatorId,
                 equipmentId: req.body.equipmentId,
-                truckNo:req.body.truckNo,
+                truckNo: req.body.truckNo,
                 userId: req.user.userId
             });
 

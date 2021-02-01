@@ -66,7 +66,7 @@ const SendPage = (props) => {
                         let parametersForSave = {
                             voyageId: data[0].VoyageID,
                             cntrNo: data[0].CntrNo,
-                            cntrLocation:data[0].CntrLocation,
+                            cntrLocation: data[0].CntrLocation,
                             fullEmptyStatus: data[0].FullEmptyStatus,
                             cntrId: data[0].CntrID,
                             agentId: data[0].AgentID,
@@ -149,6 +149,7 @@ const SendPage = (props) => {
 
     const handleContainerNoChange = (value) => {
         const data = { cntrNo: value };
+        setCntrInfo({});
         getCntrInfoForMovement(data)
             .then((response) => {
                 setDisableSubmitButton(false);

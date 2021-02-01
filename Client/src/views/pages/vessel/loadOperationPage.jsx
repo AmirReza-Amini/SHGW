@@ -38,106 +38,25 @@ const checkboxListOptions = [
     { value: "OG", label: 'Out of Gate' },
 ];
 
-const validationSchema = Yup.object({
-    selectVoyageNo: Yup.string().required("Select Voyage No !"),
-    selectEquipmentType: Yup.string().required("Select Equipment No !"),
-    containerNo: Yup.string().required("Enter Container No !"),
-    operatorCode: Yup.string().required("Enter Operator Code !"),
-    truckNo: Yup.string().required("Enter Truck No !"),
-});
-
-//#endregion ---------------------------------------------------------------
-
-//#region SUBMIT FORMIK ----------------------------------------------------
-
-const onSubmit = (values, props, staffId) => {
-    //console.log("Form Submit Data", values);
-    let parameters = {
-        cntrNo: values.containerNo,
-        voyageId: values.selectVoyageNo.value,
-    };
-    // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
-
-    let se = _(values.checkboxListSelected)
-        .filter((c) => c === "SE")
-        .first();
-    let og = _(values.checkboxListSelected)
-        .filter((c) => c === "OG")
-        .first();
-
-    getCntrInfoForLoad(parameters).then((response) => {
-        //console.log("response", response);
-        let { data, result } = response.data;
-        if (result) {
-            //---------------- Duplicate Act Check---------------------------------
-            if (data[0].ActID != null) {
-                return toast.error("The container info has been saved already");
-            }
-            else {
-                let parametersForLoad = {
-                    cntrNo: data[0].CntrNo,
-                    voyageId: data[0].VoyageID,
-                    berthId: data[0].BerthID,
-                    equipmentId: values.selectEquipmentType.value,
-                    operatorId: staffId,
-                    truckNo: values.truckNo,
-                    isShifting: data[0].ShiftingID !== null ? 1 : 0,
-                    sE: se ? 1 : 0,
-                    oG: og ? 1 : 0,
-                };
-                //console.log('response', response)
-                if (data[0].ShiftingID != null) {
-                    let paramData = {
-                        nextActType: 16,
-                        cntrNo: parametersForLoad.cntrNo,
-                    };
-
-                    isPossibleSaveAct(paramData)
-                        .then((res1) => {
-                            if (res1.data.result) {
-                                saveLoad(parametersForLoad)
-                                    .then((res2) => {
-                                        console.log("res save load", res2);
-                                        if (res2.data.result) {
-                                            toast.success(res2.data.data[0]['message']);
-                                           // return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActID'], cntrNo: values.containerNo });
-                                        } else return toast.error(res2.data.data[0]);
-                                    })
-                                    .catch((error) => {
-                                        //return toast.error(error);
-                                    });
-                            }
-                            else {
-                                return toast.error(res1.data.data[0]);
-                            }
-                        })
-                        .catch((error) => {
-                            //return toast.error(error);
-                        });
-                }
-                else {
-                    saveLoad(parametersForLoad)
-                        .then((res) => {
-                            //console.log("res save load", res, res.data.data[0]);
-                            if (res.data.result) {
-                                toast.success(res.data.data[0]['message']);
-                                return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
-                            } else return toast.error(res.data.data[0]);
-                        })
-                        .catch((error) => {
-                            //return toast.error(error);
-                        });
-                }
-            }
-        }
-        else {
-            return toast.error("No container has been found");
-        }
-    });
-};
 //#endregion ---------------------------------------------------------------
 
 const LoadOperationPage = (props) => {
+
+    const validationSchema = Yup.object({
+        selectVoyageNo: Yup.string().required("Select Voyage No !"),
+        selectEquipmentType: Yup.string().required("Select Equipment No !"),
+        containerNo: Yup.string().required("Enter Container No !"),
+        operatorCode: Yup.string().required("Enter Operator Code !")
+            .test('validoperator', 'Operator not found', (value) => {
+                if (OperatorData.operator.staffCode === value) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }),
+        truckNo: Yup.string().required("Enter Truck No !"),
+    });
 
     //#region SELECTORS AND STATE ------------------------------------------
 
@@ -166,11 +85,11 @@ const LoadOperationPage = (props) => {
         if (VoyageData.voyages === null || VoyageData.voyages.length === 0) {
             dispatch(fetchVoyagesTopTenOpen());
         }
-       // console.log('eqqqqqqqq',EquipmentData)
+        // console.log('eqqqqqqqq',EquipmentData)
         if (
             EquipmentData.equipments === null || EquipmentData.equipments.length === 0
         ) {
-           // console.log('qweqw',EquipmentData.equipments.length)
+            // console.log('qweqw',EquipmentData.equipments.length)
             dispatch(fetchEquipments());
         }
         //console.log("salam");
@@ -272,6 +191,95 @@ const LoadOperationPage = (props) => {
     }
 
     //#endregion -----------------------------------------------------------
+
+    //#region SUBMIT FORMIK ----------------------------------------------------
+
+    const onSubmit = (values, props, staffId) => {
+        //console.log("Form Submit Data", values);
+        let parameters = {
+            cntrNo: values.containerNo,
+            voyageId: values.selectVoyageNo.value,
+        };
+        // return props.history.push('/operationType/vessel/discharge/damage',{actId:12309929,cntrNo:values.containerNo});
+
+        let se = _(values.checkboxListSelected)
+            .filter((c) => c === "SE")
+            .first();
+        let og = _(values.checkboxListSelected)
+            .filter((c) => c === "OG")
+            .first();
+
+        getCntrInfoForLoad(parameters).then((response) => {
+            //console.log("response", response);
+            let { data, result } = response.data;
+            if (result) {
+                //---------------- Duplicate Act Check---------------------------------
+                if (data[0].ActID != null) {
+                    return toast.error("The container info has been saved already");
+                }
+                else {
+                    let parametersForLoad = {
+                        cntrNo: data[0].CntrNo,
+                        voyageId: data[0].VoyageID,
+                        berthId: data[0].BerthID,
+                        equipmentId: values.selectEquipmentType.value,
+                        operatorId: staffId,
+                        truckNo: values.truckNo,
+                        isShifting: data[0].ShiftingID !== null ? 1 : 0,
+                        sE: se ? 1 : 0,
+                        oG: og ? 1 : 0,
+                    };
+                    //console.log('response', response)
+                    if (data[0].ShiftingID != null) {
+                        let paramData = {
+                            nextActType: 16,
+                            cntrNo: parametersForLoad.cntrNo,
+                        };
+
+                        isPossibleSaveAct(paramData)
+                            .then((res1) => {
+                                if (res1.data.result) {
+                                    saveLoad(parametersForLoad)
+                                        .then((res2) => {
+                                            console.log("res save load", res2);
+                                            if (res2.data.result) {
+                                                toast.success(res2.data.data[0]['message']);
+                                                // return props.history.push(urls.LoadDamage, { actId: res2.data.data[0]['ActID'], cntrNo: values.containerNo });
+                                            } else return toast.error(res2.data.data[0]);
+                                        })
+                                        .catch((error) => {
+                                            //return toast.error(error);
+                                        });
+                                }
+                                else {
+                                    return toast.error(res1.data.data[0]);
+                                }
+                            })
+                            .catch((error) => {
+                                //return toast.error(error);
+                            });
+                    }
+                    else {
+                        saveLoad(parametersForLoad)
+                            .then((res) => {
+                                //console.log("res save load", res, res.data.data[0]);
+                                if (res.data.result) {
+                                    toast.success(res.data.data[0]['message']);
+                                    return props.history.push(urls.LoadDamage, { actId: res.data.data[0]['ActID'], cntrNo: values.containerNo });
+                                } else return toast.error(res.data.data[0]);
+                            })
+                            .catch((error) => {
+                                //return toast.error(error);
+                            });
+                    }
+                }
+            }
+            else {
+                return toast.error("No container has been found");
+            }
+        });
+    };
+    //#endregion ---------------------------------------------------------------
 
     return (
         <Fragment>
@@ -390,7 +398,7 @@ const LoadOperationPage = (props) => {
                                                                                 name="operatorCodeInfo"
                                                                                 className="ltr"
                                                                                 disabled={true}
-                                                                                value={OperatorData.operator.name}
+                                                                                value={OperatorData.operator.name ? OperatorData.operator.name : ""}
                                                                             />
                                                                         </Col>
                                                                     </Row>

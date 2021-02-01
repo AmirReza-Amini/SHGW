@@ -270,7 +270,7 @@ const ReceivePage = (props) => {
                                                                     control="customSelect"
                                                                     name="selectEquipmentType"
                                                                     selectedValue={
-                                                                        EquipmentData.selectedEquipment['movement']
+                                                                        EquipmentData.selectedEquipment['receive']
                                                                     }
                                                                     options={EquipmentData.equipments
                                                                         .filter(c => c.type == 6 || c.type == 3 || c.type == 7 || c.type == 9)
