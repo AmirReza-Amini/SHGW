@@ -16,5 +16,9 @@ export const deleteUserInfo = (userId) => {
 
 export const editUserInfo = (userInfo) => {
     //console.log('api for edit user info', userInfo)
-    return http.put(apiEndpoint,userInfo);
+    return http.put(apiEndpoint, userInfo);
+}
+
+export const importNewUsersFromBCTS = () => {
+    return http.get(apiEndpoint + '/importNewUsersFromBCTS');
 }

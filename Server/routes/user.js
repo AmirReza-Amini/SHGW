@@ -11,16 +11,24 @@ const queries = require('../util/T-SQL/queries');
 const setting = require('../app-setting')
 const sworm = require('sworm');
 const db = sworm.db(setting.db.sqlConfig);
+var _ = require('lodash');
 
 
-router.get('/getAllUsersFromBcts', async (req, res) => {
+router.get('/importNewUsersFromBCTS', [auth, adminOrSuperuser], async (req, res) => {
   try {
     var { permissions } = await Permission.findOne();
-    var result = await db.query(queries.USER.getAllUsersFromBcts,{});
-    //console.log('sa', result);
-    if (result && result.length > 0) {
+    var mongoUsers = await Users.find();
+    var newUsers = [];
+    var bctsUsers = await db.query(queries.USER.getAllUsersFromBcts, {});
+    bctsUsers.forEach(item => {
+      const newUser = mongoUsers.filter(c => c.userCode === item.userCode);
+      if (newUser.length == 0) {
+        newUsers.push(item);
+      }
+    })
+    if (newUsers && newUsers.length > 0) {
 
-      let temp = result.map(item => {
+      let temp = newUsers.map(item => {
         return {
           ...item,
           password: md5(item.password.trim()),
@@ -28,12 +36,13 @@ router.get('/getAllUsersFromBcts', async (req, res) => {
         }
       });
       req.body = temp;
+      console.log(temp);
       await InsertMany(Users, req, res)
     }
     else {
       return SendResponse(req, res, 'call to administrator', false);
     }
-  } 
+  }
   catch (error) {
     //console.log(error)
     return SendResponse(req, res, error, false, 500);
