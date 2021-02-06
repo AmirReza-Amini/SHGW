@@ -52,7 +52,8 @@ router.get('/importNewUsersFromBCTS', [auth, adminOrSuperuser], async (req, res)
 router.route('/')
   .get([auth, adminOrSuperuser], async (req, res) => {
     //console.log('user', req.body)
-    await GetAll(Users, req, res)
+    const options = { condition: { userType: { $ne: 'Superuser' } } };
+    await GetAll(Users, req, res, options)
   })
   // .post([auth, admin],async (req, res) => {
   //   if (req.body.option)

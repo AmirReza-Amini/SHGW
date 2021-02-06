@@ -19,13 +19,13 @@ exports.Update = async (entity, req, res) => {
 };
 
 exports.HardDelete = async (entity, req, res) => {
-    console.log(req.body)
-    let doc = await entity.findByIdAndRemove(req.body._id);
-    if (doc) {
-        if (req.user && req.user.userType === "Admin" && doc.userType === "Admin") {
+    let doc1 = await entity.findOne({ _id: req.body._id });
+    if (doc1) {
+        if (req.user && req.user.userType === "Admin" && (doc1.userType === "Admin" || doc1.userType === "Superuser")) {
             return SendResponse(req, res, "Access to this section is forbidden", false, 403);
         }
-        SendResponse(req, res, doc);
+        let doc2 = await entity.findOneAndDelete(req.body._id);
+        SendResponse(req, res, doc2);
     }
     else
         SendResponse(req, res, { error: 'nothing found!' }, false, 404);
@@ -73,10 +73,10 @@ FindAndUpdate = async (entity, req, res, condition, update) => {
     if (doc) {
 
         //console.log('user edt info',req.user)
-        if (req.user && req.user.userType === "Admin" && doc.userType === "Admin") {
+        if (req.user && req.user.userType === "Admin" && (doc.userType === "Admin" || doc.userType === "Superuser")) {
             return SendResponse(req, res, "Access to this section is forbidden", false, 403);
         }
-        
+
         if (update.password)
             update.password = md5(update.password).toUpperCase();
 
